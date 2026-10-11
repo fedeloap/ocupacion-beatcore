@@ -250,8 +250,10 @@ def glofox(cfg, a, b):
 
 
 def capture(cfg, a, b):
+    import timp
     return (momence(cfg.get("momence", []), a, b) + mindbody(cfg.get("mindbody", []), a, b)
-            + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b))
+            + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b)
+            + timp.capture(cfg.get("timp", []), a, b))
 
 
 def write(rows, path, stamp):

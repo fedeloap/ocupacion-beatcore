@@ -31,6 +31,9 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Capturar
+        env:
+          TIMP_EMAIL: ${{ secrets.TIMP_EMAIL }}
+          TIMP_PASSWORD: ${{ secrets.TIMP_PASSWORD }}
         run: python capture.py
 
       - name: Guardar datos en el repositorio

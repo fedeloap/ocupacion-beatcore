@@ -1,0 +1,26 @@
+name: TIMP descubrir centros
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: "Ids de centro TIMP separados por espacios"
+        required: true
+        default: "8292 19669 4498 2433 2402 5574"
+
+jobs:
+  descubrir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Descubrir
+        env:
+          TIMP_EMAIL: ${{ secrets.TIMP_EMAIL }}
+          TIMP_PASSWORD: ${{ secrets.TIMP_PASSWORD }}
+          IDS: ${{ github.event.inputs.ids }}
+        run: python timp.py $IDS
