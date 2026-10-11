@@ -31,3 +31,7 @@ Editar `studios.json` (sección de la plataforma correspondiente). No hace falta
 ## Ejecución manual
 
 Pestaña **Actions** > **Captura de ocupación** > **Run workflow**.
+
+## Análisis
+
+`python analisis.py` genera `reports/clases.csv` (una fila por clase) y `reports/informe.html`. Festivos excluidos en `festivos.json`. En Mindbody sin aforo publicado se estima con el máximo de plazas libres visto (cota inferior).
