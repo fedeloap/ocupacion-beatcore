@@ -62,7 +62,8 @@ def login():
         # el cuerpo trae solo el código de error (p. ej. login_bad_password), sin datos de la cuenta
         try:
             det = r.json()
-            det = {k: v for k, v in det.items() if k in ("error", "errors", "code", "message", "status")} if isinstance(det, dict) else str(det)[:120]
+            det = {k: (v if isinstance(v, (int, float, bool)) or (isinstance(v, str) and "@" not in v and len(v) < 80) else type(v).__name__)
+                   for k, v in det.items()} if isinstance(det, dict) else str(det)[:120]
         except Exception:
             det = r.text[:120]
         _login_error = f"login TIMP {r.status_code}: {det}"
