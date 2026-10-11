@@ -224,6 +224,31 @@ def informe(c, festivos):
 </main>"""
 
 
+def exportar_dashboard(c):
+    """Agregados para el dashboard de socios (ficheros pequeños, uno por vista)."""
+    desde = c["inicio_local"].min().strftime("%Y-%m-%d") if len(c) else ""
+    hasta = c["inicio_local"].max().strftime("%Y-%m-%d") if len(c) else ""
+    o = c[c["ocupacion"].notna()]
+    fr = o.groupby(["centro_beatcore", "dia", "franja"]).agg(
+        ocupacion=("ocupacion", "mean"), clases=("clase_id", "count")).reset_index()
+    fr = fr.rename(columns={"centro_beatcore": "zona"})
+    fr["ocupacion"] = fr["ocupacion"].round(3)
+    fr.to_csv("reports/ocup_franja.csv", index=False)
+    g = c.groupby(["centro_beatcore", "estudio", "plataforma"])
+    es = g.agg(clases=("clase_id", "count"), ocupacion=("ocupacion", "mean"), llenas=("llena_b", "mean"),
+               aforo=("aforo", "mean"), reservas=("reservas", "mean"),
+               estimado=("aforo_fuente", lambda s: (s == "estimado").mean())).reset_index()
+    es = es.rename(columns={"centro_beatcore": "zona"})
+    es["aforo_tipo"] = es["estimado"].map(lambda x: "estimado" if x > 0.5 else "publicado")
+    es = es.drop(columns="estimado")
+    for k in ("ocupacion", "llenas"):
+        es[k] = es[k].round(3)
+    for k in ("aforo", "reservas"):
+        es[k] = es[k].round(1)
+    es["desde"], es["hasta"] = desde, hasta
+    es.to_csv("reports/ocup_estudios.csv", index=False)
+
+
 def main():
     os.makedirs("reports", exist_ok=True)
     festivos = json.load(open("festivos.json", encoding="utf-8"))
@@ -232,6 +257,7 @@ def main():
             "aforo_fuente", "reservas", "ocupacion", "llena_b", "captured_at"]
     c[cols].sort_values(["fecha", "hora", "estudio"]).to_csv("reports/clases.csv", index=False)
     open("reports/informe.html", "w", encoding="utf-8").write(informe(c, festivos))
+    exportar_dashboard(c)
     print(f"{len(c)} clases analizadas; {c['ocupacion'].notna().sum()} con ocupación; informe en reports/informe.html")
 
 
