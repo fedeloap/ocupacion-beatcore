@@ -4,24 +4,25 @@ Captura automática, cada 30 minutos, de plazas totales y ocupadas de las clases
 
 ## Qué se mide
 
-| Plataforma | Dato | Estudios (piloto) |
+| Plataforma | Dato | Cobertura |
 |---|---|---|
-| Momence | Exacto: capacidad y plazas vendidas | AMA (Chamberí y Lagasca), Mooves, Olimpia, Prana House, Casa Kavi, DAN'S (Barceló y Salamanca), B3B Ayala |
+| Momence | Exacto: capacidad y plazas vendidas | AMA, Mooves, Olimpia, Prana House, Casa Kavi, DAN'S, B3B Ayala, Boutique Barre, TRIB3 |
+| Mindbody | Plazas libres por clase; capacidad cuando el estudio la publica | 44 estudios a 1 km de los 4 BeatCore (buscador público de Mindbody) |
 | Glofox | Exacto: capacidad y plazas ocupadas | Club Pilates Chamberí |
-| bsport | Capacidad y si la clase está llena (sin recuento exacto) | Victoria Studio (Almagro y Goya), Batelier |
+| bsport | Capacidad y si la clase está llena | Victoria, Batelier, Enjoy Gravity, KMT |
 
-No medibles sin login (por ahora): estudios en TIMP (N7, PilatesLab), Mindbody (Solid, esBarré, Inhala…), Eversports (FLO) y apps propias (eskul, Laghum, FS8).
+No medibles sin login: TIMP (N7, PilatesLab), AimHarder (crossfit: oculta la ocupación), Eversports (FLO) y apps propias (eskul, Laghum).
 
-## Cómo funciona
+## Dos capturas
 
-- Cada ejecución guarda las clases que empiezan entre 20 minutos antes y 45 minutos después del momento de captura.
-- Para el análisis se usa la última captura de cada clase antes de su inicio.
-- "Ocupadas" son reservas, no asistencia real (no se ven los no-shows).
-- Solo se usan endpoints públicos que los propios estudios exponen en su horario web; no se crean cuentas ni se hacen reservas.
+- **Ocupación final** (`data/AAAA-MM-DD.csv`), cada 30 min: clases que empiezan entre 20 min antes y 45 min después. En el análisis se usa la última captura antes del inicio de cada clase.
+- **Planificación** (`data/plan/AAAA-MM-DD.csv`), una vez al día desde las 6:00: todas las clases de los 7 días siguientes. Permite ver la curva de reservas y estimar la capacidad en Mindbody cuando no se publica.
+
+"Ocupadas" son reservas, no asistencia (no se ven los no-shows). Solo se usan endpoints públicos del horario web de cada estudio; no se crean cuentas ni se hacen reservas.
 
 ## Columnas
 
-`captured_at, plataforma, estudio, centro_beatcore, sede, clase_id, clase, inicio_local, duracion_min, capacidad, ocupadas, libres, llena, cancelada, lista_espera`
+`captured_at, plataforma, estudio, centro_beatcore, sede, clase_id, clase, inicio_local, duracion_min, capacidad, ocupadas, libres, libres_web, llena, cancelada, lista_espera`
 
 ## Añadir estudios
 
@@ -29,4 +30,4 @@ Editar `studios.json` (sección de la plataforma correspondiente). No hace falta
 
 ## Ejecución manual
 
-En GitHub: pestaña **Actions** > **Captura de ocupación** > **Run workflow**.
+Pestaña **Actions** > **Captura de ocupación** > **Run workflow**.

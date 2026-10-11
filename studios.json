@@ -1,19 +1,327 @@
 {
-  "_nota": "Estudios que se capturan. 'centro_beatcore' indica a qué centro BeatCore se asocia cada sede (location). Las sedes que no figuran en 'sedes' se guardan igualmente con centro vacío.",
-  "momence": [
-    {"estudio": "AMA Studio", "host_id": 208081, "sedes": {"AMA Studio: Juan de Austria": "Chamberí", "AMA Studio: Lagasca": "Salamanca"}},
-    {"estudio": "Mooves Studio", "host_id": 44836, "sedes": {"Mooves Studio Olavide": "Chamberí", "Mooves Studio Ponzano": ""}},
-    {"estudio": "Olimpia - The Wellness Circuit", "host_id": 201401, "sedes": {"Reformer Room - Calle de Hortaleza, 110": "Chamberí", "Mat Room - Calle de Hortaleza, 110": "Chamberí"}},
-    {"estudio": "Prana House", "host_id": 42715, "sedes": {"Prana House": "Chamberí"}},
-    {"estudio": "Casa Kavi", "host_id": 268351, "sedes": {"Sala Asana": "Chamberí", "Sala Moksha": "Chamberí"}},
-    {"estudio": "DAN'S", "host_id": 33091, "sedes_prefijo": {"DAN'S Barcelo": "Chamberí", "DAN'S Salamanca": "Salamanca"}},
-    {"estudio": "B3B Ayala", "host_id": 291318, "sedes": {"B3B AYALA": "Salamanca"}}
-  ],
-  "bsport": [
-    {"estudio": "Victoria Studio", "company_id": 5541, "establecimientos": {"18488": "Chamberí", "18508": "Chamberí", "18537": "Salamanca"}},
-    {"estudio": "Batelier Studio", "company_id": 3646, "establecimientos": {}}
-  ],
-  "glofox": [
-    {"estudio": "Club Pilates Chamberí", "branch_id": "66eab7ac56c959d0100f24db", "centro_beatcore": "Chamberí"}
-  ]
+ "_nota": "Estudios que se capturan. 'centro_beatcore' = centro BeatCore a 1 km o menos. Mindbody: lista obtenida del buscador público de Mindbody (estudios a 1 km de cada centro).",
+ "momence": [
+  {
+   "estudio": "AMA Studio",
+   "host_id": 208081,
+   "sedes": {
+    "AMA Studio: Juan de Austria": "Chamberí",
+    "AMA Studio: Lagasca": "Salamanca"
+   }
+  },
+  {
+   "estudio": "Mooves Studio",
+   "host_id": 44836,
+   "sedes": {
+    "Mooves Studio Olavide": "Chamberí",
+    "Mooves Studio Ponzano": ""
+   }
+  },
+  {
+   "estudio": "Olimpia - The Wellness Circuit",
+   "host_id": 201401,
+   "sedes": {
+    "Reformer Room - Calle de Hortaleza, 110": "Chamberí",
+    "Mat Room - Calle de Hortaleza, 110": "Chamberí"
+   }
+  },
+  {
+   "estudio": "Prana House",
+   "host_id": 42715,
+   "sedes": {
+    "Prana House": "Chamberí"
+   }
+  },
+  {
+   "estudio": "Casa Kavi",
+   "host_id": 268351,
+   "sedes": {
+    "Sala Asana": "Chamberí",
+    "Sala Moksha": "Chamberí"
+   }
+  },
+  {
+   "estudio": "DAN'S",
+   "host_id": 33091,
+   "sedes_prefijo": {
+    "DAN'S Barcelo": "Chamberí",
+    "DAN'S Salamanca": "Salamanca"
+   }
+  },
+  {
+   "estudio": "B3B Ayala",
+   "host_id": 291318,
+   "sedes": {
+    "B3B AYALA": "Salamanca"
+   }
+  },
+  {
+   "estudio": "Boutique Barre",
+   "host_id": 142220,
+   "sedes": {
+    "Boutique Barre Chamberí": "Chamberí",
+    "Boutique Barre Goya": "Salamanca"
+   }
+  },
+  {
+   "estudio": "TRIB3 Chamberí",
+   "host_id": 79028,
+   "centro_beatcore": "Chamberí"
+  }
+ ],
+ "bsport": [
+  {
+   "estudio": "Victoria Studio",
+   "company_id": 5541,
+   "establecimientos": {
+    "18488": "Chamberí",
+    "18508": "Chamberí",
+    "18537": "Salamanca"
+   }
+  },
+  {
+   "estudio": "Batelier Studio",
+   "company_id": 3646,
+   "establecimientos": {}
+  },
+  {
+   "estudio": "Enjoy Gravity",
+   "company_id": 3833,
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "KMT Studio",
+   "company_id": 3286,
+   "centro_beatcore": "Chamberí"
+  }
+ ],
+ "glofox": [
+  {
+   "estudio": "Club Pilates Chamberí",
+   "branch_id": "66eab7ac56c959d0100f24db",
+   "centro_beatcore": "Chamberí"
+  }
+ ],
+ "mindbody": [
+  {
+   "estudio": "esBarre",
+   "ref": "{\"mb_site_id\":5738675,\"mb_location_id\":2,\"mb_master_location_id\":4826244,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "YOGAOMM Studio",
+   "ref": "{\"mb_site_id\":5751730,\"mb_location_id\":1,\"mb_master_location_id\":5080320,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "City Pilates",
+   "ref": "{\"mb_site_id\":19299,\"mb_location_id\":1,\"mb_master_location_id\":1297717,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Centro MaNá",
+   "ref": "{\"mb_site_id\":5741206,\"mb_location_id\":1,\"mb_master_location_id\":4881171,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Soma club",
+   "ref": "{\"mb_site_id\":5756295,\"mb_location_id\":1,\"mb_master_location_id\":5144189,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Hot Yoga Madrid",
+   "ref": "{\"mb_site_id\":579485,\"mb_location_id\":1,\"mb_master_location_id\":4382448,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "FS8 Chamberi",
+   "ref": "{\"mb_site_id\":5743713,\"mb_location_id\":1,\"mb_master_location_id\":4934640,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "GONG",
+   "ref": "{\"mb_site_id\":451779,\"mb_location_id\":1,\"mb_master_location_id\":3694934,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "PT FitLab",
+   "ref": "{\"mb_site_id\":5750705,\"mb_location_id\":1,\"mb_master_location_id\":5070182,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Solid Studio Chamberí",
+   "ref": "{\"mb_site_id\":5740876,\"mb_location_id\":1,\"mb_master_location_id\":4874260,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Lean Barre Studio",
+   "ref": "{\"mb_site_id\":5744853,\"mb_location_id\":1,\"mb_master_location_id\":4958405,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "barrelatte",
+   "ref": "{\"mb_site_id\":5739282,\"mb_location_id\":1,\"mb_master_location_id\":4839482,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Solid Studio Tribunal",
+   "ref": "{\"mb_site_id\":5740877,\"mb_location_id\":1,\"mb_master_location_id\":4874264,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Royal Barre",
+   "ref": "{\"mb_site_id\":5742631,\"mb_location_id\":1,\"mb_master_location_id\":4911751,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Inhala Hot Yoga",
+   "ref": "{\"mb_site_id\":5735435,\"mb_location_id\":1,\"mb_master_location_id\":4754694,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Body Koncept",
+   "ref": "{\"mb_site_id\":5754390,\"mb_location_id\":1,\"mb_master_location_id\":5115164,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "SQUARE Fitness Studio Goya",
+   "ref": "{\"mb_site_id\":5741164,\"mb_location_id\":1,\"mb_master_location_id\":4880492,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "VYV Vive Pilates",
+   "ref": "{\"mb_site_id\":199810,\"mb_location_id\":1,\"mb_master_location_id\":1970354,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Orangetheory Velázquez",
+   "ref": "{\"mb_site_id\":5722655,\"mb_location_id\":1,\"mb_master_location_id\":4451688,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Garota Club",
+   "ref": "{\"mb_site_id\":5744599,\"mb_location_id\":1,\"mb_master_location_id\":4953189,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Corazón Studio",
+   "ref": "{\"mb_site_id\":5751206,\"mb_location_id\":1,\"mb_master_location_id\":5075522,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "PULS",
+   "ref": "{\"mb_site_id\":5752188,\"mb_location_id\":1,\"mb_master_location_id\":5085894,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Estiro Estudio",
+   "ref": "{\"mb_site_id\":5742804,\"mb_location_id\":1,\"mb_master_location_id\":4915440,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Kore Lab",
+   "ref": "{\"mb_site_id\":5749842,\"mb_location_id\":2,\"mb_master_location_id\":5061599,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Fitclub Collective",
+   "ref": "{\"mb_site_id\":5731117,\"mb_location_id\":1,\"mb_master_location_id\":4655308,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Solid Studio Barrio Salamanca",
+   "ref": "{\"mb_site_id\":5755868,\"mb_location_id\":1,\"mb_master_location_id\":5137374,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "The Nomad Club",
+   "ref": "{\"mb_site_id\":5752233,\"mb_location_id\":1,\"mb_master_location_id\":5086361,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "HOM House of Movement",
+   "ref": "{\"mb_site_id\":5736990,\"mb_location_id\":1,\"mb_master_location_id\":4788306,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Tabula Rasa",
+   "ref": "{\"mb_site_id\":5755311,\"mb_location_id\":1,\"mb_master_location_id\":5128989,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "ADN Pilates",
+   "ref": "{\"mb_site_id\":5744145,\"mb_location_id\":1,\"mb_master_location_id\":4943610,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Prepnation",
+   "ref": "{\"mb_site_id\":5749300,\"mb_location_id\":1,\"mb_master_location_id\":5051521,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Pampa Studio",
+   "ref": "{\"mb_site_id\":5735414,\"mb_location_id\":1,\"mb_master_location_id\":4754055,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Fit Lovas Neptú",
+   "ref": "{\"mb_site_id\":5754683,\"mb_location_id\":1,\"mb_master_location_id\":5119889,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Casa Focco",
+   "ref": "{\"mb_site_id\":5748794,\"mb_location_id\":1,\"mb_master_location_id\":5041552,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Concept Barre Neptú",
+   "ref": "{\"mb_site_id\":5731294,\"mb_location_id\":1,\"mb_master_location_id\":4659508,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Concept Barre Eixample",
+   "ref": "{\"mb_site_id\":5731294,\"mb_location_id\":2,\"mb_master_location_id\":4660070,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Nexes Gràcia",
+   "ref": "{\"mb_site_id\":5742910,\"mb_location_id\":1,\"mb_master_location_id\":4917886,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "VICTAS",
+   "ref": "{\"mb_site_id\":5747001,\"mb_location_id\":1,\"mb_master_location_id\":5003360,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Let's Rise",
+   "ref": "{\"mb_site_id\":5740617,\"mb_location_id\":1,\"mb_master_location_id\":4868420,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "F45 Aribau",
+   "ref": "{\"mb_site_id\":5744613,\"mb_location_id\":1,\"mb_master_location_id\":4953483,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Iron Studios",
+   "ref": "{\"mb_site_id\":5746561,\"mb_location_id\":1,\"mb_master_location_id\":4994507,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Orangetheory Aribau",
+   "ref": "{\"mb_site_id\":681363,\"mb_location_id\":1,\"mb_master_location_id\":4138109,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Wellnest Studio",
+   "ref": "{\"mb_site_id\":5750673,\"mb_location_id\":1,\"mb_master_location_id\":5069908,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Valencia"
+  },
+  {
+   "estudio": "Bikram Hot Yoga La Finca Roja",
+   "ref": "{\"mb_site_id\":44322,\"mb_location_id\":1,\"mb_master_location_id\":1687378,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Valencia"
+  }
+ ]
 }
