@@ -84,6 +84,9 @@ def momence(cfg, a, b):
             if not between(start, a, b):
                 continue
             sede = x.get("location") or ""
+            # solo_sedes: descarta sedes del mismo host fuera del radio de 1 km
+            if s.get("solo_sedes") and sede not in s.get("sedes", {}):
+                continue
             centro = s.get("sedes", {}).get(sede, s.get("centro_beatcore", ""))
             for pref, c in s.get("sedes_prefijo", {}).items():
                 if sede.startswith(pref):
@@ -202,8 +205,11 @@ def glofox(cfg, a, b):
         return rows
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page()
         for s in cfg:
+            # contexto nuevo por estudio: el token de invitado se guarda en localStorage
+            # y es propio de cada branch; reutilizarlo devolvería las clases del primer estudio
+            ctx = browser.new_context()
+            page = ctx.new_page()
             try:
                 page.goto(f"https://app.glofox.com/portal/#/branch/{s['branch_id']}/classes-day-view",
                           wait_until="networkidle", timeout=60000)
@@ -238,6 +244,7 @@ def glofox(cfg, a, b):
                     })
             except Exception as e:
                 print(f"[glofox] {s['estudio']}: error {e}", file=sys.stderr)
+            ctx.close()
         browser.close()
     return rows
 

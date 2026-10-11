@@ -97,6 +97,27 @@
    "estudio": "Corehaus",
    "host_id": 47062,
    "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Casa Barré",
+   "host_id": 42927,
+   "sedes": {
+    "Casa Barré - Ayala": "Salamanca"
+   },
+   "solo_sedes": true
+  },
+  {
+   "estudio": "B3B Retiro",
+   "host_id": 225970,
+   "sedes": {
+    "B3B Retiro": "Salamanca"
+   },
+   "solo_sedes": true
+  },
+  {
+   "estudio": "Yogalates House",
+   "host_id": 82955,
+   "centro_beatcore": "Salamanca"
   }
  ],
  "bsport": [
@@ -112,7 +133,11 @@
   {
    "estudio": "Batelier Studio",
    "company_id": 3646,
-   "establecimientos": {}
+   "establecimientos": {
+    "12489": "Salamanca",
+    "12490": "Chamberí"
+   },
+   "solo_establecimientos": true
   },
   {
    "estudio": "Enjoy Gravity",
@@ -151,6 +176,14 @@
    "estudio": "Form Studio Pilates Club",
    "company_id": 5183,
    "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Dark Studio",
+   "company_id": 4994,
+   "establecimientos": {
+    "16882": "Salamanca"
+   },
+   "solo_establecimientos": true
   }
  ],
  "glofox": [
@@ -163,6 +196,16 @@
    "estudio": "Club Pilates Eixample",
    "branch_id": "61c07795f4492f7e61243062",
    "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Club Pilates Goya",
+   "branch_id": "6895fbb175b367c91101f96d",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Pomona Club (Serrano y Retiro)",
+   "branch_id": "660d6658f351bda23f05d487",
+   "centro_beatcore": "Salamanca"
   }
  ],
  "mindbody": [
