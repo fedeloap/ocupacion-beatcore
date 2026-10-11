@@ -123,6 +123,14 @@
    "estudio": "Studio 130",
    "host_id": 164736,
    "centro_beatcore": "Valencia"
+  },
+  {
+   "estudio": "Barrefit",
+   "host_id": 5381,
+   "sedes": {
+    "Gracia": "Diagonal"
+   },
+   "solo_sedes": true
   }
  ],
  "bsport": [
@@ -228,6 +236,11 @@
     "20985": "Valencia"
    },
    "solo_establecimientos": true
+  },
+  {
+   "estudio": "AGMO",
+   "company_id": 6425,
+   "centro_beatcore": "Chamberí"
   }
  ],
  "glofox": [
@@ -472,6 +485,11 @@
    "estudio": "Bikram Hot Yoga La Finca Roja",
    "ref": "{\"mb_site_id\":44322,\"mb_location_id\":1,\"mb_master_location_id\":1687378,\"inventory_source\":\"MB\"}",
    "centro_beatcore": "Valencia"
+  },
+  {
+   "estudio": "WEMOOV",
+   "ref": "{\"mb_site_id\":5730378,\"mb_location_id\":1,\"mb_master_location_id\":4636035,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": "Chamberí"
   }
  ]
 }
