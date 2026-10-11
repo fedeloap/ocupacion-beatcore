@@ -1,0 +1,19 @@
+{
+  "_nota": "Estudios que se capturan. 'centro_beatcore' indica a qué centro BeatCore se asocia cada sede (location). Las sedes que no figuran en 'sedes' se guardan igualmente con centro vacío.",
+  "momence": [
+    {"estudio": "AMA Studio", "host_id": 208081, "sedes": {"AMA Studio: Juan de Austria": "Chamberí", "AMA Studio: Lagasca": "Salamanca"}},
+    {"estudio": "Mooves Studio", "host_id": 44836, "sedes": {"Mooves Studio Olavide": "Chamberí", "Mooves Studio Ponzano": ""}},
+    {"estudio": "Olimpia - The Wellness Circuit", "host_id": 201401, "sedes": {"Reformer Room - Calle de Hortaleza, 110": "Chamberí", "Mat Room - Calle de Hortaleza, 110": "Chamberí"}},
+    {"estudio": "Prana House", "host_id": 42715, "sedes": {"Prana House": "Chamberí"}},
+    {"estudio": "Casa Kavi", "host_id": 268351, "sedes": {"Sala Asana": "Chamberí", "Sala Moksha": "Chamberí"}},
+    {"estudio": "DAN'S", "host_id": 33091, "sedes_prefijo": {"DAN'S Barcelo": "Chamberí", "DAN'S Salamanca": "Salamanca"}},
+    {"estudio": "B3B Ayala", "host_id": 291318, "sedes": {"B3B AYALA": "Salamanca"}}
+  ],
+  "bsport": [
+    {"estudio": "Victoria Studio", "company_id": 5541, "establecimientos": {"18488": "Chamberí", "18508": "Chamberí", "18537": "Salamanca"}},
+    {"estudio": "Batelier Studio", "company_id": 3646, "establecimientos": {}}
+  ],
+  "glofox": [
+    {"estudio": "Club Pilates Chamberí", "branch_id": "66eab7ac56c959d0100f24db", "centro_beatcore": "Chamberí"}
+  ]
+}
