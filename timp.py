@@ -19,6 +19,7 @@ API = "https://panel.timp.pro/api/user_app/v2"
 KEY = "sDyGM00j1uF5nwTC"  # clave pública de la app web (está en su JavaScript)
 MADRID = ZoneInfo("Europe/Madrid")
 _token = None
+_login_error = None
 
 
 def _headers(token=None):
@@ -48,15 +49,24 @@ def _find_token(obj):
 
 
 def login():
-    global _token
+    global _token, _login_error
     if _token:
         return _token
+    if _login_error:  # un solo intento por ejecución, para no bloquear la cuenta
+        raise RuntimeError(_login_error)
     email, pwd = os.environ.get("TIMP_EMAIL"), os.environ.get("TIMP_PASSWORD")
     if not email or not pwd:
         raise RuntimeError("faltan los secretos TIMP_EMAIL / TIMP_PASSWORD")
     r = requests.post(API + "/sessions", data={"email": email, "password": pwd}, headers=_headers(), timeout=30)
     if r.status_code >= 400:
-        raise RuntimeError(f"login TIMP {r.status_code}")
+        # el cuerpo trae solo el código de error (p. ej. login_bad_password), sin datos de la cuenta
+        try:
+            det = r.json()
+            det = {k: v for k, v in det.items() if k in ("error", "errors", "code", "message", "status")} if isinstance(det, dict) else str(det)[:120]
+        except Exception:
+            det = r.text[:120]
+        _login_error = f"login TIMP {r.status_code}: {det}"
+        raise RuntimeError(_login_error)
     _token = _find_token(r.json())
     if not _token:
         raise RuntimeError("login TIMP sin token en la respuesta; claves: " + ",".join(r.json().keys()))
