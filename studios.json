@@ -67,6 +67,36 @@
    "estudio": "TRIB3 Chamberí",
    "host_id": 79028,
    "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Senda Studio",
+   "host_id": 298782,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "MOODBODY",
+   "host_id": 11259,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "PILAT3S Gràcia",
+   "host_id": 46614,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Human Pilates",
+   "host_id": 120707,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Dharma Estudio",
+   "host_id": 34747,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Corehaus",
+   "host_id": 47062,
+   "centro_beatcore": "Diagonal"
   }
  ],
  "bsport": [
@@ -93,6 +123,34 @@
    "estudio": "KMT Studio",
    "company_id": 3286,
    "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "VERDE Studio",
+   "company_id": 5959,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "SHE Barre Gràcia",
+   "company_id": 2192,
+   "establecimientos": {
+    "19209": "Diagonal"
+   },
+   "solo_establecimientos": true
+  },
+  {
+   "estudio": "Rohi by Kore Studio",
+   "company_id": 3608,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Core Studio",
+   "company_id": 4651,
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Form Studio Pilates Club",
+   "company_id": 5183,
+   "centro_beatcore": "Diagonal"
   }
  ],
  "glofox": [
@@ -100,6 +158,11 @@
    "estudio": "Club Pilates Chamberí",
    "branch_id": "66eab7ac56c959d0100f24db",
    "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Club Pilates Eixample",
+   "branch_id": "61c07795f4492f7e61243062",
+   "centro_beatcore": "Diagonal"
   }
  ],
  "mindbody": [

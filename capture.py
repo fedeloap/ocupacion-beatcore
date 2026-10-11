@@ -174,6 +174,9 @@ def bsport(cfg, a, b):
             if not between(start, a, b):
                 continue
             est = str(x.get("establishment"))
+            # solo_establecimientos: descarta sedes lejanas (p.ej. SHE Barre en Alella o Mataró)
+            if s.get("solo_establecimientos") and est not in s.get("establecimientos", {}):
+                continue
             rows.append({
                 "plataforma": "bsport", "estudio": s["estudio"],
                 "centro_beatcore": s.get("establecimientos", {}).get(est, s.get("centro_beatcore", "")),
