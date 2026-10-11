@@ -118,6 +118,11 @@
    "estudio": "Yogalates House",
    "host_id": 82955,
    "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Studio 130",
+   "host_id": 164736,
+   "centro_beatcore": "Valencia"
   }
  ],
  "bsport": [
@@ -182,6 +187,45 @@
    "company_id": 4994,
    "establecimientos": {
     "16882": "Salamanca"
+   },
+   "solo_establecimientos": true
+  },
+  {
+   "estudio": "The Sanctuary",
+   "company_id": 4858,
+   "establecimientos": {
+    "17474": "Valencia",
+    "16719": "Valencia",
+    "16717": "Valencia",
+    "16718": "Valencia"
+   },
+   "solo_establecimientos": true
+  },
+  {
+   "estudio": "Musa House",
+   "company_id": 4862,
+   "establecimientos": {
+    "17057": "Valencia"
+   },
+   "solo_establecimientos": true
+  },
+  {
+   "estudio": "Soma Club Ruzafa",
+   "company_id": 6410,
+   "establecimientos": {
+    "21646": "Valencia",
+    "21688": "Valencia",
+    "21888": "Valencia",
+    "21889": "Valencia",
+    "21890": "Valencia"
+   },
+   "solo_establecimientos": true
+  },
+  {
+   "estudio": "Aero Studio Seijaku",
+   "company_id": 6357,
+   "establecimientos": {
+    "20985": "Valencia"
    },
    "solo_establecimientos": true
   }
