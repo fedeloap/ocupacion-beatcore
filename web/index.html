@@ -48,6 +48,20 @@ nav.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid v
 nav.tabs button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; padding: 8px 12px; white-space: nowrap; font-weight: 600; color: var(--muted); cursor: pointer; }
 nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
 .panel[hidden] { display: none; }
+.zonas { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.zonas > span { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-right: 4px; }
+.zonas button { border-radius: 999px; padding: 6px 14px; cursor: pointer; color: var(--muted); }
+.zonas button[aria-pressed=true] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 10px; min-width: 0; align-content: start; }
+.card h2, .card h3 { margin: 0; }
+.card .meta { font-size: 13px; }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
+.duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
+.hb { display: grid; grid-template-columns: minmax(110px, 40%) 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
+.hv { display: block; } .hv .bar { height: 10px; margin: 0; display: block; }
+.hn { color: var(--muted); font-variant-numeric: tabular-nums; }
 .panel { display: grid; gap: 22px; min-width: 0; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
@@ -105,6 +119,7 @@ a { color: var(--accent); }
   </div>
 </details>
 
+<div class="zonas" id="zona-seg" aria-label="Centro BeatCore"><span>Centro</span></div>
 <nav class="tabs" role="tablist" id="tabs"></nav>
 
 <section class="panel" id="p-resumen" role="tabpanel"></section>
@@ -130,6 +145,7 @@ const DISCS = ["Reformer", "Lagree", "Barre", "Yoga", "HIIT/Funcional", "Ciclo",
 const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagree": "Lagree", "Barre": "Barre", "Yoga": "Yoga", "Hot yoga": "Yoga",
   "Funcional": "HIIT/Funcional", "HIIT": "HIIT/Funcional", "Crossfit": "HIIT/Funcional", "Indoor cycling": "Ciclo", "Boxeo": "Boxeo" };
 const ZN = { "Valencia": "Valencia (Ruzafa)" };
+const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
 const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Curvas de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
 
@@ -168,8 +184,17 @@ function montarFiltros() {
   $("#f-h1").value = 24;
   $("#f-dias").innerHTML = DIAS.map((d, i) => `<label><input type="checkbox" data-d="${i}" checked>${d}</label>`).join("");
   $("#f-f0").min = $("#f-f1").min = META.desde; $("#f-f0").max = $("#f-f1").max = META.hasta;
-  estudiosSelect();
+  estudiosSelect(); zonaSeg();
   $("#filtros").open = window.innerWidth > 700;
+}
+function zonaSeg() {
+  const seg = $("#zona-seg");
+  seg.querySelectorAll("button").forEach(b => b.remove());
+  [["", "Todos"], ...D.dic.centro.map(c => [c, zn(c)])].forEach(([v, l]) => {
+    const b = document.createElement("button"); b.type = "button"; b.dataset.z = v; b.textContent = l;
+    b.addEventListener("click", () => { $("#f-centro").value = v; estudiosSelect(); refrescar(); });
+    seg.append(b);
+  });
 }
 function estudiosSelect() {
   const c = $("#f-centro").value, m = $("#f-marca").value;
@@ -251,17 +276,56 @@ function enlazarTabla(el, id, render, onRow) {
 const lin = ix => ix === GA ? '<span class="tag">BeatCore</span>' : '<span class="tag b">Competencia</span>';
 
 /* ---------- pestañas ---------- */
+function grupal(r) { return r.filter(x => x.tipo_servicio === "Grupal"); }
+function medDe(rows, k) { return median(rows.map(r => r[k]).filter(v => v != null)); }
+function zonasVisibles() { return F.centro ? [F.centro] : D.dic.centro; }
+function porId(ix) {
+  const m = new Map();
+  for (const i of ix) { const id = EST[D.e[i]].id; if (!m.has(id)) m.set(id, []); m.get(id).push(i); }
+  return m;
+}
+function barras(items, max, cls) {
+  return items.map(([l, v, extra]) => `<div class="hb"><span class="hl">${esc(l)}</span><span class="hv"><span class="bar ${cls || ""}" style="width:${max ? Math.round(v / max * 100) : 0}%"></span></span><span class="hn">${esc(extra ?? v)}</span></div>`).join("");
+}
 function resumen() {
+  const cat = catFiltrado(false), g = grupal(cat), dir = g.filter(r => r.grupo === "Reformer y Lagree");
   const A = metricas(GA), B = metricas(GB);
-  const kpi = (cl, v, t) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span></div>`;
-  let h = `<div class="kpis">${kpi("a", pct(A.ocup), "Ocupación media BeatCore")}${kpi("b", pct(B.ocup), "Ocupación media competencia")}
-    ${kpi("a", pct(A.llenas), "Clases llenas BeatCore")}${kpi("b", pct(B.llenas), "Clases llenas competencia")}
-    ${kpi("a", A.n, "Clases BeatCore")}${kpi("b", B.n, "Clases competencia")}</div>`;
+  const kpi = (cl, v, t, s) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span>${s ? `<small>${s}</small>` : ""}</div>`;
+  let h = `<div class="kpis">
+    ${kpi("", cat.length, "Estudios a 1 km", "competencia catalogada")}
+    ${kpi("", dir.length, "Reformer y Lagree", "competencia directa")}
+    ${kpi("", eur(medDe(dir, "ocho_mes")), "8 clases/mes, reformer y Lagree", "mediana, con IVA")}
+    ${kpi("", eur(medDe(g, "ocho_mes")), "8 clases/mes, todo grupal", "mediana, con IVA")}
+    ${kpi("", eur(medDe(g, "clase_suelta")), "Clase suelta, todo grupal", "mediana, con IVA")}
+    ${kpi("a", pct(A.ocup), "Ocupación BeatCore", A.n + " clases")}
+    ${kpi("b", pct(B.ocup), "Ocupación competencia", B.n + " clases")}</div>`;
+
+  // un bloque por centro BeatCore con su competencia
+  h += `<section><h2>Cada centro BeatCore y su competencia</h2><div class="cards">`;
+  for (const z of zonasVisibles()) {
+    const cz = cat.filter(r => r.zona === z), gz = grupal(cz), dz = gz.filter(r => r.grupo === "Reformer y Lagree");
+    const ga = GA.filter(i => D.dic.centro[D.c[i]] === z), gb = GB.filter(i => D.dic.centro[D.c[i]] === z);
+    const ma = metricas(ga), mb = metricas(gb), occ = new Map([...porId(gb)].map(([id, ix]) => [id, metricas(ix)]));
+    const rows = (dz.length ? dz : gz).map(r => { const m = occ.get(r.id); return { estudio: r.estudio, dist: r.distancia_m, suelta: r.clase_suelta, ocho: r.ocho_mes,
+      ocup: m ? m.ocup : null, llenas: m ? m.llenas : null, n: m ? m.n : 0, plat: r.plataforma }; }).sort((a, b) => (a.dist ?? 1e9) - (b.dist ?? 1e9));
+    const cols = [{ k: "estudio", l: "Estudio" }, { k: "dist", l: "Dist.", n: 1, f: v => v == null ? "–" : Math.round(v) + " m" },
+      { k: "suelta", l: "Suelta", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur }, { k: "ocup", l: "Ocup.", n: 1, f: pct },
+      { k: "n", l: "Clases", n: 1 }, { k: "plat", l: "Plataforma" }];
+    h += `<div class="card"><h3>BeatCore ${esc(zn(z))}</h3>
+      <div class="duo"><div><span class="tag">BeatCore</span><b>${pct(ma.ocup)}</b><small>ocupación · ${pct(ma.llenas)} llenas · ${ma.n} clases</small></div>
+      <div><span class="tag b">Competencia</span><b>${pct(mb.ocup)}</b><small>ocupación · ${pct(mb.llenas)} llenas · ${mb.n} clases</small></div></div>
+      <p class="meta">${cz.length} estudios a 1 km · ${dz.length} de reformer y Lagree · 8 clases/mes (reformer y Lagree): mediana ${eur(medDe(dz, "ocho_mes"))} · clase suelta grupal: ${eur(medDe(gz, "clase_suelta"))}</p>
+      <h3>${dz.length ? "Competencia directa (reformer y Lagree)" : "Estudios grupales"}</h3>
+      ${tabla("t-c-" + z, cols, rows, { limit: 12 })}</div>`;
+  }
+  h += `</div></section>`;
+
+  // BeatCore vs competencia por centro
   const filas = [];
   for (const z of D.dic.centro) {
     if (F.centro && z !== F.centro) continue;
-    for (const [g, nom] of [[GA, "BeatCore"], [GB, "Competencia"]]) {
-      const ix = g.filter(i => D.dic.centro[D.c[i]] === z), m = metricas(ix);
+    for (const [gg, nom] of [[GA, "BeatCore"], [GB, "Competencia"]]) {
+      const ix = gg.filter(i => D.dic.centro[D.c[i]] === z), m = metricas(ix);
       filas.push({ centro: zn(z), linea: nom, n: m.n, ocup: m.ocup, llenas: m.llenas, res: m.res, aforo: m.aforo, estudios: new Set(ix.map(i => D.e[i])).size });
     }
   }
@@ -270,18 +334,26 @@ function resumen() {
     { k: "llenas", l: "% clases llenas", n: 1, f: pct }, { k: "res", l: "Reservas/clase", n: 1, f: v => num(v) }, { k: "aforo", l: "Aforo medio", n: 1, f: v => num(v) }];
   h += `<section><h2>BeatCore vs competencia por centro</h2>${tabla("t-res", cols, filas)}
     <p class="nota">Ocupación media: clases con aforo conocido o estimado (Momence, Glofox, Mariana Tek y Mindbody). Mindbody sin aforo publicado usa el máximo de plazas libres visto (cota inferior). bsport solo informa de si la clase está llena: cuenta en % llenas, no en ocupación. Las reservas no son asistencia.</p></section>`;
+
+  // tipos de estudio y cadenas
+  const mix = GRUPOS.map(gr => { const e = cat.filter(r => r.grupo === gr); return [gr, e.length, e.filter(r => r.cadena === "Cadena").length]; });
+  const mx = Math.max(1, ...mix.map(m => m[1]));
+  h += `<div class="cards"><section class="card"><h2>Qué tipo de estudios hay</h2>${barras(mix.map(m => [m[0], m[1]]), mx)}</section>
+    <section class="card"><h2>Cadenas e independientes</h2>${barras(mix.map(m => [m[0], m[2], m[2] + " cadena / " + (m[1] - m[2]) + " indep."]), mx, "a")}</section></div>`;
+
   // cobertura
   const cr = catFiltrado(false), zonas = [...new Set(CATROWS.map(r => r.zona))];
   const cob = zonas.filter(z => !F.centro || z === F.centro).map(z => {
-    const r = cr.filter(x => x.zona === z && !x.propio);
+    const r = cr.filter(x => x.zona === z);
     return { centro: zn(z), n: r.length, p: r.filter(x => x.con_precio).length, o: r.filter(x => x.con_occ).length,
       ambos: r.filter(x => x.con_precio && x.con_occ).length, nada: r.filter(x => !x.con_precio && !x.con_occ).length };
   });
   h += `<section><h2>Cobertura por centro (competencia)</h2>${tabla("t-cob", [{ k: "centro", l: "Centro" }, { k: "n", l: "Estudios", n: 1 }, { k: "p", l: "Con precios", n: 1 },
     { k: "o", l: "Con ocupación", n: 1 }, { k: "ambos", l: "Ambos", n: 1 }, { k: "nada", l: "Sin nada", n: 1 }], cob)}
     <p class="nota">Catálogo de estudios a 1 km de cada centro. "Con precios" incluye precios parciales. No incluye los 4 centros BeatCore.</p></section>`;
-  $("#p-resumen").innerHTML = h;
-  enlazarTabla($("#p-resumen"), "t-res", resumen); enlazarTabla($("#p-resumen"), "t-cob", resumen);
+  const el = $("#p-resumen");
+  el.innerHTML = h;
+  el.querySelectorAll("[data-t]").forEach(n => enlazarTabla(el, n.dataset.t, resumen));
 }
 
 function heatmap(ix, titulo, rgb) {
@@ -403,30 +475,69 @@ function catFiltrado(conPropios = true) {
     (idE == null || r.id === idE) && (!F.disc || r.disc_n === F.disc));
 }
 function precios() {
-  const rows = catFiltrado().filter(r => !r.propio && r.con_precio);
-  const cp = [["clase_suelta", "Clase suelta"], ["cuatro_mes", "4 al mes"], ["ocho_mes", "8 al mes"], ["ilimitada", "Ilimitada"], ["oferta_entrada", "Oferta entrada"]];
-  const med = [...new Set(rows.map(r => r.zona))].map(z => {
-    const g = rows.filter(r => r.zona === z), o = { centro: zn(z), n: g.length };
-    cp.forEach(([k]) => { const v = g.map(r => r[k]).filter(x => x != null); o[k] = median(v); o[k + "_n"] = v.length; });
-    return o;
+  const el = $("#p-precios");
+  const grupo = el.dataset.grupo || "Reformer y Lagree";
+  const cat = catFiltrado(false), g = grupal(cat);
+  const zs = zonasVisibles();
+  const rows = g.filter(r => r.grupo === grupo && r.ocho_mes != null);
+  // tira de puntos: precio de 8 clases al mes por zona
+  const W = 720, band = 58, top = 10, bot = 28, H = top + zs.length * band + bot, L = 120;
+  const max = Math.max(50, ...rows.map(r => r.ocho_mes)) * 1.08;
+  const X = v => L + v / max * (W - L - 14);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Precio de 8 clases al mes">`;
+  const paso = max > 400 ? 100 : 50;
+  for (let t = 0; t <= max; t += paso) svg += `<line x1="${X(t)}" x2="${X(t)}" y1="${top}" y2="${H - bot}" stroke="var(--line)"/><text x="${X(t)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)">${t} €</text>`;
+  zs.forEach((z, i) => {
+    const cy = top + i * band + band / 2, rz = rows.filter(r => r.zona === z).sort((a, b) => a.ocho_mes - b.ocho_mes);
+    svg += `<text x="0" y="${cy + 4}" font-size="12" fill="var(--fg)">${esc(zn(z))}</text>`;
+    if (!rz.length) { svg += `<text x="${L}" y="${cy + 4}" font-size="12" fill="var(--muted)">Ningún estudio publica este precio</text>`; return; }
+    const m = median(rz.map(r => r.ocho_mes));
+    svg += `<line x1="${X(m)}" x2="${X(m)}" y1="${cy - 20}" y2="${cy + 20}" stroke="var(--fg)" stroke-width="2"/><text x="${X(m)}" y="${cy - 23}" text-anchor="middle" font-size="11" fill="var(--fg)">${esc(eur(m))}</text>`;
+    rz.forEach((r, k) => { svg += `<circle cx="${X(r.ocho_mes)}" cy="${cy + ((k % 3) - 1) * 8}" r="5" fill="var(--comp)" fill-opacity=".8"><title>${esc(r.estudio)} · ${esc(eur(r.ocho_mes))} (${esc(eur(r.ocho_mes / 8))} por clase)</title></circle>`; });
   });
-  const colsM = [{ k: "centro", l: "Centro" }, { k: "n", l: "Estudios con precios", n: 1 }, ...cp.map(([k, l]) => ({ k, l: "Mediana " + l.toLowerCase(), n: 1, f: eur }))];
-  const colsT = [{ k: "estudio", l: "Estudio" }, { k: "zona", l: "Centro", f: zn }, { k: "marca", l: "Marca" }, ...cp.map(([k, l]) => ({ k, l, n: 1, f: eur })),
-    { k: "precios_publicados", l: "Precios" }];
-  $("#p-precios").innerHTML = `<section><h2>Medianas por centro</h2>${tabla("t-med", colsM, med)}
-    <p class="nota">Competencia con precios publicados. Los precios de BeatCore aún no están en el catálogo, así que no se comparan.</p></section>
-    <section><h2>Precios por estudio</h2>${tabla("t-pre", colsT, rows)}</section>`;
-  ["t-med", "t-pre"].forEach(t => enlazarTabla($("#p-precios"), t, precios));
+  svg += "</svg>";
+  const grupos = GRUPOS.map(x => `<option${x === grupo ? " selected" : ""}>${esc(x)}</option>`).join("");
+
+  const colsM = [{ k: "grupo", l: "Tipo" }, { k: "zona", l: "Zona" }, { k: "estudios", l: "Estudios", n: 1 }, { k: "con", l: "Con precio", n: 1 },
+    { k: "suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro", l: "4/mes", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur },
+    { k: "clase", l: "€/clase con 8", n: 1, f: eur }, { k: "ilim", l: "Ilimitada", n: 1, f: eur }];
+  const zonasT = [...zs, ...(zs.length > 1 ? ["Todas"] : [])], med = [];
+  for (const gr of GRUPOS) for (const z of zonasT) {
+    const e = cat.filter(r => r.grupo === gr && (z === "Todas" || r.zona === z)), gg = grupal(e);
+    med.push({ grupo: gr, zona: z === "Todas" ? "Todas" : zn(z), estudios: e.length, con: gg.filter(r => r.con_precio).length, suelta: medDe(gg, "clase_suelta"),
+      cuatro: medDe(gg, "cuatro_mes"), ocho: medDe(gg, "ocho_mes"), clase: median(gg.map(r => r.ocho_mes).filter(v => v != null).map(v => v / 8)), ilim: medDe(gg, "ilimitada") });
+  }
+  const colsT = [{ k: "estudio", l: "Estudio" }, { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" },
+    { k: "clase_suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro_mes", l: "4/mes", n: 1, f: eur }, { k: "ocho_mes", l: "8/mes", n: 1, f: eur },
+    { k: "ilimitada", l: "Ilimitada", n: 1, f: eur }, { k: "oferta_entrada", l: "Oferta entrada", n: 1, f: eur }, { k: "precios_publicados", l: "Precios" }];
+  const prow = cat.filter(r => r.con_precio);
+  el.innerHTML = `<section><div class="row"><h2 style="margin:0">Precio de 8 clases al mes</h2><label>Tipo <select id="p-grupo">${grupos}</select></label></div>
+    <div class="chartbox" style="height:auto">${svg}</div>
+    <p class="nota">Cada punto es un estudio con ese precio publicado; la raya marca la mediana de la zona. Importes con IVA. Los precios de BeatCore aún no están en el catálogo, así que no se comparan.</p></section>
+    <section><h2>Medianas por zona y tipo</h2>${tabla("t-med", colsM, med, { limit: 100 })}
+    <p class="nota">Solo servicio grupal. "Con precio" cuenta estudios que publican tarifas; con menos de 3, la mediana es orientativa.</p></section>
+    <section><h2>Precios por estudio (${prow.length})</h2>${tabla("t-pre", colsT, prow)}</section>`;
+  $("#p-grupo").addEventListener("change", e => { el.dataset.grupo = e.target.value; precios(); });
+  ["t-med", "t-pre"].forEach(t => enlazarTabla(el, t, precios));
 }
 function estudios() {
-  const rows = catFiltrado().map(r => ({ ...r, tienePrecio: r.precios_publicados, tieneOcc: r.con_occ ? "Sí" : "No" }));
-  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "zona", l: "Centro", f: zn }, { k: "marca", l: "Marca" },
-    { k: "disciplina", l: "Disciplina" }, { k: "plataforma", l: "Plataforma" }, { k: "tienePrecio", l: "Precios" }, { k: "tieneOcc", l: "Ocupación" },
-    { k: "distancia_m", l: "Distancia (m)", n: 1, f: v => v == null ? "–" : Math.round(v) }, { k: "rating", l: "Rating", n: 1, f: v => num(v) },
-    { k: "en_classpass", l: "ClassPass" },
-    { k: "web", l: "Web", h: r => /^https?:\/\//.test(r.web || "") ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">enlace</a>` : "–" }];
-  $("#p-estudios").innerHTML = `<section><h2>Catálogo de estudios (${rows.length})</h2>${tabla("t-est", cols, rows, { limit: 500 })}</section>`;
-  enlazarTabla($("#p-estudios"), "t-est", estudios);
+  const el = $("#p-estudios");
+  const q = (el.dataset.q || "").toLowerCase();
+  const rows = catFiltrado().filter(r => !q || [r.estudio, r.disciplina, r.plataforma, r.marca, r.grupo].join(" ").toLowerCase().includes(q))
+    .map(r => ({ ...r, tienePrecio: r.precios_publicados, tieneOcc: r.con_occ ? "Sí" : "No" }));
+  const cols = [{ k: "estudio", l: "Estudio", h: r => /^https?:\/\//.test(r.web || "") ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.estudio)}</a>${r.propio ? ' <span class="tag">BeatCore</span>' : ""}` : esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" }, { k: "disciplina", l: "Disciplina" }, { k: "cadena", l: "Cadena" },
+    { k: "distancia_m", l: "Distancia", n: 1, f: v => v == null ? "–" : Math.round(v) + " m" },
+    { k: "clase_suelta", l: "Suelta", n: 1, f: eur }, { k: "ocho_mes", l: "8/mes", n: 1, f: eur }, { k: "ilimitada", l: "Ilimitada", n: 1, f: eur },
+    { k: "plataforma", l: "Plataforma" }, { k: "tieneOcc", l: "Ocupación" }, { k: "rating", l: "Google", n: 1, f: v => num(v) }];
+  if (!sortState["t-est"]) sortState["t-est"] = { k: "distancia_m", dir: 1 };
+  el.innerHTML = `<section><div class="row"><h2 style="margin:0">Todos los estudios (${rows.length})</h2>
+    <input type="search" id="e-q" placeholder="Buscar estudio, disciplina o plataforma" value="${esc(el.dataset.q || "")}" aria-label="Buscar"></div>
+    ${tabla("t-est", cols, rows, { limit: 500 })}
+    <p class="nota">Precios con IVA tal como se publican.</p></section>`;
+  const inp = $("#e-q");
+  inp.addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; estudios(); const n = $("#e-q"); n.focus(); n.setSelectionRange(p, p); });
+  enlazarTabla(el, "t-est", estudios);
 }
 function mapa() {
   const u = META.mapa_url || "";
@@ -447,7 +558,7 @@ function activar(t) {
   if (location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
   render();
 }
-function refrescar() { leerFiltros(); aplicar(); render(); }
+function refrescar() { leerFiltros(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
 
 (async function () {
   try { await cargar(); } catch (e) { $("#meta").textContent = "No se han podido cargar los datos: " + e.message; return; }
@@ -469,7 +580,7 @@ function refrescar() { leerFiltros(); aplicar(); render(); }
   });
   window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (RENDER[h] && h !== tabActual) activar(h); });
   const t = location.hash.slice(1);
-  leerFiltros(); aplicar();
+  refrescar();
   activar(RENDER[t] ? t : "resumen");
 })();
 </script>
