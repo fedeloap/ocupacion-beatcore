@@ -646,7 +646,7 @@ function precios() {
   const comp = [];
   for (const z of zs) {
     const b = bc(z); if (!b) continue;
-    for (const [k, l] of [["cuatro_mes", "4 clases al mes"], ["ocho_mes", "8 clases al mes"], ["ilimitada", "Ilimitada"]]) {
+    for (const [k, l] of [["clase_suelta", "Clase suelta"], ["cuatro_mes", "4 clases al mes"], ["ocho_mes", "8 clases al mes"], ["ilimitada", "Ilimitada"]]) {
       if (b[k] == null) continue;
       const v = directos(z).map(r => r[k]).filter(x => x != null), m = median(v);
       comp.push({ centro: zn(z), precio: l, beat: b[k], med: m, dif: m ? b[k] / m - 1 : null, n: v.length });
@@ -674,7 +674,7 @@ function precios() {
   el.innerHTML = `<section><h2>BeatCore frente a su competencia directa</h2>
     ${comp.length ? tabla("t-comp-pr", colsC, comp, { limit: 40 }) : '<p class="vacio-msg">No hay precios de BeatCore con estos filtros.</p>'}
     <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li><b>BeatCore</b>: precio publicado en su web (con IVA) para ese centro.</li>
+      <li><b>BeatCore</b>: precio de sus membresías publicado en su web (con IVA) para ese centro, y clase suelta (drop in).</li>
       <li><b>Mediana competencia directa</b>: precio que deja a la mitad de los estudios de reformer y Lagree de la zona por debajo y a la otra mitad por encima.</li>
       <li><b>Diferencia</b>: cuánto más caro (+) o más barato (−) es BeatCore que esa mediana.</li>
       <li>Precios de BeatCore tomados de beatcore.co/comprar-beatcore el 12/10/2026. Si no hay precio de BeatCore para un paquete, no sale esa fila.</li>

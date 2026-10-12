@@ -299,7 +299,7 @@ def main():
             if zona.startswith("_"):
                 continue
             m = (cat_out["propio"] == 1) & (cat_out["zona"] == zona)
-            for col in ("cuatro_mes", "ocho_mes", "doce_mes", "ilimitada"):
+            for col in ("clase_suelta", "cuatro_mes", "ocho_mes", "doce_mes", "ilimitada"):
                 if pr.get(col) is not None:
                     cat_out.loc[m, col] = float(pr[col])
             if m.any():
