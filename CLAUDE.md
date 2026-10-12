@@ -7,8 +7,9 @@ Ojo: el dictado por voz escribe "Bitcoin" o "Beatcore" cuando quiere decir BeatC
 
 ## Objetivo inmediato
 
-Construir un **dashboard web público** (sin login, sin Claude) para compartir con gente externa, publicado en
-**GitHub Pages** desde este repo (que ya es público) y regenerado automáticamente por GitHub Actions.
+Construir un **dashboard web** para compartir con gente externa (que no usa Claude), publicado en **Vercel**
+con **contraseña**, y regenerado automáticamente a partir de los datos que captura GitHub Actions.
+Decisión de Fede (12/10/2026): **el repo sigue público**. La contraseña protege la web, no los CSV del repo; lo sabe y lo acepta.
 
 ## Estructura del repo
 
@@ -71,11 +72,43 @@ Interruptor "BeatCore vs resto" para comparar siempre la línea propia con la co
 - `web.py`: reutiliza `analisis.cargar()` y `preparar()`, une el catálogo, calcula curvas y escribe JSON compactos
   (columnares, strings con diccionario) en `_site/data/`. Limitar a los últimos 90 días si pesa.
 - `web/index.html`: HTML + JS estático (Chart.js desde cdnjs con versión fija o SVG propio). Debe verse bien en móvil.
-- Despliegue: añadir al workflow `actions/upload-pages-artifact` + `actions/deploy-pages`
-  (permisos `pages: write`, `id-token: write`, entorno `github-pages`).
-  Fede tiene que activar una vez **Settings → Pages → Source: GitHub Actions** (el GITHUB_TOKEN no puede activarlo).
-- URL resultante: `https://fedeloap.github.io/ocupacion-beatcore/`. Es pública: cualquiera con el enlace la ve.
-  Si quiere restringirlo, alternativa: Cloudflare Pages + Cloudflare Access, o Vercel con contraseña.
+- Todas las rutas de datos son relativas (`data/...`) para que la web funcione igual en local y en Vercel.
+
+## Despliegue en Vercel (decidido)
+
+**Generación del sitio**
+- El JSON lo genera `web.py` dentro de GitHub Actions (Python ya está instalado ahí), no en el build de Vercel.
+- Salida en `public/` (index.html + `public/data/*.json`), commiteada al repo. Vercel solo sirve estáticos:
+  sin framework, sin build command, output directory `public`.
+- Regenerar `public/` unas 3 veces al día (p. ej. tras la captura de las 7:38, 14:38 y 22:38 hora Madrid) o en cada captura,
+  pero **sin desplegar 38 veces al día**.
+
+**Evitar un despliegue por cada commit de captura** (elige una y documéntala aquí):
+1. `vercel.json` con `ignoreCommand` que solo deje construir si el último commit lleva `[deploy]` en el mensaje
+   (recordar: en Vercel, salida 0 = se salta el build, salida 1 = construye). El paso de regeneración del Action commitea con `[deploy]`.
+2. O desactivar el despliegue automático por git (`"git": {"deploymentEnabled": false}`) y lanzar un **Deploy Hook**
+   desde el Action con `curl -X POST "$VERCEL_DEPLOY_HOOK"`. El hook va como secreto de GitHub `VERCEL_DEPLOY_HOOK`.
+   No verificado si los Deploy Hooks funcionan con `deploymentEnabled: false`: comprobarlo antes de dar por buena esta opción.
+
+**Contraseña**
+- No usar la "Password Protection" nativa de Vercel (es un extra de pago).
+- Usar **Vercel Routing Middleware** (`middleware.js` en la raíz, sirve para proyectos estáticos sin Next.js) con HTTP Basic Auth,
+  o una pantalla de login simple que ponga una cookie firmada.
+- El middleware debe cubrir **todas** las rutas, incluidos `data/*.json`, no solo `index.html`.
+- La contraseña va en la variable de entorno de Vercel `DASHBOARD_PASSWORD` (y usuario en `DASHBOARD_USER` si es Basic Auth).
+  **La define Fede en el panel de Vercel**. Nunca en el repo ni en el chat.
+- Comparar la contraseña en tiempo constante y devolver 401 con `WWW-Authenticate` si falla.
+- Añadir `X-Robots-Tag: noindex` y un `robots.txt` que bloquee todo.
+
+**Pasos que hace Fede (Claude Code no puede ni debe hacerlos por él)**
+1. En vercel.com: Add New → Project → importar `fedeloap/ocupacion-beatcore`. Framework "Other", output directory `public`.
+2. Settings → Environment Variables: `DASHBOARD_PASSWORD` (y `DASHBOARD_USER`). Redesplegar.
+3. Si se usa la opción 2: crear el Deploy Hook en Settings → Git y guardarlo como secreto `VERCEL_DEPLOY_HOOK` en GitHub.
+4. Opcional: dominio propio (p. ej. `competencia.theboutiquetribe.com`) en Settings → Domains.
+
+**Avisos**
+- El plan Hobby de Vercel es para uso no comercial según sus condiciones. Este uso es comercial: en rigor corresponde Pro. Lo decide Fede.
+- No pasar el repo a privado sin avisar: GitHub Actions gratis en privado da 2.000 min/mes y la captura consume unos 3.400.
 
 ## Cobertura actual (12/10/2026)
 
