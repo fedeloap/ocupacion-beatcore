@@ -449,13 +449,13 @@ function curvas() {
     h: r => r[k + j] == null ? "–" : `${pct(r[k + j])}${k === "o" ? ` <small>(${r["n" + j]})</small>` : ""}` });
   const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
-    ...momentos.flatMap(j => [celda(j, "o"), celda(j, "p")]),
-    { k: "fin", l: "Al empezar: ocupación", n: 1, h: r => r.fin == null ? "–" : `${pct(r.fin)} <small>(${r.nf})</small>` }];
+    { k: "fin", l: "FINAL: ocupación al empezar", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` },
+    ...momentos.flatMap(j => [celda(j, "o"), celda(j, "p")])];
   if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
   el.innerHTML = `<section><h2>Cuánto llevan reservado antes de empezar</h2>
     <p class="meta">Una fila por estudio. Sirve para ver quién llena con antelación y quién llena sobre la hora.</p>
     ${tabla("t-rit", cols, rows, { limit: 300 })}
-    <p class="nota"><b>Cómo leerlo.</b> "A 24 h: ocupación" es el % de plazas reservadas 24 horas antes de empezar la clase. "% de lo final ya reservado" compara esas reservas con las que tuvo la clase al empezar: 85 % significa que a 24 h ya estaba reservado el 85 % de lo que acabó teniendo. Cuanto más alto, antes llena ese estudio. Pasa de 100 % si hubo cancelaciones. El número entre paréntesis es cuántas clases hay detrás de la media; con 1 o 2, es una anécdota, no un patrón. Un "–" es que aún no tenemos foto de ese momento para ese estudio. Solo salen estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</p></section>
+    <p class="nota"><b>Cómo leerlo.</b> Empieza por "FINAL": es cuánta gente acabó teniendo la clase al empezar. Después, "A 24 h: ocupación" es cuánta había apuntada 24 horas antes, y "% de lo final ya reservado" es qué parte de esa gente final ya estaba apuntada: 85 % significa que a 24 h ya estaba el 85 % de lo que acabó teniendo. Cuanto más alto, antes llena ese estudio. Pasa de 100 % si hubo cancelaciones. El número entre paréntesis es cuántas clases hay detrás de la media; con 1 o 2, es una anécdota, no un patrón. Un "–" es que aún no tenemos foto de ese momento para ese estudio. Solo salen estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</p></section>
     <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
   const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
     ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
