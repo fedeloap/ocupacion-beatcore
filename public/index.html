@@ -240,7 +240,7 @@ function metricas(ix) {
   const ll = ix.map(i => D.l[i]).filter(v => v != null);
   const res = ix.filter(i => D.r[i] != null).map(i => D.r[i]);
   const af = ix.filter(i => D.a[i] != null).map(i => D.a[i]);
-  return { n: ix.length, nocc: occ.length, ocup: mean(occ), llenas: mean(ll), res: mean(res), aforo: mean(af) };
+  return { n: ix.length, nocc: occ.length, ocup: mean(occ), llenas: mean(ll), res: mean(res), aforo: median(af) };
 }
 function mediaCurva(ix, j, modo) {
   const v = [];
@@ -331,7 +331,7 @@ function resumen() {
   }
   const cols = [{ k: "centro", l: "Centro" }, { k: "linea", l: "Línea", h: r => r.linea === "BeatCore" ? '<span class="tag">BeatCore</span>' : '<span class="tag b">Competencia</span>' },
     { k: "estudios", l: "Estudios", n: 1 }, { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct },
-    { k: "llenas", l: "% clases llenas", n: 1, f: pct }, { k: "res", l: "Reservas/clase", n: 1, f: v => num(v) }, { k: "aforo", l: "Aforo medio", n: 1, f: v => num(v) }];
+    { k: "llenas", l: "% clases llenas", n: 1, f: pct }, { k: "res", l: "Reservas/clase", n: 1, f: v => num(v) }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   h += `<section><h2>BeatCore vs competencia por centro</h2>${tabla("t-res", cols, filas)}
     <p class="nota">Ocupación media: clases con aforo conocido o estimado (Momence, Glofox, Mariana Tek y Mindbody). Mindbody sin aforo publicado usa el máximo de plazas libres visto (cota inferior). bsport solo informa de si la clase está llena: cuenta en % llenas, no en ocupación. Las reservas no son asistencia.</p></section>`;
 
@@ -390,7 +390,7 @@ function ocupacion() {
   const rows = [...por].map(([e, ix]) => { const m = metricas(ix); return { _i: e, estudio: EST[e].n, centro: zn(EST[e].z), marca: EST[e].m, propio: EST[e].p, n: m.n, nocc: m.nocc, ocup: m.ocup, llenas: m.llenas, aforo: m.aforo }; });
   const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
-    { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Aforo medio", n: 1, f: v => num(v) }];
+    { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
   h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}
     <p class="nota">Con pocas clases por estudio, la media no es fiable: mira la columna Clases.</p></section>`;
