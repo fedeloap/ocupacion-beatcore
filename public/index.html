@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -60,6 +60,7 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 .chip { font-size: 13px !important; min-height: 28px !important; }
 .chip small { color: var(--muted); }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+button.vc { padding: 2px 10px; min-height: 28px; cursor: pointer; font-size: 13px; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
 .duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
@@ -151,7 +152,7 @@ const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagr
 const ZN = { "Valencia": "Valencia (Ruzafa)" };
 const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
-const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Curvas de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
 
 let D, CAT, META, N, OCC, EST;           // datos
 let CATROWS = [];                        // catálogo como objetos
@@ -414,66 +415,48 @@ function ocupacion() {
   enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
 }
 
-const COLORES = ["#2f7fd1", "#c2570c", "#7a4fd0", "#d1a31f", "#c23b6e", "#2a9d8f", "#8a6f4e", "#6b7280"];
 function curvas() {
   const el = $("#p-curvas");
-  const modo = el.dataset.modo || "ocup";
-  const cps = D.checkpoints, par = el.dataset.par !== "0";
-  // competidores elegibles: los que pasan los filtros globales
-  const cand = [...new Set(GB.map(i => D.e[i]))].sort((x, y) => EST[x].n.localeCompare(EST[y].n, "es"));
-  const sel = JSON.parse(el.dataset.sel || "[]").filter(e => cand.includes(e));
-  const GBs = sel.length ? GB.filter(i => sel.includes(D.e[i])) : GB;
-  const uno = el.dataset.uno === "1" && sel.length > 0 && sel.length <= 8;
-  const serie = ix => cps.map((_, j) => mediaCurva(ix, j, modo, par));
-  const sA = serie(GA), sB = serie(GBs);
-  const porEst = uno ? sel.map(e => ({ e, s: serie(GB.filter(i => D.e[i] === e)) })) : [];
-  const nClases = new Map(); GB.forEach(i => nClases.set(D.e[i], (nClases.get(D.e[i]) || 0) + 1));
-  const lista = cand.map(e => `<label class="sw chip"><input type="checkbox" data-e="${e}"${sel.includes(e) ? " checked" : ""}> ${esc(EST[e].n)} <small>(${nClases.get(e)})</small></label>`).join("");
-  const celdas = s => s.map(x => `<td class="n">${pct(x.v)} <small>(${x.n})</small></td>`).join("");
-  const filas = (uno ? porEst.map((p, k) => `<tr><td><span class="dot" style="background:${COLORES[k]}"></span>${esc(EST[p.e].n)}</td>${celdas(p.s)}</tr>`).join("")
-    : `<tr><td><span class="tag b">Competencia${sel.length ? " (" + sel.length + " estudios)" : ""}</span></td>${celdas(sB)}</tr>`);
-  el.innerHTML = `<section><h2>Curvas de reserva</h2>
-    <div class="row"><label>Métrica <select id="c-modo"><option value="ocup">% ocupación (sin bsport)</option><option value="llenas">% clases llenas (con bsport)</option></select></label>
-    <label class="sw"><input type="checkbox" id="c-par"${par ? " checked" : ""}> Misma muestra en todos los puntos (solo clases con dato también al inicio)</label></div>
-    <details class="filtros" id="c-det"${el.dataset.open === "1" ? " open" : ""}><summary>Competencia: elegir estudios (${sel.length ? sel.length + " de " + cand.length : "todos, " + cand.length})</summary>
-      <div class="row" style="margin-top:10px"><button type="button" id="c-todos">Todos</button>
-      <label class="sw"><input type="checkbox" id="c-uno"${el.dataset.uno === "1" ? " checked" : ""}> Una línea por estudio (hasta 8)</label></div>
-      <div class="chips">${lista || '<p class="vacio-msg">Sin competencia con estos filtros</p>'}</div></details>
-    <div class="chartbox"><canvas id="c-canvas" aria-label="Curva de reservas"></canvas></div>
-    <div class="scroll"><table><thead><tr><th>Horas antes</th>${cps.map(c => `<th class="n">${c} h</th>`).join("")}</tr></thead><tbody>
-    <tr><td><span class="tag">BeatCore</span></td>${celdas(sA)}</tr>${filas}</tbody></table></div>
-    <p class="nota">Para cada hora, el último snapshot anterior a esa hora (tolerancia: máx. 1 h o el 50 % de las horas). Entre paréntesis, nº de clases que tienen dato. Con "misma muestra" cada punto usa solo las clases que también tienen dato al inicio, y la línea discontinua es la ocupación final de esas mismas clases: la distancia entre ambas es lo que aún se reserva. Sin ella, cada punto mezcla clases distintas y la curva puede subir y bajar sin que ninguna clase lo haga. La curva larga (7 días) solo hay dos veces al día y empieza cuando empezó la captura.</p></section>
+  const cps = D.checkpoints, last = cps.length - 1, momentos = [4, 6, 8]; // 24 h, 6 h, 1 h
+  const por = new Map();
+  for (const i of [...GA, ...GB]) { const e = D.e[i]; if (!por.has(e)) por.set(e, []); por.get(e).push(i); }
+  const calc = ix => {
+    const o = { n: ix.length };
+    for (const j of momentos) {
+      const oc = []; let sr = 0, sf = 0;
+      for (const i of ix) {
+        const r = D.cr[j][i], a = D.a[i], f = D.r[i];
+        if (r == null || !(a > 0)) continue;
+        oc.push(Math.min(1, r / a));
+        if (f != null && f > 0) { sr += r; sf += f; }
+      }
+      o["o" + j] = mean(oc); o["n" + j] = oc.length; o["p" + j] = sf > 0 ? sr / sf : null;
+    }
+    const fin = ix.map(i => OCC[i]).filter(v => v != null);
+    o.fin = mean(fin); o.nf = fin.length;
+    return o;
+  };
+  const todas = [...por].map(([e, ix]) => ({ _i: e, estudio: EST[e].n, centro: zn(EST[e].z), propio: EST[e].p, ...calc(ix) }));
+  const rows = todas.filter(r => momentos.some(j => r["n" + j] > 0));
+  const celda = (j, k) => ({ k: k + j, l: `A ${cps[j]} h: ${k === "o" ? "ocupación" : "% de lo final ya reservado"}`, n: 1,
+    h: r => r[k + j] == null ? "–" : `${pct(r[k + j])}${k === "o" ? ` <small>(${r["n" + j]})</small>` : ""}` });
+  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
+    ...momentos.flatMap(j => [celda(j, "o"), celda(j, "p")]),
+    { k: "fin", l: "Al empezar: ocupación", n: 1, h: r => r.fin == null ? "–" : `${pct(r.fin)} <small>(${r.nf})</small>` }];
+  if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
+  el.innerHTML = `<section><h2>Cuánto llevan reservado antes de empezar</h2>
+    <p class="meta">Una fila por estudio. Sirve para ver quién llena con antelación y quién llena sobre la hora.</p>
+    ${tabla("t-rit", cols, rows, { limit: 300 })}
+    <p class="nota"><b>Cómo leerlo.</b> "A 24 h: ocupación" es el % de plazas reservadas 24 horas antes de empezar la clase. "% de lo final ya reservado" compara esas reservas con las que tuvo la clase al empezar: 85 % significa que a 24 h ya estaba reservado el 85 % de lo que acabó teniendo. Cuanto más alto, antes llena ese estudio. Pasa de 100 % si hubo cancelaciones. El número entre paréntesis es cuántas clases hay detrás de la media; con 1 o 2, es una anécdota, no un patrón. Un "–" es que aún no tenemos foto de ese momento para ese estudio. Solo salen estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</p></section>
     <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
-  $("#c-modo").value = modo;
-  $("#c-modo").addEventListener("change", e => { el.dataset.modo = e.target.value; curvas(); });
-  $("#c-par").addEventListener("change", e => { el.dataset.par = e.target.checked ? "1" : "0"; curvas(); });
-  $("#c-det").addEventListener("toggle", e => { el.dataset.open = e.target.open ? "1" : "0"; });
-  $("#c-todos").addEventListener("click", () => { el.dataset.sel = "[]"; curvas(); });
-  $("#c-uno").addEventListener("change", e => { el.dataset.uno = e.target.checked ? "1" : "0"; curvas(); });
-  el.querySelectorAll(".chips input").forEach(c => c.addEventListener("change", () => {
-    el.dataset.sel = JSON.stringify([...el.querySelectorAll(".chips input:checked")].map(x => +x.dataset.e)); curvas();
-  }));
-  if (chart) chart.destroy();
-  const css = getComputedStyle(document.documentElement);
-  const rgb = v => `rgb(${css.getPropertyValue(v).trim().split(" ").join(",")})`;
-  const v100 = s => s.map(x => x.v == null ? null : x.v * 100), f100 = s => s.map(x => x.fin == null ? null : x.fin * 100);
-  const ds = [{ label: "BeatCore", data: v100(sA), borderColor: rgb("--accent-rgb"), backgroundColor: rgb("--accent-rgb"), spanGaps: true, tension: .2 }];
-  if (uno) porEst.forEach((p, k) => ds.push({ label: EST[p.e].n, data: v100(p.s), borderColor: COLORES[k], backgroundColor: COLORES[k], spanGaps: true, tension: .2 }));
-  else ds.push({ label: "Competencia", data: v100(sB), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 });
-  if (par) {
-    ds.push({ label: "BeatCore: final de esas mismas clases", data: f100(sA), borderColor: rgb("--accent-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true });
-    if (uno) porEst.forEach((p, k) => ds.push({ label: EST[p.e].n + ": final", data: f100(p.s), borderColor: COLORES[k], borderDash: [5, 5], pointRadius: 0, spanGaps: true }));
-    else ds.push({ label: "Competencia: final de esas mismas clases", data: f100(sB), borderColor: rgb("--comp-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true });
-  }
-  chart = new Chart($("#c-canvas"), { type: "line", data: { labels: cps.map(c => c + " h"), datasets: ds },
-    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: modo === "ocup" ? "% ocupación" : "% clases llenas" } },
-      x: { title: { display: true, text: "Antes del inicio de la clase" } } }, plugins: { tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.parsed.y)}%` } } } } });
   const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
     ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
   const fila = (g, nom) => { const s = hf(g); return `<tr><td>${nom}</td><td class="n">${s.n} de ${s.tot}</td><td class="n">${s.n ? pct(s.ya / s.n) : "–"}</td><td class="n">${s.med == null ? "–" : num(s.med) + " h"}</td><td class="n">${s.med2 == null ? "–" : num(s.med2) + " h"}</td></tr>`; };
   $("#c-hf").innerHTML = `<div class="scroll"><table><thead><tr><th>Línea</th><th class="n">Clases que se llenan</th><th class="n">Ya llenas en la 1ª foto</th><th class="n">Mediana (todas)</th><th class="n">Mediana (sin las ya llenas)</th></tr></thead><tbody>
-    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GBs, '<span class="tag b">Competencia' + (sel.length ? " (" + sel.length + " estudios)" : "") + "</span>")}</tbody></table></div>
-    <p class="nota">Horas antes del inicio en que aparece por primera vez una foto con la clase llena. Es una <b>cota superior</b>: se llenó en algún momento entre esa foto y la anterior. Si ya estaba llena en la primera foto que tenemos, el dato real es mayor (columna "ya llenas").</p>`;
+    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>
+    <p class="nota"><b>Cómo leerlo.</b> De las clases que acaban llenas, la mediana de horas antes de empezar en que ya aparecían llenas. "Ya llenas en la 1ª foto" son las que ya estaban llenas la primera vez que las fotografiamos: de esas no sabemos cuándo se llenaron, solo que fue antes, así que la mediana real es mayor. Es una estimación por arriba: la clase pudo llenarse en cualquier momento entre una foto y la anterior.</p>`;
+  enlazarTabla(el, "t-rit", curvas);
 }
 
 function claseCols() {
@@ -493,25 +476,41 @@ function filaClase(i) {
     llena: D.l[i] == null ? null : D.l[i] === 1, hf: D.hf[i], hf0: D.hf0[i] === 1 };
 }
 function clases() {
-  const rows = [...GA, ...GB].map(filaClase);
+  const el = $("#p-clases");
+  const q = (el.dataset.q || "").toLowerCase();
+  const rows = [...GA, ...GB].map(filaClase).filter(r => !q || (r.estudio + " " + r.clase + " " + r.disc).toLowerCase().includes(q));
   if (!sortState["t-cl"]) sortState["t-cl"] = { k: "fecha", dir: -1 };
-  $("#p-clases").innerHTML = `<section><h2>Clase a clase</h2>${tabla("t-cl", claseCols(), rows, { click: true, limit: 300, sel: r => r._i === claseSel })}
-    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto. Pulsa una fila para ver su curva.</p></section>
-    <section id="cl-det"></section>`;
-  enlazarTabla($("#p-clases"), "t-cl", clases, i => { claseSel = i; clases(); });
+  const cols = [{ k: "_ver", l: "Curva", h: r => `<button type="button" class="vc">Ver curva</button>` }, ...claseCols()];
+  el.innerHTML = `<section id="cl-det"></section>
+    <section><h2>Clase a clase</h2>
+    <p class="meta">Pulsa <b>Ver curva</b> (o cualquier fila) para ver cómo se fue llenando esa clase. La curva aparece aquí arriba, encima de la tabla.</p>
+    <div class="row"><input type="search" id="cl-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar"><span class="meta">${rows.length} clases</span></div>
+    ${tabla("t-cl", cols, rows, { click: true, limit: 300, sel: r => r._i === claseSel })}
+    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto.</p></section>`;
+  $("#cl-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; clases(); const n = $("#cl-q"); n.focus(); n.setSelectionRange(p, p); });
+  enlazarTabla(el, "t-cl", clases, i => { claseSel = i; clases(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); });
+  if (claseSel != null && !rows.some(r => r._i === claseSel)) claseSel = null;
   if (claseSel != null) detalleClase(claseSel);
 }
 function detalleClase(i) {
   const r = filaClase(i), cps = D.checkpoints, bs = D.dic.plat[D.p[i]] === "bsport";
   const vals = cps.map((_, j) => bs ? (D.cl[j][i] == null ? null : D.cl[j][i] * 100) : (D.cr[j][i] != null && D.a[i] > 0 ? Math.min(100, D.cr[j][i] / D.a[i] * 100) : null));
-  $("#cl-det").innerHTML = `<h2>${esc(r.clase)} · ${esc(r.estudio)}</h2><p class="meta">${r.fecha} ${r.hora} · ${esc(r.centro)} · ${esc(r.plat)} · aforo ${r.aforo ?? "–"} · reservas finales ${r.res ?? "–"}${bs ? " · bsport: 100 = llena, 0 = no llena" : ""}</p>
-    <div class="chartbox"><canvas id="cl-canvas"></canvas></div>${vals.every(v => v == null) ? '<p class="nota">Esta clase no tiene snapshots en los checkpoints (la captura larga empezó hace poco).</p>' : ""}`;
+  const filas = cps.map((c, j) => {
+    const v = bs ? (D.cl[j][i] == null ? "–" : D.cl[j][i] ? "Llena" : "No llena") : (D.cr[j][i] == null ? "–" : `${D.cr[j][i]} de ${D.a[i] ?? "?"} plazas (${vals[j] == null ? "–" : Math.round(vals[j]) + "%"})`);
+    return `<tr><td>${c === 0 ? "Al empezar" : c + " h antes"}</td><td>${v}</td></tr>`;
+  }).filter((_, j) => vals[j] != null).join("");
+  $("#cl-det").innerHTML = `<div class="card"><h2>${esc(r.clase)} · ${esc(r.estudio)}</h2>
+    <p class="meta">${r.fecha} ${r.hora} · ${esc(r.centro)} · ${esc(r.plat)} · ${r.aforo ?? "–"} plazas · ${r.res ?? "–"} reservas al empezar${bs ? " · bsport solo indica si está llena" : ""}</p>
+    <div class="chartbox"><canvas id="cl-canvas"></canvas></div>
+    ${filas ? `<div class="scroll"><table><thead><tr><th>Momento</th><th>Reservas</th></tr></thead><tbody>${filas}</tbody></table></div>`
+      : '<p class="nota">Esta clase aún no tiene fotos previas: solo conocemos el estado al empezar.</p>'}
+    <p class="nota"><button type="button" id="cl-cerrar">Cerrar</button></p></div>`;
+  $("#cl-cerrar").addEventListener("click", () => { claseSel = null; clases(); });
   if (chart) chart.destroy();
   const css = getComputedStyle(document.documentElement);
   const c = `rgb(${css.getPropertyValue(r.propio ? "--accent-rgb" : "--comp-rgb").trim().split(" ").join(",")})`;
   chart = new Chart($("#cl-canvas"), { type: "line", data: { labels: cps.map(x => x + " h"), datasets: [{ label: bs ? "% llena" : "% ocupación", data: vals, borderColor: c, backgroundColor: c, spanGaps: true, tension: .2 }] },
-    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } } });
-  $("#cl-det").scrollIntoView({ block: "nearest", behavior: "smooth" });
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 }, x: { title: { display: true, text: "Antes del inicio de la clase" } } } } });
 }
 
 /* catálogo filtrado (sin filtros de fecha/hora/día, que no aplican) */
