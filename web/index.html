@@ -127,7 +127,7 @@ a { color: var(--accent); }
     <label>Fechas<span class="rango"><input type="date" id="f-f0"><input type="date" id="f-f1"></span></label>
     <label>Día de la semana<span class="dias" id="f-dias"></span></label>
     <label class="sw"><input type="checkbox" id="f-fest" checked> Incluir festivos</label>
-    <label class="sw"><input type="checkbox" id="f-vs" checked> BeatCore vs resto (BeatCore ignora marca y estudio)</label>
+    <label class="sw"><input type="checkbox" id="f-vs" checked> BeatCore siempre visible (ignora marca, estudio y disciplina para dar perspectiva)</label>
     <button type="button" id="f-reset">Quitar filtros</button>
   </div>
 </details>
@@ -229,9 +229,9 @@ function leerFiltros() {
   F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked;
   F.dias = new Set([...document.querySelectorAll("#f-dias input:checked")].map(x => +x.dataset.d));
 }
-function pasaBase(i) {
+function pasaBase(i, ignorarDisc) {
   if (F.centro && D.dic.centro[D.c[i]] !== F.centro) return false;
-  if (F.disc && D.dic.disc[D.d[i]] !== F.disc) return false;
+  if (!ignorarDisc && F.disc && D.dic.disc[D.d[i]] !== F.disc) return false;
   if (!F.dias.has(D.w[i])) return false;
   if (!F.fest && D.fe[i]) return false;
   const h = D.h[i] / 60;
@@ -250,9 +250,9 @@ let GA = [], GB = [];
 function aplicar() {
   GA = []; GB = [];
   for (let i = 0; i < N; i++) {
-    if (!pasaBase(i)) continue;
-    if (EST[D.e[i]].p) { if (F.vs || pasaComp(i)) GA.push(i); }
-    else if (pasaComp(i)) GB.push(i);
+    // con "BeatCore vs resto", BeatCore se muestra siempre (ignora marca, estudio y disciplina) para dar perspectiva
+    if (EST[D.e[i]].p) { if (F.vs ? pasaBase(i, true) : pasaBase(i) && pasaComp(i)) GA.push(i); }
+    else if (pasaBase(i) && pasaComp(i)) GB.push(i);
   }
 }
 
@@ -560,7 +560,7 @@ function clases() {
   const q = (el.dataset.q || "").toLowerCase();
   const soloCurva = el.dataset.sc !== "0";
   // aquí el interruptor "BeatCore vs resto" no se aplica: si eliges un estudio o marca, solo salen sus clases
-  const todas = [...GA.filter(pasaComp), ...GB].map(filaClase);
+  const todas = [...GA.filter(i => pasaBase(i) && pasaComp(i)), ...GB].map(filaClase);
   const rows = todas.filter(r => (!soloCurva || r.hc) && (!q || (r.estudio + " " + r.clase + " " + r.disc).toLowerCase().includes(q)));
   if (!sortState["t-cl"]) sortState["t-cl"] = { k: "fecha", dir: -1 };
   const cols = [{ k: "_ver", l: "Curva", h: r => r.hc ? `<button type="button" class="vc">Ver curva</button>` : "sin fotos" }, ...claseCols()];
@@ -609,16 +609,18 @@ function precios() {
   const el = $("#p-precios");
   const grupo = el.dataset.grupo || "Reformer y Lagree";
   const cat = catFiltrado(false), g = grupal(cat);
-  const propios = catFiltrado(true).filter(r => r.propio && r.con_precio);
+  // BeatCore siempre visible (solo respeta el centro), para dar perspectiva con cualquier filtro
+  const propios = CATROWS.filter(r => r.propio && r.con_precio && (!F.centro || r.zona === F.centro));
   const zs = zonasVisibles();
   const bc = z => propios.find(r => r.zona === z);
   const directos = z => g.filter(r => r.grupo === "Reformer y Lagree" && r.zona === z);
   const rows = g.filter(r => r.grupo === grupo && r.ocho_mes != null);
-  const verBC = grupo === "Reformer y Lagree";
+  const verBC = true;
 
   // tira de puntos: precio de 8 clases al mes por zona
   const W = 720, band = 62, top = 12, bot = 28, H = top + zs.length * band + bot, L = 120;
-  const max = Math.max(50, ...rows.map(r => r.ocho_mes), ...(verBC ? zs.map(z => (bc(z) || {}).ocho_mes || 0) : [])) * 1.08;
+  // escala fija: el máximo de todo el catálogo, para que no cambie al cambiar de tipo o de filtro
+  const max = Math.max(50, ...CATROWS.map(r => r.ocho_mes || 0)) * 1.08;
   const X = v => L + v / max * (W - L - 14);
   let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Precio de 8 clases al mes">`;
   const paso = max > 400 ? 100 : 50;
@@ -684,7 +686,8 @@ function precios() {
     <div class="guia"><h3>Cómo leer el gráfico</h3><ul>
       <li>Cada <b>punto naranja</b> es un estudio que publica ese precio (con IVA). Pasa el ratón por encima para ver cuál es.</li>
       <li>La <b>raya blanca</b> es la mediana de la zona: la mitad de los estudios cuesta menos y la otra mitad más.</li>
-      <li>El <b>rombo verde</b> es BeatCore. Solo aparece en "Reformer y Lagree".</li>
+      <li>El <b>rombo verde</b> es BeatCore. Aparece siempre, con cualquier tipo, para que tengas la referencia.</li>
+      <li>La <b>escala (0 a 250 €) es siempre la misma</b>, así puedes comparar un tipo con otro.</li>
       <li>Los puntos con el mismo precio se solapan.</li>
     </ul></div></section>
     <section><h2>Medianas por zona y tipo</h2>${tabla("t-med", colsM, med, { limit: 100 })}
