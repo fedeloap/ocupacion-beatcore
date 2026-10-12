@@ -105,14 +105,28 @@ def cargar_snapshots():
     s["sede"] = s["sede"].fillna("").astype(str)
     s["clase_id"] = s["clase_id"].astype(str)
     s = s.drop_duplicates(KEY + ["captured_at"])
-    return s[KEY + ["captured_at", "ocupadas", "libres", "llena"]]
+    s["inicio_local"] = pd.to_datetime(s["inicio_local"])
+    return s[KEY + ["clase", "inicio_local", "captured_at", "ocupadas", "libres", "llena"]]
+
+
+def clave_clase(d):
+    """Identificador de la clase estable entre capturas.
+
+    En Mindbody el clase_id cambia de una captura a otra (los ids de la planificación no
+    coinciden con los de la captura final), así que se usa estudio, sede, hora y nombre.
+    En el resto de plataformas vale clase_id."""
+    alt = (d["estudio"].astype(str) + "|" + d["sede"].astype(str) + "|"
+           + d["inicio_local"].dt.strftime("%Y-%m-%d %H:%M") + "|" + d["clase"].astype(str))
+    return alt.where(d["plataforma"] == "mindbody", d["clase_id"].astype(str))
 
 
 def curvas(c, snap):
     """Reservas y 'llena' en cada checkpoint, y horas antes de llenarse, por clase (índice de c)."""
-    base = c[KEY + ["inicio_local", "aforo"]].copy()
+    base = c[KEY + ["clase", "inicio_local", "aforo"]].copy()
     base["i"] = np.arange(len(base))
-    m = snap.merge(base, on=KEY, how="inner")
+    base["kid"] = clave_clase(base)
+    snap = snap.assign(kid=clave_clase(snap)).drop(columns=["clase_id", "clase", "inicio_local"])
+    m = snap.merge(base.drop(columns=["clase_id", "clase"]), on=["plataforma", "estudio", "sede", "kid"], how="inner")
     m["hb"] = (m["inicio_local"] - m["captured_at"]).dt.total_seconds() / 3600
     m = m[m["hb"] >= -MARGEN_H].copy()
     aforo = m["aforo"]

@@ -154,7 +154,7 @@ const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Func
 const zn = z => ZN[z] || z;
 const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
 
-let D, CAT, META, N, OCC, EST;           // datos
+let D, CAT, META, N, OCC, EST, HC;           // datos
 let CATROWS = [];                        // catálogo como objetos
 const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
 let tabActual = "resumen", chart = null, claseSel = null;
@@ -168,6 +168,9 @@ async function cargar() {
   EST = D.estudios;
   OCC = new Array(N);
   for (let i = 0; i < N; i++) OCC[i] = D.r[i] != null && D.a[i] > 0 ? Math.min(1, D.r[i] / D.a[i]) : null;
+  const ult = D.checkpoints.length - 1;
+  HC = new Array(N);   // la clase tiene alguna foto previa a su inicio (curva)
+  for (let i = 0; i < N; i++) HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
   CATROWS = CAT.rows.map(r => Object.fromEntries(CAT.cols.map((c, j) => [c, r[j]])));
   CATROWS.forEach(r => { r.disc_n = DISC_CAT[r.disciplina] || "Otros"; r.con_precio = r.precios_publicados === "Sí" || r.precios_publicados === "Parcial"; r.con_occ = !!r.captura; });
 }
@@ -180,8 +183,7 @@ function opciones(sel, items, todo) {
 }
 function montarFiltros() {
   opciones($("#f-centro"), D.dic.centro.map(c => [c, zn(c)]), "Todos");
-  const marcas = [...new Set(EST.map(e => e.m))].sort((a, b) => a.localeCompare(b, "es"));
-  opciones($("#f-marca"), marcas.map(m => [m, m]), "Todas");
+  marcasSelect();
   opciones($("#f-disc"), DISCS.map(d => [d, d]), "Todas");
   const horas = Array.from({ length: 25 }, (_, h) => [h, String(h).padStart(2, "0") + ":00"]);
   $("#f-h0").innerHTML = horas.slice(0, 24).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
@@ -197,13 +199,18 @@ function zonaSeg() {
   seg.querySelectorAll("button").forEach(b => b.remove());
   [["", "Todos"], ...D.dic.centro.map(c => [c, zn(c)])].forEach(([v, l]) => {
     const b = document.createElement("button"); b.type = "button"; b.dataset.z = v; b.textContent = l;
-    b.addEventListener("click", () => { $("#f-centro").value = v; estudiosSelect(); refrescar(); });
+    b.addEventListener("click", () => { $("#f-centro").value = v; marcasSelect(); estudiosSelect(); refrescar(); });
     seg.append(b);
   });
 }
+function marcasSelect() {
+  const c = $("#f-centro").value;
+  const marcas = [...new Set(EST.filter(e => !e.p && (!c || e.z === c)).map(e => e.m))].sort((a, b) => a.localeCompare(b, "es"));
+  opciones($("#f-marca"), marcas.map(m => [m, m]), "Todas");
+}
 function estudiosSelect() {
   const c = $("#f-centro").value, m = $("#f-marca").value;
-  const lista = EST.map((e, i) => [i, e]).filter(([, e]) => (!c || D.dic.centro[0] === undefined || e.z === c) && (!m || e.m === m))
+  const lista = EST.map((e, i) => [i, e]).filter(([, e]) => !e.p && (!c || e.z === c) && (!m || e.m === m))
     .sort((a, b) => a[1].n.localeCompare(b[1].n, "es"));
   opciones($("#f-estudio"), lista.map(([i, e]) => [i, e.n + (c ? "" : " · " + zn(e.z))]), "Todos");
 }
@@ -473,21 +480,27 @@ function filaClase(i) {
   const m = D.h[i], hh = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
   return { _i: i, fecha: D.dic.fecha[D.f[i]], hora: hh, centro: zn(D.dic.centro[D.c[i]]), estudio: e.n, propio: e.p, clase: D.dic.clase[D.k[i]],
     disc: D.dic.disc[D.d[i]], plat: D.dic.plat[D.p[i]], aforo: D.a[i], est: D.af[i] === 1, res: D.r[i], ocup: OCC[i],
-    llena: D.l[i] == null ? null : D.l[i] === 1, hf: D.hf[i], hf0: D.hf0[i] === 1 };
+    llena: D.l[i] == null ? null : D.l[i] === 1, hf: D.hf[i], hf0: D.hf0[i] === 1, hc: HC[i] };
 }
 function clases() {
   const el = $("#p-clases");
   const q = (el.dataset.q || "").toLowerCase();
-  const rows = [...GA, ...GB].map(filaClase).filter(r => !q || (r.estudio + " " + r.clase + " " + r.disc).toLowerCase().includes(q));
+  const soloCurva = el.dataset.sc !== "0";
+  // aquí el interruptor "BeatCore vs resto" no se aplica: si eliges un estudio o marca, solo salen sus clases
+  const todas = [...GA.filter(pasaComp), ...GB].map(filaClase);
+  const rows = todas.filter(r => (!soloCurva || r.hc) && (!q || (r.estudio + " " + r.clase + " " + r.disc).toLowerCase().includes(q)));
   if (!sortState["t-cl"]) sortState["t-cl"] = { k: "fecha", dir: -1 };
-  const cols = [{ k: "_ver", l: "Curva", h: r => `<button type="button" class="vc">Ver curva</button>` }, ...claseCols()];
+  const cols = [{ k: "_ver", l: "Curva", h: r => r.hc ? `<button type="button" class="vc">Ver curva</button>` : "sin fotos" }, ...claseCols()];
   el.innerHTML = `<section id="cl-det"></section>
     <section><h2>Clase a clase</h2>
     <p class="meta">Pulsa <b>Ver curva</b> (o cualquier fila) para ver cómo se fue llenando esa clase. La curva aparece aquí arriba, encima de la tabla.</p>
-    <div class="row"><input type="search" id="cl-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar"><span class="meta">${rows.length} clases</span></div>
+    <div class="row"><input type="search" id="cl-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar">
+    <label class="sw"><input type="checkbox" id="cl-sc"${soloCurva ? " checked" : ""}> Solo clases con curva (con fotos antes de empezar)</label>
+    <span class="meta">${rows.length} clases${soloCurva ? ` de ${todas.length}` : ""}</span></div>
     ${tabla("t-cl", cols, rows, { click: true, limit: 300, sel: r => r._i === claseSel })}
-    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto.</p></section>`;
+    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto. "Sin fotos": de esa clase solo tenemos el dato al empezar, así que no hay curva que ver.</p></section>`;
   $("#cl-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; clases(); const n = $("#cl-q"); n.focus(); n.setSelectionRange(p, p); });
+  $("#cl-sc").addEventListener("change", e => { el.dataset.sc = e.target.checked ? "1" : "0"; clases(); });
   enlazarTabla(el, "t-cl", clases, i => { claseSel = i; clases(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); });
   if (claseSel != null && !rows.some(r => r._i === claseSel)) claseSel = null;
   if (claseSel != null) detalleClase(claseSel);
@@ -614,14 +627,15 @@ function refrescar() { leerFiltros(); aplicar(); document.querySelectorAll('#zon
   $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" data-t="${k}" aria-selected="false">${l}</button>`).join("");
   $("#tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) activar(b.dataset.t); });
   montarFiltros();
-  ["#f-centro", "#f-marca"].forEach(s => $(s).addEventListener("change", () => { estudiosSelect(); refrescar(); }));
+  $("#f-centro").addEventListener("change", () => { marcasSelect(); estudiosSelect(); refrescar(); });
+  $("#f-marca").addEventListener("change", () => { estudiosSelect(); refrescar(); });
   ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest"].forEach(s => $(s).addEventListener("change", refrescar));
   $("#f-dias").addEventListener("change", refrescar);
   $("#f-reset").addEventListener("click", () => {
     ["#f-centro", "#f-marca", "#f-estudio", "#f-disc"].forEach(s => $(s).value = "");
     $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true;
     document.querySelectorAll("#f-dias input").forEach(x => x.checked = true);
-    estudiosSelect(); refrescar();
+    marcasSelect(); estudiosSelect(); refrescar();
   });
   window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (RENDER[h] && h !== tabActual) activar(h); });
   const t = location.hash.slice(1);
