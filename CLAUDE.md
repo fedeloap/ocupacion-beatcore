@@ -89,7 +89,9 @@ Interruptor "BeatCore vs resto" para comparar siempre la línea propia con la co
 - Opción elegida: **1 (`ignoreCommand` + `[deploy]`)**, en `vercel.json`. El workflow regenera `public/` en las capturas
   de 05:38, 12:38 y 20:38 UTC (7:38, 14:38 y 22:38 en horario de verano; una hora menos en invierno) o a mano
   (Actions → Run workflow → regenerar = 1), y ese commit lleva `[deploy]`.
-- Contraseña: `middleware.js` (Basic Auth, todas las rutas). Si `DASHBOARD_PASSWORD` no existe, la web queda cerrada.
+- Contraseña: `middleware.js` (pantalla de acceso solo con contraseña, sin usuario, cookie firmada de 30 días, cubre todas las rutas
+  incluido `data/*.json`). Si `DASHBOARD_PASSWORD` no existe, la web queda cerrada. `DASHBOARD_USER` ya no se usa.
+  Cambiar la contraseña invalida las sesiones abiertas.
 - Enlace del My Maps: `web/config.json` → `mapa_url`. **Falta que Fede lo dé.**
 - Disciplina de clase: regex sobre el nombre en `web.py` (`REGLAS`); si no dice nada, la del estudio en el catálogo.
   Pilates sin la palabra "reformer" cae en la disciplina del estudio (puede ser mat).
