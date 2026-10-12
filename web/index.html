@@ -60,6 +60,9 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 .chip { font-size: 13px !important; min-height: 28px !important; }
 .chip small { color: var(--muted); }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+[data-t="t-rit"] th { white-space: normal; vertical-align: bottom; line-height: 1.25; padding: 6px 8px; }
+[data-t="t-rit"] td { padding: 6px 8px; }
+[data-t="t-rit"] { overflow-x: auto; }
 button.vc { padding: 2px 10px; min-height: 28px; cursor: pointer; font-size: 13px; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
@@ -445,11 +448,11 @@ function curvas() {
   };
   const todas = [...por].map(([e, ix]) => ({ _i: e, estudio: EST[e].n, centro: zn(EST[e].z), propio: EST[e].p, ...calc(ix) }));
   const rows = todas.filter(r => momentos.some(j => r["n" + j] > 0));
-  const celda = (j, k) => ({ k: k + j, l: `A ${cps[j]} h: ${k === "o" ? "ocupación" : "% de lo final ya reservado"}`, n: 1,
+  const celda = (j, k) => ({ k: k + j, l: `A ${cps[j]} h antes: ${k === "o" ? "ocupación" : "% de lo final ya reservado"}`, n: 1,
     h: r => r[k + j] == null ? "–" : `${pct(r[k + j])}${k === "o" ? ` <small>(${r["n" + j]})</small>` : ""}` });
   const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
-    { k: "fin", l: "FINAL: ocupación al empezar", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` },
+    { k: "fin", l: "FINAL: ocupación al empezar la clase", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` },
     ...momentos.flatMap(j => [celda(j, "o"), celda(j, "p")])];
   if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
   el.innerHTML = `<section><h2>Cuánto llevan reservado antes de empezar</h2>
