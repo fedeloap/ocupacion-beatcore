@@ -106,7 +106,8 @@ def cargar_snapshots():
     s["clase_id"] = s["clase_id"].astype(str)
     s = s.drop_duplicates(KEY + ["captured_at"])
     s["inicio_local"] = pd.to_datetime(s["inicio_local"])
-    return s[KEY + ["clase", "inicio_local", "captured_at", "ocupadas", "libres", "llena"]]
+    return s[KEY + ["clase", "inicio_local", "captured_at", "capacidad", "ocupadas", "libres", "llena",
+                    "centro_beatcore", "cancelada", "duracion_min"]]
 
 
 def clave_clase(d):
@@ -118,6 +119,79 @@ def clave_clase(d):
     alt = (d["estudio"].astype(str) + "|" + d["sede"].astype(str) + "|"
            + d["inicio_local"].dt.strftime("%Y-%m-%d %H:%M") + "|" + d["clase"].astype(str))
     return alt.where(d["plataforma"] == "mindbody", d["clase_id"].astype(str))
+
+
+def fichas(c, mapa, propios):
+    """Por cada fila de c: (id catálogo, nombre, marca, propio, disciplina catálogo, centro), la tabla de
+    estudios únicos y el índice de cada fila en esa tabla."""
+    filas = []
+    for e, z in zip(c["estudio"], c["centro_beatcore"]):
+        r = mapa.get(f"{e}|{z}")
+        filas.append((int(r["id"]) if r is not None else -1,
+                      r["estudio"] if r is not None else e,
+                      r["marca"] if r is not None else e,
+                      bool(r["propio"]) if r is not None else e in propios,
+                      r["disciplina"] if r is not None else "",
+                      z))
+    est_tab, est_idx, e_idx = [], {}, []
+    for f in filas:
+        k = f[:2] + (f[5],)
+        if k not in est_idx:
+            est_idx[k] = len(est_tab)
+            est_tab.append({"id": f[0], "n": f[1], "m": f[2], "p": int(f[3]), "z": f[5]})
+        e_idx.append(est_idx[k])
+    return filas, est_tab, e_idx
+
+
+def proximas(snap, mapa, propios, festivos):
+    """Clases que aún no han empezado, con su última foto de reservas (planificación a 7 días)."""
+    vacio = {"n": 0, "ahora": "", "dic": {}, "estudios": []}
+    if snap.empty:
+        return vacio
+    ahora = snap["captured_at"].max()
+    s = snap[snap["inicio_local"] > ahora].copy()
+    s = s[s["centro_beatcore"].notna() & (s["centro_beatcore"].astype(str) != "")]
+    if s.empty:
+        return vacio
+    s["kid"] = clave_clase(s)
+    s["libres_n"] = pd.to_numeric(s["libres"], errors="coerce")
+    maxlib = s.groupby(["plataforma", "estudio", "sede", "kid"])["libres_n"].max().rename("max_libres")
+    s = s.sort_values("captured_at").groupby(["plataforma", "estudio", "sede", "kid"], as_index=False).tail(1)
+    s = s.merge(maxlib, left_on=["plataforma", "estudio", "sede", "kid"], right_index=True, how="left")
+    s = s[s["cancelada"].astype(str).str.lower() != "true"]
+    s = s.sort_values(["inicio_local", "estudio"]).reset_index(drop=True)
+    cap = pd.to_numeric(s["capacidad"], errors="coerce")
+    occ = pd.to_numeric(s["ocupadas"], errors="coerce")
+    lib = pd.to_numeric(s["libres"], errors="coerce")
+    est = (s["plataforma"] == "mindbody") & ~(cap > 0) & (s["max_libres"] > 0) & (s["max_libres"] <= analisis.AFORO_MAX_PLAUSIBLE)
+    fuente = pd.Series(np.where(cap > 0, 0, np.where(est, 1, np.nan)))
+    cap = cap.where(cap > 0, s["max_libres"].where(est))
+    occ = occ.where(occ.notna(), cap - lib)
+    res = occ.where(s["plataforma"] != "bsport").clip(lower=0)
+    res = res.where(cap.isna(), res.clip(upper=cap))
+    lleno = s["llena"].astype(str).str.lower().map({"true": True, "false": False})
+    lleno = lleno.where(lleno.notna(), (res / cap) >= 0.999).map({True: 1, False: 0})
+    filas, est_tab, e_idx = fichas(s, mapa, propios)
+    disc = [disciplina(k, f[4]) for k, f in zip(s["clase"], filas)]
+    fecha = s["inicio_local"].dt.strftime("%Y-%m-%d")
+    fest = [int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
+            for f, z in zip((festivos.get(d) for d in fecha), s["centro_beatcore"])]
+    d_centro, i_centro = indexar(s["centro_beatcore"])
+    d_plat, i_plat = indexar(s["plataforma"])
+    d_clase, i_clase = indexar(s["clase"])
+    d_fecha, i_fecha = indexar(fecha)
+    d_disc, i_disc = indexar(disc)
+    d_ts, i_ts = indexar(s["captured_at"].dt.strftime("%d/%m %H:%M"))
+    minutos = s["inicio_local"].dt.hour * 60 + s["inicio_local"].dt.minute
+    return {
+        "n": len(s), "ahora": ahora.strftime("%Y-%m-%d %H:%M"),
+        "dic": {"centro": d_centro, "plat": d_plat, "clase": d_clase, "fecha": d_fecha, "disc": d_disc, "ts": d_ts},
+        "estudios": est_tab,
+        "e": e_idx, "c": i_centro, "p": i_plat, "k": i_clase, "f": i_fecha, "d": i_disc, "t": i_ts,
+        "w": lista(s["inicio_local"].dt.weekday), "h": lista(minutos),
+        "a": lista(cap), "r": lista(res), "l": lista(lleno),
+        "af": lista(fuente), "fe": lista(pd.Series(fest)),
+    }
 
 
 def curvas(c, snap):
@@ -182,25 +256,12 @@ def main():
     c = c.sort_values(["inicio_local", "estudio", "clase_id"]).reset_index(drop=True)
 
     cat, mapa = cargar_catalogo()
-    filas = []
-    for e, z in zip(c["estudio"], c["centro_beatcore"]):
-        r = mapa.get(f"{e}|{z}")
-        filas.append((int(r["id"]) if r is not None else -1,
-                      r["estudio"] if r is not None else e,
-                      r["marca"] if r is not None else e,
-                      bool(r["propio"]) if r is not None else e in propios,
-                      r["disciplina"] if r is not None else "",
-                      z))
-    est_tab, est_idx = [], {}
-    e_idx = []
-    for f in filas:
-        if f[:2] + (f[5],) not in est_idx:
-            est_idx[f[:2] + (f[5],)] = len(est_tab)
-            est_tab.append({"id": f[0], "n": f[1], "m": f[2], "p": int(f[3]), "z": f[5]})
-        e_idx.append(est_idx[f[:2] + (f[5],)])
+    filas, est_tab, e_idx = fichas(c, mapa, propios)
 
     disc = [disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
-    cr, cl, hf, hf0 = curvas(c, cargar_snapshots())
+    snap = cargar_snapshots()
+    cr, cl, hf, hf0 = curvas(c, snap)
+    prox = proximas(snap, mapa, propios, festivos)
 
     d_centro, i_centro = indexar(c["centro_beatcore"])
     d_plat, i_plat = indexar(c["plataforma"])
@@ -247,7 +308,9 @@ def main():
         "festivos": {k: v["nombre"] for k, v in festivos.items()},
     }
 
-    tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta))}
+    meta["proximas"] = prox["n"]
+    tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
+                                          ("proximas.json", prox))}
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))

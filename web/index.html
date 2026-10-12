@@ -139,6 +139,7 @@ a { color: var(--accent); }
 <section class="panel" id="p-ocupacion" role="tabpanel" hidden></section>
 <section class="panel" id="p-curvas" role="tabpanel" hidden></section>
 <section class="panel" id="p-clases" role="tabpanel" hidden></section>
+<section class="panel" id="p-proximas" role="tabpanel" hidden></section>
 <section class="panel" id="p-precios" role="tabpanel" hidden></section>
 <section class="panel" id="p-estudios" role="tabpanel" hidden></section>
 <section class="panel" id="p-mapa" role="tabpanel" hidden></section>
@@ -160,9 +161,9 @@ const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagr
 const ZN = { "Valencia": "Valencia (Ruzafa)" };
 const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
-const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
 
-let D, CAT, META, N, OCC, EST, HC;           // datos
+let D, CAT, META, N, OCC, EST, HC, PX = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
 const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
 let tabActual = "resumen", chart = null, claseSel = null;
@@ -172,6 +173,7 @@ const sortState = {};
 async function cargar() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
+  try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
   N = D.n;
   EST = D.estudios;
   OCC = new Array(N);
@@ -432,7 +434,7 @@ function ocupacion() {
 
 function curvas() {
   const el = $("#p-curvas");
-  const cps = D.checkpoints, momentos = [4, 5, 6, 8]; // 24 h, 12 h, 6 h, 1 h
+  const cps = D.checkpoints, momentos = [4, 6, 8]; // 24 h, 6 h, 1 h
   const por = new Map();
   for (const i of [...GA, ...GB]) { const e = D.e[i]; if (!por.has(e)) por.set(e, []); por.get(e).push(i); }
   const calc = ix => {
@@ -459,7 +461,7 @@ function curvas() {
     { k: "fin", l: "Total (al empezar)", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` }];
   if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
   el.innerHTML = `<section><h2>Ocupación antes de empezar la clase</h2>
-    <p class="meta">Qué % de plazas estaba reservado 24, 12, 6 y 1 hora antes de empezar, y cuánto al empezar.</p>
+    <p class="meta">Qué % de plazas estaba reservado 24, 6 y 1 hora antes de empezar, y cuánto al empezar.</p>
     ${tabla("t-rit", cols, rows, { limit: 300 })}
     <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
       <li>Una fila por estudio. Cada número es el <b>% de plazas reservadas</b> en ese momento, de media entre sus clases.</li>
@@ -483,6 +485,57 @@ function curvas() {
       <li>Es una estimación: la clase pudo llenarse en cualquier momento entre una foto y la anterior.</li>
     </ul></div>`;
   enlazarTabla(el, "t-rit", curvas);
+}
+
+function proximas() {
+  const el = $("#p-proximas");
+  if (!PX || !PX.n) { el.innerHTML = '<p class="vacio-msg">Todavía no hay clases próximas capturadas.</p>'; return; }
+  const P = PX, EP = P.estudios, q = (el.dataset.q || "").toLowerCase(), dia = el.dataset.dia || "";
+  const estSel = F.estudio !== "" ? EST[+F.estudio] : null;
+  const rows = [];
+  for (let i = 0; i < P.n; i++) {
+    const e = EP[P.e[i]], f = P.dic.fecha[P.f[i]];
+    if (F.centro && P.dic.centro[P.c[i]] !== F.centro) continue;
+    if (F.disc && P.dic.disc[P.d[i]] !== F.disc) continue;
+    if (!F.dias.has(P.w[i]) || (!F.fest && P.fe[i])) continue;
+    const h = P.h[i] / 60;
+    if (h < F.h0 || h >= F.h1) continue;
+    if ((F.f0 && f < F.f0) || (F.f1 && f > F.f1) || (dia && f !== dia)) continue;
+    if (F.marca && e.m !== F.marca) continue;
+    if (estSel && !(e.n === estSel.n && e.z === estSel.z)) continue;
+    const hh = String(Math.floor(P.h[i] / 60)).padStart(2, "0") + ":" + String(P.h[i] % 60).padStart(2, "0");
+    const a = P.a[i], r = P.r[i];
+    const row = { _i: i, fecha: f, hora: hh, centro: zn(P.dic.centro[P.c[i]]), estudio: e.n, propio: e.p, clase: P.dic.clase[P.k[i]],
+      disc: P.dic.disc[P.d[i]], plat: P.dic.plat[P.p[i]], aforo: a, est: P.af[i] === 1, res: r,
+      ocup: r != null && a > 0 ? Math.min(1, r / a) : null, llena: P.l[i] == null ? null : P.l[i] === 1, foto: P.dic.ts[P.t[i]] };
+    if (q && !(row.estudio + " " + row.clase + " " + row.disc).toLowerCase().includes(q)) continue;
+    rows.push(row);
+  }
+  const mA = metricas2(rows.filter(r => r.propio)), mB = metricas2(rows.filter(r => !r.propio));
+  const cols = [{ k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
+    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "clase", l: "Clase" }, { k: "disc", l: "Disciplina" }, { k: "plat", l: "Plataforma" },
+    { k: "aforo", l: "Plazas", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Reservadas", n: 1 },
+    { k: "ocup", l: "Reservado ahora", n: 1, h: r => r.llena === true ? "<b>Llena</b>" : (r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 60)}px"></span>${pct(r.ocup)}`) },
+    { k: "foto", l: "Dato de" }];
+  if (!sortState["t-px"]) sortState["t-px"] = { k: "fecha", dir: 1 };
+  const dias = [...new Set(P.dic.fecha)].sort();
+  const kpi = (cl, v, t) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span></div>`;
+  el.innerHTML = `<section><h2>Próximas clases y cuánto llevan reservado</h2>
+    <p class="meta">Reservas en la última foto que tenemos de cada clase (columna "Dato de"). Aún pueden subir o bajar hasta que empiece la clase.</p>
+    <div class="kpis">${kpi("a", pct(mA.ocup), "BeatCore: reservado ahora (" + mA.n + " clases)")}${kpi("b", pct(mB.ocup), "Competencia: reservado ahora (" + mB.n + " clases)")}</div>
+    <div class="row"><label>Día <select id="px-dia"><option value="">Todos</option>${dias.map(d => `<option value="${d}"${d === dia ? " selected" : ""}>${d}</option>`).join("")}</select></label>
+    <input type="search" id="px-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar">
+    <span class="meta">${rows.length} clases</span></div>
+    ${tabla("t-px", cols, rows, { limit: 400 })}
+    <p class="nota">* plazas estimadas (Mindbody, cota inferior). Los filtros de arriba (centro, marca, estudio, disciplina, día, horas) también se aplican aquí. Última captura: ${esc(P.ahora)}.</p></section>`;
+  $("#px-dia").addEventListener("change", e => { el.dataset.dia = e.target.value; proximas(); });
+  $("#px-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; proximas(); const n = $("#px-q"); n.focus(); n.setSelectionRange(p, p); });
+  enlazarTabla(el, "t-px", proximas);
+}
+function metricas2(rows) {
+  const o = rows.map(r => r.ocup).filter(v => v != null);
+  return { n: rows.length, ocup: mean(o) };
 }
 
 function claseCols() {
@@ -626,7 +679,7 @@ function mapa() {
 }
 
 /* ---------- arranque ---------- */
-const RENDER = { resumen, ocupacion, curvas, clases, precios, estudios, mapa };
+const RENDER = { resumen, ocupacion, curvas, clases, proximas, precios, estudios, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {
   tabActual = t;
