@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Competencia BeatCore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f6f7f5; --surface: #ffffff; --fg: #1d2724; --muted: #5d6b66; --line: #dde3e0;
+  --accent: #0f6b5c; --accent-rgb: 15 107 92; --comp: #c2570c; --comp-rgb: 194 87 12;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #121816; --surface: #19211e; --fg: #e5ece9; --muted: #9aaba5; --line: #2b3632;
+    --accent: #5fc4b0; --accent-rgb: 95 196 176; --comp: #f09a55; --comp-rgb: 240 154 85; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #121816; --surface: #19211e; --fg: #e5ece9; --muted: #9aaba5; --line: #2b3632;
+  --accent: #5fc4b0; --accent-rgb: 95 196 176; --comp: #f09a55; --comp-rgb: 240 154 85; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 56px; display: grid; gap: 18px; }
+main > *, .panel > * { min-width: 0; }
+.eyebrow { margin: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+h1 { margin: 2px 0 4px; font-family: var(--display); font-weight: 800; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; }
+h2 { margin: 0 0 10px; font-family: var(--display); font-weight: 700; font-size: 19px; }
+h3 { margin: 0 0 6px; font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--muted); }
+.meta, .nota { margin: 0; color: var(--muted); font-size: 13px; max-width: 80ch; }
+.nota { margin-top: 8px; }
+.aviso { background: rgb(var(--comp-rgb) / .12); border: 1px solid rgb(var(--comp-rgb) / .5); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+details.filtros { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+details.filtros summary { cursor: pointer; font-weight: 600; font-family: var(--display); }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin-top: 12px; align-items: end; }
+.fgrid label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+select, input[type=date], button { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 36px; }
+.rango { display: flex; gap: 6px; align-items: center; }
+.rango > * { flex: 1; min-width: 0; }
+.dias { display: flex; flex-wrap: wrap; gap: 4px; }
+.dias label { flex-direction: row; display: flex; align-items: center; gap: 4px; text-transform: none; letter-spacing: 0; font-size: 13px;
+  border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; min-height: 36px; background: var(--bg); color: var(--fg); }
+.sw { display: flex !important; flex-direction: row !important; align-items: center; gap: 8px; text-transform: none !important; letter-spacing: 0 !important;
+  font-size: 14px !important; color: var(--fg) !important; min-height: 36px; }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
+nav.tabs button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; padding: 8px 12px; white-space: nowrap; font-weight: 600; color: var(--muted); cursor: pointer; }
+nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
+.panel[hidden] { display: none; }
+.panel { display: grid; gap: 22px; min-width: 0; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.kpi b { display: block; font-family: var(--display); font-size: 26px; line-height: 1.1; }
+.kpi span { font-size: 12px; color: var(--muted); }
+.kpi.a b { color: var(--accent); } .kpi.b b { color: var(--comp); }
+.scroll { overflow: auto; max-height: 70vh; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 14px; }
+th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: var(--surface); position: sticky; top: 0; z-index: 1; }
+th.sort { cursor: pointer; user-select: none; }
+td.n, th.n { text-align: right; }
+tbody tr.click { cursor: pointer; } tbody tr.click:hover { background: rgb(var(--accent-rgb) / .08); }
+tr.sel { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: rgb(var(--accent-rgb) / .15); color: var(--accent); }
+.tag.b { background: rgb(var(--comp-rgb) / .15); color: var(--comp); }
+.heats { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; }
+.heats > div { min-width: 0; }
+table.heat td, table.heat th { text-align: center; padding: 5px 4px; font-size: 12px; }
+table.heat td { background: rgb(var(--c) / calc(var(--o) * .85)); }
+table.heat td.dark { color: #fff; }
+table.heat td.vacio { background: transparent; }
+.bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--comp); vertical-align: middle; margin-right: 6px; }
+.bar.a { background: var(--accent); }
+.chartbox { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px; position: relative; height: 340px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+iframe.mapa { width: 100%; height: 70vh; min-height: 420px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+a { color: var(--accent); }
+.vacio-msg { color: var(--muted); padding: 16px; }
+@media (max-width: 600px) { th, td { padding: 6px 7px; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <p class="eyebrow">The Boutique Tribe · análisis de competencia</p>
+  <h1>Competencia BeatCore</h1>
+  <p class="meta" id="meta">Cargando datos…</p>
+</header>
+<div id="aviso" class="aviso" hidden></div>
+
+<details class="filtros" open id="filtros">
+  <summary>Filtros</summary>
+  <div class="fgrid">
+    <label>Centro BeatCore<select id="f-centro"></select></label>
+    <label>Marca / cadena<select id="f-marca"></select></label>
+    <label>Estudio<select id="f-estudio"></select></label>
+    <label>Disciplina<select id="f-disc"></select></label>
+    <label>Horas<span class="rango"><select id="f-h0"></select><select id="f-h1"></select></span></label>
+    <label>Fechas<span class="rango"><input type="date" id="f-f0"><input type="date" id="f-f1"></span></label>
+    <label>Día de la semana<span class="dias" id="f-dias"></span></label>
+    <label class="sw"><input type="checkbox" id="f-fest" checked> Incluir festivos</label>
+    <label class="sw"><input type="checkbox" id="f-vs" checked> BeatCore vs resto (BeatCore ignora marca y estudio)</label>
+    <button type="button" id="f-reset">Quitar filtros</button>
+  </div>
+</details>
+
+<nav class="tabs" role="tablist" id="tabs"></nav>
+
+<section class="panel" id="p-resumen" role="tabpanel"></section>
+<section class="panel" id="p-ocupacion" role="tabpanel" hidden></section>
+<section class="panel" id="p-curvas" role="tabpanel" hidden></section>
+<section class="panel" id="p-clases" role="tabpanel" hidden></section>
+<section class="panel" id="p-precios" role="tabpanel" hidden></section>
+<section class="panel" id="p-estudios" role="tabpanel" hidden></section>
+<section class="panel" id="p-mapa" role="tabpanel" hidden></section>
+</main>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = v => v == null || isNaN(v) ? "–" : Math.round(v * 100) + "%";
+const num = (v, d = 1) => v == null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
+const eur = v => v == null ? "–" : v.toFixed(v % 1 ? 2 : 0).replace(".", ",") + " €";
+const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
+const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+const DISCS = ["Reformer", "Lagree", "Barre", "Yoga", "HIIT/Funcional", "Ciclo", "Boxeo", "Otros"];
+const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagree": "Lagree", "Barre": "Barre", "Yoga": "Yoga", "Hot yoga": "Yoga",
+  "Funcional": "HIIT/Funcional", "HIIT": "HIIT/Funcional", "Crossfit": "HIIT/Funcional", "Indoor cycling": "Ciclo", "Boxeo": "Boxeo" };
+const ZN = { "Valencia": "Valencia (Ruzafa)" };
+const zn = z => ZN[z] || z;
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Curvas de reserva"], ["clases", "Clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
+
+let D, CAT, META, N, OCC, EST;           // datos
+let CATROWS = [];                        // catálogo como objetos
+const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
+let tabActual = "resumen", chart = null, claseSel = null;
+const sortState = {};
+
+/* ---------- carga ---------- */
+async function cargar() {
+  const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+  [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
+  N = D.n;
+  EST = D.estudios;
+  OCC = new Array(N);
+  for (let i = 0; i < N; i++) OCC[i] = D.r[i] != null && D.a[i] > 0 ? Math.min(1, D.r[i] / D.a[i]) : null;
+  CATROWS = CAT.rows.map(r => Object.fromEntries(CAT.cols.map((c, j) => [c, r[j]])));
+  CATROWS.forEach(r => { r.disc_n = DISC_CAT[r.disciplina] || "Otros"; r.con_precio = r.precios_publicados === "Sí" || r.precios_publicados === "Parcial"; r.con_occ = !!r.captura; });
+}
+
+/* ---------- filtros ---------- */
+function opciones(sel, items, todo) {
+  const v = sel.value;
+  sel.innerHTML = `<option value="">${esc(todo)}</option>` + items.map(([val, lab]) => `<option value="${esc(val)}">${esc(lab)}</option>`).join("");
+  if ([...sel.options].some(o => o.value === v)) sel.value = v; else sel.value = "";
+}
+function montarFiltros() {
+  opciones($("#f-centro"), D.dic.centro.map(c => [c, zn(c)]), "Todos");
+  const marcas = [...new Set(EST.map(e => e.m))].sort((a, b) => a.localeCompare(b, "es"));
+  opciones($("#f-marca"), marcas.map(m => [m, m]), "Todas");
+  opciones($("#f-disc"), DISCS.map(d => [d, d]), "Todas");
+  const horas = Array.from({ length: 25 }, (_, h) => [h, String(h).padStart(2, "0") + ":00"]);
+  $("#f-h0").innerHTML = horas.slice(0, 24).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  $("#f-h1").innerHTML = horas.slice(1).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  $("#f-h1").value = 24;
+  $("#f-dias").innerHTML = DIAS.map((d, i) => `<label><input type="checkbox" data-d="${i}" checked>${d}</label>`).join("");
+  $("#f-f0").min = $("#f-f1").min = META.desde; $("#f-f0").max = $("#f-f1").max = META.hasta;
+  estudiosSelect();
+  $("#filtros").open = window.innerWidth > 700;
+}
+function estudiosSelect() {
+  const c = $("#f-centro").value, m = $("#f-marca").value;
+  const lista = EST.map((e, i) => [i, e]).filter(([, e]) => (!c || D.dic.centro[0] === undefined || e.z === c) && (!m || e.m === m))
+    .sort((a, b) => a[1].n.localeCompare(b[1].n, "es"));
+  opciones($("#f-estudio"), lista.map(([i, e]) => [i, e.n + (c ? "" : " · " + zn(e.z))]), "Todos");
+}
+function leerFiltros() {
+  F.centro = $("#f-centro").value; F.marca = $("#f-marca").value; F.estudio = $("#f-estudio").value; F.disc = $("#f-disc").value;
+  F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked;
+  F.dias = new Set([...document.querySelectorAll("#f-dias input:checked")].map(x => +x.dataset.d));
+}
+function pasaBase(i) {
+  if (F.centro && D.dic.centro[D.c[i]] !== F.centro) return false;
+  if (F.disc && D.dic.disc[D.d[i]] !== F.disc) return false;
+  if (!F.dias.has(D.w[i])) return false;
+  if (!F.fest && D.fe[i]) return false;
+  const h = D.h[i] / 60;
+  if (h < F.h0 || h >= F.h1) return false;
+  const f = D.dic.fecha[D.f[i]];
+  if (F.f0 && f < F.f0) return false;
+  if (F.f1 && f > F.f1) return false;
+  return true;
+}
+function pasaComp(i) {
+  if (F.marca && EST[D.e[i]].m !== F.marca) return false;
+  if (F.estudio !== "" && D.e[i] !== +F.estudio) return false;
+  return true;
+}
+let GA = [], GB = [];
+function aplicar() {
+  GA = []; GB = [];
+  for (let i = 0; i < N; i++) {
+    if (!pasaBase(i)) continue;
+    if (EST[D.e[i]].p) { if (F.vs || pasaComp(i)) GA.push(i); }
+    else if (pasaComp(i)) GB.push(i);
+  }
+}
+
+/* ---------- métricas ---------- */
+function metricas(ix) {
+  const occ = ix.map(i => OCC[i]).filter(v => v != null);
+  const ll = ix.map(i => D.l[i]).filter(v => v != null);
+  const res = ix.filter(i => D.r[i] != null).map(i => D.r[i]);
+  const af = ix.filter(i => D.a[i] != null).map(i => D.a[i]);
+  return { n: ix.length, nocc: occ.length, ocup: mean(occ), llenas: mean(ll), res: mean(res), aforo: mean(af) };
+}
+function mediaCurva(ix, j, modo) {
+  const v = [];
+  for (const i of ix) {
+    if (modo === "llenas") { const x = D.cl[j][i]; if (x != null) v.push(x); }
+    else { const r = D.cr[j][i], a = D.a[i]; if (r != null && a > 0) v.push(Math.min(1, r / a)); }
+  }
+  return { v: mean(v), n: v.length };
+}
+
+/* ---------- utilidades de tabla ---------- */
+function tabla(id, cols, rows, o = {}) {
+  const st = sortState[id] || (sortState[id] = o.sort || null);
+  let data = rows;
+  if (st) { const c = cols.find(c => c.k === st.k); data = [...rows].sort((a, b) => {
+    const x = a[st.k], y = b[st.k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+    return (typeof x === "string" ? x.localeCompare(y, "es") : x - y) * st.dir; }); }
+  const lim = o.limit || 400, vis = data.slice(0, lim);
+  const th = cols.map(c => `<th class="${c.n ? "n " : ""}sort" data-k="${c.k}">${esc(c.l)}${st && st.k === c.k ? (st.dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("");
+  const body = vis.map((r, ix) => `<tr class="${o.click ? "click" : ""}${o.sel && o.sel(r) ? " sel" : ""}" data-i="${r._i ?? ix}">` +
+    cols.map(c => `<td class="${c.n ? "n" : ""}">${c.h ? c.h(r) : esc(c.f ? c.f(r[c.k], r) : r[c.k] ?? "–")}</td>`).join("") + "</tr>").join("");
+  const extra = data.length > lim ? `<p class="nota">Mostrando ${lim} de ${data.length} filas. Filtra o ordena para ver otras.</p>` : "";
+  return `<div class="scroll" data-t="${id}"><table><thead><tr>${th}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length}" class="vacio-msg">Sin datos con estos filtros</td></tr>`}</tbody></table></div>${extra}`;
+}
+function enlazarTabla(el, id, render, onRow) {
+  el.querySelectorAll(`[data-t="${id}"] th.sort`).forEach(th => th.addEventListener("click", () => {
+    const k = th.dataset.k, st = sortState[id];
+    sortState[id] = { k, dir: st && st.k === k ? -st.dir : (th.classList.contains("n") ? -1 : 1) };
+    render();
+  }));
+  if (onRow) el.querySelectorAll(`[data-t="${id}"] tbody tr.click`).forEach(tr => tr.addEventListener("click", () => onRow(+tr.dataset.i)));
+}
+const lin = ix => ix === GA ? '<span class="tag">BeatCore</span>' : '<span class="tag b">Competencia</span>';
+
+/* ---------- pestañas ---------- */
+function resumen() {
+  const A = metricas(GA), B = metricas(GB);
+  const kpi = (cl, v, t) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span></div>`;
+  let h = `<div class="kpis">${kpi("a", pct(A.ocup), "Ocupación media BeatCore")}${kpi("b", pct(B.ocup), "Ocupación media competencia")}
+    ${kpi("a", pct(A.llenas), "Clases llenas BeatCore")}${kpi("b", pct(B.llenas), "Clases llenas competencia")}
+    ${kpi("a", A.n, "Clases BeatCore")}${kpi("b", B.n, "Clases competencia")}</div>`;
+  const filas = [];
+  for (const z of D.dic.centro) {
+    if (F.centro && z !== F.centro) continue;
+    for (const [g, nom] of [[GA, "BeatCore"], [GB, "Competencia"]]) {
+      const ix = g.filter(i => D.dic.centro[D.c[i]] === z), m = metricas(ix);
+      filas.push({ centro: zn(z), linea: nom, n: m.n, ocup: m.ocup, llenas: m.llenas, res: m.res, aforo: m.aforo, estudios: new Set(ix.map(i => D.e[i])).size });
+    }
+  }
+  const cols = [{ k: "centro", l: "Centro" }, { k: "linea", l: "Línea", h: r => r.linea === "BeatCore" ? '<span class="tag">BeatCore</span>' : '<span class="tag b">Competencia</span>' },
+    { k: "estudios", l: "Estudios", n: 1 }, { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct },
+    { k: "llenas", l: "% clases llenas", n: 1, f: pct }, { k: "res", l: "Reservas/clase", n: 1, f: v => num(v) }, { k: "aforo", l: "Aforo medio", n: 1, f: v => num(v) }];
+  h += `<section><h2>BeatCore vs competencia por centro</h2>${tabla("t-res", cols, filas)}
+    <p class="nota">Ocupación media: clases con aforo conocido o estimado (Momence, Glofox, Mariana Tek y Mindbody). Mindbody sin aforo publicado usa el máximo de plazas libres visto (cota inferior). bsport solo informa de si la clase está llena: cuenta en % llenas, no en ocupación. Las reservas no son asistencia.</p></section>`;
+  // cobertura
+  const cr = catFiltrado(false), zonas = [...new Set(CATROWS.map(r => r.zona))];
+  const cob = zonas.filter(z => !F.centro || z === F.centro).map(z => {
+    const r = cr.filter(x => x.zona === z && !x.propio);
+    return { centro: zn(z), n: r.length, p: r.filter(x => x.con_precio).length, o: r.filter(x => x.con_occ).length,
+      ambos: r.filter(x => x.con_precio && x.con_occ).length, nada: r.filter(x => !x.con_precio && !x.con_occ).length };
+  });
+  h += `<section><h2>Cobertura por centro (competencia)</h2>${tabla("t-cob", [{ k: "centro", l: "Centro" }, { k: "n", l: "Estudios", n: 1 }, { k: "p", l: "Con precios", n: 1 },
+    { k: "o", l: "Con ocupación", n: 1 }, { k: "ambos", l: "Ambos", n: 1 }, { k: "nada", l: "Sin nada", n: 1 }], cob)}
+    <p class="nota">Catálogo de estudios a 1 km de cada centro. "Con precios" incluye precios parciales. No incluye los 4 centros BeatCore.</p></section>`;
+  $("#p-resumen").innerHTML = h;
+  enlazarTabla($("#p-resumen"), "t-res", resumen); enlazarTabla($("#p-resumen"), "t-cob", resumen);
+}
+
+function heatmap(ix, titulo, rgb) {
+  const sum = {}, cnt = {};
+  let hmin = 24, hmax = 0;
+  for (const i of ix) {
+    if (OCC[i] == null) continue;
+    const h = Math.floor(D.h[i] / 60), k = h * 7 + D.w[i];
+    sum[k] = (sum[k] || 0) + OCC[i]; cnt[k] = (cnt[k] || 0) + 1;
+    hmin = Math.min(hmin, h); hmax = Math.max(hmax, h);
+  }
+  if (hmin > hmax) return `<div><h3>${titulo}</h3><p class="vacio-msg">Sin datos con ocupación</p></div>`;
+  let h = `<div><h3>${titulo}</h3><div class="scroll"><table class="heat"><thead><tr><th></th>${DIAS.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
+  for (let hr = hmin; hr <= hmax; hr++) {
+    h += `<tr><th>${String(hr).padStart(2, "0")}h</th>`;
+    for (let d = 0; d < 7; d++) {
+      const k = hr * 7 + d;
+      if (!cnt[k]) { h += `<td class="vacio"></td>`; continue; }
+      const v = sum[k] / cnt[k];
+      h += `<td class="${v > .6 ? "dark" : ""}" style="--c:${rgb};--o:${v.toFixed(2)}" title="${cnt[k]} clases">${Math.round(v * 100)}</td>`;
+    }
+    h += "</tr>";
+  }
+  return h + `</tbody></table></div></div>`;
+}
+function ocupacion() {
+  let h = `<section><h2>Mapa de calor: ocupación media por día y hora</h2><div class="heats">${heatmap(GA, "BeatCore", "var(--accent-rgb)")}${heatmap(GB, "Competencia", "var(--comp-rgb)")}</div>
+    <p class="nota">% de ocupación media de las clases que empiezan en cada hora. Pasa el ratón (o mantén pulsado) para ver cuántas clases hay detrás.</p></section>`;
+  const por = new Map();
+  for (const i of [...GA, ...GB]) {
+    const e = D.e[i]; if (!por.has(e)) por.set(e, []);
+    por.get(e).push(i);
+  }
+  const rows = [...por].map(([e, ix]) => { const m = metricas(ix); return { _i: e, estudio: EST[e].n, centro: zn(EST[e].z), marca: EST[e].m, propio: EST[e].p, n: m.n, nocc: m.nocc, ocup: m.ocup, llenas: m.llenas, aforo: m.aforo }; });
+  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
+    { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
+    { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Aforo medio", n: 1, f: v => num(v) }];
+  if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
+  h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}
+    <p class="nota">Con pocas clases por estudio, la media no es fiable: mira la columna Clases.</p></section>`;
+  $("#p-ocupacion").innerHTML = h;
+  enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
+}
+
+function curvas() {
+  const el = $("#p-curvas");
+  const modo = el.dataset.modo || "ocup";
+  const cps = D.checkpoints;
+  const sA = cps.map((_, j) => mediaCurva(GA, j, modo)), sB = cps.map((_, j) => mediaCurva(GB, j, modo));
+  el.innerHTML = `<section><h2>Curvas de reserva</h2>
+    <div class="row"><label>Métrica <select id="c-modo"><option value="ocup">% ocupación (sin bsport)</option><option value="llenas">% clases llenas (con bsport)</option></select></label></div>
+    <div class="chartbox"><canvas id="c-canvas" aria-label="Curva de reservas"></canvas></div>
+    <div class="scroll"><table><thead><tr><th>Horas antes</th>${cps.map(c => `<th class="n">${c} h</th>`).join("")}</tr></thead><tbody>
+    <tr><td><span class="tag">BeatCore</span></td>${sA.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr>
+    <tr><td><span class="tag b">Competencia</span></td>${sB.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr></tbody></table></div>
+    <p class="nota">Para cada hora, el último snapshot anterior a esa hora (tolerancia: máx. 1 h o el 50 % de las horas). Entre paréntesis, nº de clases que tienen dato. La curva larga (7 días) solo hay dos veces al día y empieza cuando empezó la captura.</p></section>
+    <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
+  $("#c-modo").value = modo;
+  $("#c-modo").addEventListener("change", e => { el.dataset.modo = e.target.value; curvas(); });
+  if (chart) chart.destroy();
+  const css = getComputedStyle(document.documentElement);
+  const rgb = v => `rgb(${css.getPropertyValue(v).trim().split(" ").join(",")})`;
+  chart = new Chart($("#c-canvas"), { type: "line",
+    data: { labels: cps.map(c => c + " h"), datasets: [
+      { label: "BeatCore", data: sA.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--accent-rgb"), backgroundColor: rgb("--accent-rgb"), spanGaps: true, tension: .2 },
+      { label: "Competencia", data: sB.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: modo === "ocup" ? "% ocupación" : "% clases llenas" } },
+      x: { title: { display: true, text: "Antes del inicio de la clase" } } }, plugins: { tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.parsed.y)}%` } } } } });
+  const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
+    ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
+  const fila = (g, nom) => { const s = hf(g); return `<tr><td>${nom}</td><td class="n">${s.n} de ${s.tot}</td><td class="n">${s.n ? pct(s.ya / s.n) : "–"}</td><td class="n">${s.med == null ? "–" : num(s.med) + " h"}</td><td class="n">${s.med2 == null ? "–" : num(s.med2) + " h"}</td></tr>`; };
+  $("#c-hf").innerHTML = `<div class="scroll"><table><thead><tr><th>Línea</th><th class="n">Clases que se llenan</th><th class="n">Ya llenas en la 1ª foto</th><th class="n">Mediana (todas)</th><th class="n">Mediana (sin las ya llenas)</th></tr></thead><tbody>
+    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>
+    <p class="nota">Horas antes del inicio en que aparece por primera vez una foto con la clase llena. Es una <b>cota superior</b>: se llenó en algún momento entre esa foto y la anterior. Si ya estaba llena en la primera foto que tenemos, el dato real es mayor (columna "ya llenas").</p>`;
+}
+
+function claseCols() {
+  return [
+    { k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
+    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "clase", l: "Clase" }, { k: "disc", l: "Disciplina" }, { k: "plat", l: "Plataforma" },
+    { k: "aforo", l: "Aforo", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Reservas", n: 1 },
+    { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llena", l: "Llena", f: v => v == null ? "–" : v ? "Sí" : "No" },
+    { k: "hf", l: "Llena desde (h antes)", n: 1, f: (v, r) => v == null ? "–" : (r.hf0 ? "≥ " : "") + num(v) }];
+}
+function filaClase(i) {
+  const e = EST[D.e[i]];
+  const m = D.h[i], hh = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+  return { _i: i, fecha: D.dic.fecha[D.f[i]], hora: hh, centro: zn(D.dic.centro[D.c[i]]), estudio: e.n, propio: e.p, clase: D.dic.clase[D.k[i]],
+    disc: D.dic.disc[D.d[i]], plat: D.dic.plat[D.p[i]], aforo: D.a[i], est: D.af[i] === 1, res: D.r[i], ocup: OCC[i],
+    llena: D.l[i] == null ? null : D.l[i] === 1, hf: D.hf[i], hf0: D.hf0[i] === 1 };
+}
+function clases() {
+  const rows = [...GA, ...GB].map(filaClase);
+  if (!sortState["t-cl"]) sortState["t-cl"] = { k: "fecha", dir: -1 };
+  $("#p-clases").innerHTML = `<section><h2>Clase a clase</h2>${tabla("t-cl", claseCols(), rows, { click: true, limit: 300, sel: r => r._i === claseSel })}
+    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto. Pulsa una fila para ver su curva.</p></section>
+    <section id="cl-det"></section>`;
+  enlazarTabla($("#p-clases"), "t-cl", clases, i => { claseSel = i; clases(); });
+  if (claseSel != null) detalleClase(claseSel);
+}
+function detalleClase(i) {
+  const r = filaClase(i), cps = D.checkpoints, bs = D.dic.plat[D.p[i]] === "bsport";
+  const vals = cps.map((_, j) => bs ? (D.cl[j][i] == null ? null : D.cl[j][i] * 100) : (D.cr[j][i] != null && D.a[i] > 0 ? Math.min(100, D.cr[j][i] / D.a[i] * 100) : null));
+  $("#cl-det").innerHTML = `<h2>${esc(r.clase)} · ${esc(r.estudio)}</h2><p class="meta">${r.fecha} ${r.hora} · ${esc(r.centro)} · ${esc(r.plat)} · aforo ${r.aforo ?? "–"} · reservas finales ${r.res ?? "–"}${bs ? " · bsport: 100 = llena, 0 = no llena" : ""}</p>
+    <div class="chartbox"><canvas id="cl-canvas"></canvas></div>${vals.every(v => v == null) ? '<p class="nota">Esta clase no tiene snapshots en los checkpoints (la captura larga empezó hace poco).</p>' : ""}`;
+  if (chart) chart.destroy();
+  const css = getComputedStyle(document.documentElement);
+  const c = `rgb(${css.getPropertyValue(r.propio ? "--accent-rgb" : "--comp-rgb").trim().split(" ").join(",")})`;
+  chart = new Chart($("#cl-canvas"), { type: "line", data: { labels: cps.map(x => x + " h"), datasets: [{ label: bs ? "% llena" : "% ocupación", data: vals, borderColor: c, backgroundColor: c, spanGaps: true, tension: .2 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } } });
+  $("#cl-det").scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+/* catálogo filtrado (sin filtros de fecha/hora/día, que no aplican) */
+function catFiltrado(conPropios = true) {
+  const idE = F.estudio !== "" ? EST[+F.estudio].id : null;
+  return CATROWS.filter(r => (conPropios || !r.propio) && (!F.centro || r.zona === F.centro) && (!F.marca || r.marca === F.marca) &&
+    (idE == null || r.id === idE) && (!F.disc || r.disc_n === F.disc));
+}
+function precios() {
+  const rows = catFiltrado().filter(r => !r.propio && r.con_precio);
+  const cp = [["clase_suelta", "Clase suelta"], ["cuatro_mes", "4 al mes"], ["ocho_mes", "8 al mes"], ["ilimitada", "Ilimitada"], ["oferta_entrada", "Oferta entrada"]];
+  const med = [...new Set(rows.map(r => r.zona))].map(z => {
+    const g = rows.filter(r => r.zona === z), o = { centro: zn(z), n: g.length };
+    cp.forEach(([k]) => { const v = g.map(r => r[k]).filter(x => x != null); o[k] = median(v); o[k + "_n"] = v.length; });
+    return o;
+  });
+  const colsM = [{ k: "centro", l: "Centro" }, { k: "n", l: "Estudios con precios", n: 1 }, ...cp.map(([k, l]) => ({ k, l: "Mediana " + l.toLowerCase(), n: 1, f: eur }))];
+  const colsT = [{ k: "estudio", l: "Estudio" }, { k: "zona", l: "Centro", f: zn }, { k: "marca", l: "Marca" }, ...cp.map(([k, l]) => ({ k, l, n: 1, f: eur })),
+    { k: "precios_publicados", l: "Precios" }];
+  $("#p-precios").innerHTML = `<section><h2>Medianas por centro</h2>${tabla("t-med", colsM, med)}
+    <p class="nota">Competencia con precios publicados. Los precios de BeatCore aún no están en el catálogo, así que no se comparan.</p></section>
+    <section><h2>Precios por estudio</h2>${tabla("t-pre", colsT, rows)}</section>`;
+  ["t-med", "t-pre"].forEach(t => enlazarTabla($("#p-precios"), t, precios));
+}
+function estudios() {
+  const rows = catFiltrado().map(r => ({ ...r, tienePrecio: r.precios_publicados, tieneOcc: r.con_occ ? "Sí" : "No" }));
+  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "zona", l: "Centro", f: zn }, { k: "marca", l: "Marca" },
+    { k: "disciplina", l: "Disciplina" }, { k: "plataforma", l: "Plataforma" }, { k: "tienePrecio", l: "Precios" }, { k: "tieneOcc", l: "Ocupación" },
+    { k: "distancia_m", l: "Distancia (m)", n: 1, f: v => v == null ? "–" : Math.round(v) }, { k: "rating", l: "Rating", n: 1, f: v => num(v) },
+    { k: "en_classpass", l: "ClassPass" },
+    { k: "web", l: "Web", h: r => /^https?:\/\//.test(r.web || "") ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">enlace</a>` : "–" }];
+  $("#p-estudios").innerHTML = `<section><h2>Catálogo de estudios (${rows.length})</h2>${tabla("t-est", cols, rows, { limit: 500 })}</section>`;
+  enlazarTabla($("#p-estudios"), "t-est", estudios);
+}
+function mapa() {
+  const u = META.mapa_url || "";
+  const ok = /^https:\/\/www\.google\.com\/maps\/d\//.test(u);
+  const enlace = u.replace("/embed", "/viewer");
+  $("#p-mapa").innerHTML = ok ? `<iframe class="mapa" src="${esc(u)}" title="Mapa de estudios" loading="lazy"></iframe>
+    <p class="nota"><a href="${esc(enlace)}" target="_blank" rel="noopener noreferrer">Abrir el mapa en Google Maps</a></p>`
+    : `<p class="aviso">Falta el enlace del mapa. Hay que poner el enlace de inserción del My Maps (<code>https://www.google.com/maps/d/embed?mid=...</code>) en <code>web/config.json</code> (<code>mapa_url</code>).</p>`;
+}
+
+/* ---------- arranque ---------- */
+const RENDER = { resumen, ocupacion, curvas, clases, precios, estudios, mapa };
+function render() { RENDER[tabActual](); }
+function activar(t) {
+  tabActual = t;
+  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.t === t));
+  document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== "p-" + t);
+  if (location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
+  render();
+}
+function refrescar() { leerFiltros(); aplicar(); render(); }
+
+(async function () {
+  try { await cargar(); } catch (e) { $("#meta").textContent = "No se han podido cargar los datos: " + e.message; return; }
+  const gen = META.generado ? new Date(META.generado).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "";
+  const dias = new Set(D.dic.fecha).size;
+  $("#meta").textContent = `Clases del ${META.desde} al ${META.hasta} · ${dias} día${dias === 1 ? "" : "s"} con datos · ${N} clases · actualizado ${gen}`;
+  if (dias < 14) { $("#aviso").hidden = false; $("#aviso").textContent = `Datos todavía escasos (${dias} día${dias === 1 ? "" : "s"}): las medias pueden cambiar mucho. Las curvas de reserva mejoran con los días.`; }
+  $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" data-t="${k}" aria-selected="false">${l}</button>`).join("");
+  $("#tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) activar(b.dataset.t); });
+  montarFiltros();
+  ["#f-centro", "#f-marca"].forEach(s => $(s).addEventListener("change", () => { estudiosSelect(); refrescar(); }));
+  ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest"].forEach(s => $(s).addEventListener("change", refrescar));
+  $("#f-dias").addEventListener("change", refrescar);
+  $("#f-reset").addEventListener("click", () => {
+    ["#f-centro", "#f-marca", "#f-estudio", "#f-disc"].forEach(s => $(s).value = "");
+    $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true;
+    document.querySelectorAll("#f-dias input").forEach(x => x.checked = true);
+    estudiosSelect(); refrescar();
+  });
+  window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (RENDER[h] && h !== tabActual) activar(h); });
+  const t = location.hash.slice(1);
+  leerFiltros(); aplicar();
+  activar(RENDER[t] ? t : "resumen");
+})();
+</script>
+</body>
+</html>

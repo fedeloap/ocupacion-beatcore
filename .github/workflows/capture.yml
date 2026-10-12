@@ -4,7 +4,12 @@ on:
   schedule:
     # Cada 30 minutos entre las 4:00 y las 22:59 UTC (6:00 a 0:59 en Madrid en horario de verano)
     - cron: "8,38 4-22 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      regenerar:
+        description: "1 = regenerar y desplegar el dashboard en esta ejecución"
+        required: false
+        default: "0"
 
 permissions:
   contents: write
@@ -36,11 +41,28 @@ jobs:
           TIMP_PASSWORD: ${{ secrets.TIMP_PASSWORD }}
         run: python capture.py
 
+      # Regenera el dashboard 3 veces al día (las capturas de ~7:38, 14:38 y 22:38 hora Madrid en verano)
+      # o a mano con workflow_dispatch + regenerar=1. Solo ese commit lleva [deploy] y despliega en Vercel.
+      - name: Regenerar dashboard
+        env:
+          FORZAR: ${{ github.event.inputs.regenerar }}
+        run: |
+          H=$(date -u +%H); M=$(date -u +%M)
+          if [ "$FORZAR" = "1" ] || { [ "$M" -ge 30 ] && { [ "$H" = "05" ] || [ "$H" = "12" ] || [ "$H" = "20" ]; }; }; then
+            pip install pandas
+            python web.py
+            echo "REGENERADO=1" >> "$GITHUB_ENV"
+          fi
+
       - name: Guardar datos en el repositorio
         run: |
           git config user.name "captura-bot"
           git config user.email "captura-bot@users.noreply.github.com"
           git add data/
           git diff --cached --quiet || git commit -m "Captura $(date -u +%Y-%m-%dT%H:%MZ)"
+          if [ "$REGENERADO" = "1" ]; then
+            git add public/
+            git diff --cached --quiet || git commit -m "Web $(date -u +%Y-%m-%dT%H:%MZ) [deploy]"
+          fi
           git pull --rebase --autostash
           git push

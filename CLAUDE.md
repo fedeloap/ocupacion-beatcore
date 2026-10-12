@@ -70,7 +70,7 @@ Interruptor "BeatCore vs resto" para comparar siempre la línea propia con la co
 
 **Técnica recomendada**
 - `web.py`: reutiliza `analisis.cargar()` y `preparar()`, une el catálogo, calcula curvas y escribe JSON compactos
-  (columnares, strings con diccionario) en `_site/data/`. Limitar a los últimos 90 días si pesa.
+  (columnares, strings con diccionario) en `public/data/`. Limitar a los últimos 90 días si pesa.
 - `web/index.html`: HTML + JS estático (Chart.js desde cdnjs con versión fija o SVG propio). Debe verse bien en móvil.
 - Todas las rutas de datos son relativas (`data/...`) para que la web funcione igual en local y en Vercel.
 
@@ -82,6 +82,18 @@ Interruptor "BeatCore vs resto" para comparar siempre la línea propia con la co
   sin framework, sin build command, output directory `public`.
 - Regenerar `public/` unas 3 veces al día (p. ej. tras la captura de las 7:38, 14:38 y 22:38 hora Madrid) o en cada captura,
   pero **sin desplegar 38 veces al día**.
+
+**Estado (12/10/2026): construido, pendiente de que Fede lo conecte en Vercel.**
+- `web.py` genera `public/` (lee `web/index.html`, `web/robots.txt`, `web/config.json`). En local: `python web.py` y
+  `python -m http.server 8765 --directory public`. El interruptor/ficheros fuente se editan en `web/`, nunca en `public/`.
+- Opción elegida: **1 (`ignoreCommand` + `[deploy]`)**, en `vercel.json`. El workflow regenera `public/` en las capturas
+  de 05:38, 12:38 y 20:38 UTC (7:38, 14:38 y 22:38 en horario de verano; una hora menos en invierno) o a mano
+  (Actions → Run workflow → regenerar = 1), y ese commit lleva `[deploy]`.
+- Contraseña: `middleware.js` (Basic Auth, todas las rutas). Si `DASHBOARD_PASSWORD` no existe, la web queda cerrada.
+- Enlace del My Maps: `web/config.json` → `mapa_url`. **Falta que Fede lo dé.**
+- Disciplina de clase: regex sobre el nombre en `web.py` (`REGLAS`); si no dice nada, la del estudio en el catálogo.
+  Pilates sin la palabra "reformer" cae en la disciplina del estudio (puede ser mat).
+- Ficheros JSON: `public/data/clases.json` (columnar), `estudios.json`, `meta.json`. 90 días máximo.
 
 **Evitar un despliegue por cada commit de captura** (elige una y documéntala aquí):
 1. `vercel.json` con `ignoreCommand` que solo deje construir si el último commit lleva `[deploy]` en el mensaje
