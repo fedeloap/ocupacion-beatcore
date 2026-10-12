@@ -9,6 +9,7 @@ Captura automática, cada 30 minutos, de plazas totales y ocupadas de las clases
 | Momence | Exacto: capacidad y plazas vendidas | AMA, Mooves, Olimpia, Prana House, Casa Kavi, DAN'S, B3B Ayala, B3B Retiro, Casa Barré Ayala, Yogalates House, Boutique Barre, TRIB3 (Madrid); Senda, MOODBODY, PILAT3S Gràcia, Human Pilates, Dharma, Corehaus (Diagonal); Studio 130 (Valencia) |
 | Mindbody | Plazas libres por clase; capacidad cuando el estudio la publica | 44 estudios a 1 km de los 4 BeatCore (buscador público de Mindbody) |
 | Glofox | Exacto: capacidad y plazas ocupadas | Club Pilates Chamberí, Goya y Eixample; Pomona Club |
+| Mariana Tek | Exacto: capacidad y plazas libres | Sessions Studios, Hotcore Madrid y Barcelona, Barry's Madrid, Red Spot Valencia |
 | bsport | Capacidad y si la clase está llena | Victoria, Batelier, Dark Studio, Enjoy Gravity, KMT (Madrid); VERDE, SHE Barre Gràcia, Rohi, Core Studio, Form Studio (Diagonal); The Sanctuary, Musa House, Soma Club Ruzafa, Aero Studio Seijaku (Valencia) |
 
 No medibles sin login: TIMP (N7, PilatesLab), AimHarder (crossfit: oculta la ocupación), Eversports (FLO) y apps propias (eskul, Laghum).

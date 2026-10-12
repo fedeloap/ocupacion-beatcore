@@ -155,6 +155,16 @@
    "host_id": 127870,
    "centro_beatcore": "Valencia",
    "propio": true
+  },
+  {
+   "estudio": "the melt",
+   "host_id": 62000,
+   "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Cerclé Studio",
+   "host_id": 24321,
+   "centro_beatcore": "Salamanca"
   }
  ],
  "bsport": [
@@ -265,6 +275,17 @@
    "estudio": "AGMO",
    "company_id": 6425,
    "centro_beatcore": "Chamberí"
+  },
+  {
+   "estudio": "Vibe Pilates & Fitness",
+   "company_id": 4454,
+   "centro_beatcore": "Chamberí",
+   "establecimientos": {
+    "15076": "Chamberí",
+    "15077": "Chamberí",
+    "15078": "Chamberí"
+   },
+   "solo_establecimientos": true
   }
  ],
  "glofox": [
@@ -514,6 +535,38 @@
    "estudio": "WEMOOV",
    "ref": "{\"mb_site_id\":5730378,\"mb_location_id\":1,\"mb_master_location_id\":4636035,\"inventory_source\":\"MB\"}",
    "centro_beatcore": "Chamberí"
+  }
+ ],
+ "marianatek": [
+  {
+   "estudio": "Sessions Studios",
+   "tenant": "sessionstudios",
+   "location_id": "48717",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Hotcore Studios Madrid",
+   "tenant": "hotcorestudios",
+   "location_id": "48717",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "Hotcore Studios Barcelona",
+   "tenant": "hotcorestudios",
+   "location_id": "48750",
+   "centro_beatcore": "Diagonal"
+  },
+  {
+   "estudio": "Barry's Madrid Salamanca",
+   "tenant": "barrysbootcamp",
+   "location_id": "10274",
+   "centro_beatcore": "Salamanca"
+  },
+  {
+   "estudio": "RED SPOT VLC",
+   "tenant": "redspotvlc",
+   "location_id": "48717",
+   "centro_beatcore": "Valencia"
   }
  ]
 }

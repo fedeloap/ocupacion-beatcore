@@ -249,11 +249,48 @@ def glofox(cfg, a, b):
     return rows
 
 
+# ---------------- Mariana Tek (dato exacto: capacidad y plazas libres, API pública de reservas) ----------------
+def marianatek(cfg, a, b):
+    rows = []
+    d1 = a.astimezone(MADRID).strftime("%Y-%m-%d")
+    d2 = b.astimezone(MADRID).strftime("%Y-%m-%d")
+    for s in cfg:
+        url = (f"https://{s['tenant']}.marianatek.com/api/customer/v1/classes?location={s['location_id']}"
+               f"&min_start_date={d1}&max_start_date={d2}&page_size=100")
+        data = []
+        try:
+            while url:
+                r = requests.get(url, headers=UA, timeout=30)
+                r.raise_for_status()
+                j = r.json()
+                data += j.get("results", [])
+                url = (j.get("links") or {}).get("next") or j.get("next")
+                time.sleep(0.5)
+        except Exception as e:
+            print(f"[marianatek] {s['estudio']}: error {e}", file=sys.stderr)
+        for x in data:
+            start = datetime.fromisoformat(x["start_datetime"].replace("Z", "+00:00"))
+            if not between(start, a, b):
+                continue
+            cap, libres = x.get("capacity"), x.get("available_spot_count")
+            ok = isinstance(cap, int) and isinstance(libres, int)
+            rows.append({
+                "plataforma": "marianatek", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
+                "sede": (x.get("location") or {}).get("name", ""), "clase_id": x.get("id"), "clase": x.get("name", ""),
+                "inicio_local": to_local(start), "duracion_min": "",
+                "capacidad": cap, "ocupadas": (cap - libres) if ok else "", "libres": libres if libres is not None else "",
+                "libres_web": "", "llena": (libres <= 0) if ok else "",
+                "cancelada": x.get("is_cancelled", ""), "lista_espera": x.get("waitlist_count") if x.get("waitlist_count") is not None else "",
+            })
+        time.sleep(1)
+    return rows
+
+
 def capture(cfg, a, b):
     import timp
     return (momence(cfg.get("momence", []), a, b) + mindbody(cfg.get("mindbody", []), a, b)
             + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b)
-            + timp.capture(cfg.get("timp", []), a, b))
+            + timp.capture(cfg.get("timp", []), a, b) + marianatek(cfg.get("marianatek", []), a, b))
 
 
 def write(rows, path, stamp):
