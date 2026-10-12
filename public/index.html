@@ -242,13 +242,25 @@ function metricas(ix) {
   const af = ix.filter(i => D.a[i] != null).map(i => D.a[i]);
   return { n: ix.length, nocc: occ.length, ocup: mean(occ), llenas: mean(ll), res: mean(res), aforo: median(af) };
 }
-function mediaCurva(ix, j, modo) {
-  const v = [];
+function valorCurva(i, j, modo) {
+  if (modo === "llenas") return D.cl[j][i];
+  const r = D.cr[j][i], a = D.a[i];
+  return r != null && a > 0 ? Math.min(1, r / a) : null;
+}
+// pareado: cada punto usa solo las clases que también tienen dato al inicio (0 h), así la muestra no cambia
+// de un punto a otro; "fin" es la ocupación final de esas mismas clases.
+function mediaCurva(ix, j, modo, pareado) {
+  const last = D.checkpoints.length - 1, v = [], f = [];
   for (const i of ix) {
-    if (modo === "llenas") { const x = D.cl[j][i]; if (x != null) v.push(x); }
-    else { const r = D.cr[j][i], a = D.a[i]; if (r != null && a > 0) v.push(Math.min(1, r / a)); }
+    const x = valorCurva(i, j, modo);
+    if (x == null) continue;
+    const fin = valorCurva(i, last, modo);
+    if (pareado && fin == null) continue;
+    // el punto de 0 h solo cuenta las clases que también aparecen en algún punto anterior de la curva
+    if (pareado && j === last && !D.checkpoints.some((_, k) => k < last && valorCurva(i, k, modo) != null)) continue;
+    v.push(x); if (fin != null) f.push(fin);
   }
-  return { v: mean(v), n: v.length };
+  return { v: mean(v), n: v.length, fin: mean(f) };
 }
 
 /* ---------- utilidades de tabla ---------- */
@@ -401,25 +413,30 @@ function ocupacion() {
 function curvas() {
   const el = $("#p-curvas");
   const modo = el.dataset.modo || "ocup";
-  const cps = D.checkpoints;
-  const sA = cps.map((_, j) => mediaCurva(GA, j, modo)), sB = cps.map((_, j) => mediaCurva(GB, j, modo));
+  const cps = D.checkpoints, par = el.dataset.par !== "0";
+  const sA = cps.map((_, j) => mediaCurva(GA, j, modo, par)), sB = cps.map((_, j) => mediaCurva(GB, j, modo, par));
   el.innerHTML = `<section><h2>Curvas de reserva</h2>
-    <div class="row"><label>Métrica <select id="c-modo"><option value="ocup">% ocupación (sin bsport)</option><option value="llenas">% clases llenas (con bsport)</option></select></label></div>
+    <div class="row"><label>Métrica <select id="c-modo"><option value="ocup">% ocupación (sin bsport)</option><option value="llenas">% clases llenas (con bsport)</option></select></label>
+    <label class="sw"><input type="checkbox" id="c-par"${par ? " checked" : ""}> Misma muestra en todos los puntos (solo clases con dato también al inicio)</label></div>
     <div class="chartbox"><canvas id="c-canvas" aria-label="Curva de reservas"></canvas></div>
     <div class="scroll"><table><thead><tr><th>Horas antes</th>${cps.map(c => `<th class="n">${c} h</th>`).join("")}</tr></thead><tbody>
     <tr><td><span class="tag">BeatCore</span></td>${sA.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr>
     <tr><td><span class="tag b">Competencia</span></td>${sB.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr></tbody></table></div>
-    <p class="nota">Para cada hora, el último snapshot anterior a esa hora (tolerancia: máx. 1 h o el 50 % de las horas). Entre paréntesis, nº de clases que tienen dato. La curva larga (7 días) solo hay dos veces al día y empieza cuando empezó la captura.</p></section>
+    <p class="nota">Para cada hora, el último snapshot anterior a esa hora (tolerancia: máx. 1 h o el 50 % de las horas). Entre paréntesis, nº de clases que tienen dato. Con "misma muestra" cada punto usa solo las clases que también tienen dato al inicio, y la línea discontinua es la ocupación final de esas mismas clases: la distancia entre ambas es lo que aún se reserva. Sin ella, cada punto mezcla clases distintas y la curva puede subir y bajar sin que ninguna clase lo haga. La curva larga (7 días) solo hay dos veces al día y empieza cuando empezó la captura.</p></section>
     <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
   $("#c-modo").value = modo;
   $("#c-modo").addEventListener("change", e => { el.dataset.modo = e.target.value; curvas(); });
+  $("#c-par").addEventListener("change", e => { el.dataset.par = e.target.checked ? "1" : "0"; curvas(); });
   if (chart) chart.destroy();
   const css = getComputedStyle(document.documentElement);
   const rgb = v => `rgb(${css.getPropertyValue(v).trim().split(" ").join(",")})`;
   chart = new Chart($("#c-canvas"), { type: "line",
     data: { labels: cps.map(c => c + " h"), datasets: [
       { label: "BeatCore", data: sA.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--accent-rgb"), backgroundColor: rgb("--accent-rgb"), spanGaps: true, tension: .2 },
-      { label: "Competencia", data: sB.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 }] },
+      { label: "Competencia", data: sB.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 },
+      ...(par ? [
+        { label: "BeatCore: final de esas mismas clases", data: sA.map(s => s.fin == null ? null : s.fin * 100), borderColor: rgb("--accent-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true },
+        { label: "Competencia: final de esas mismas clases", data: sB.map(s => s.fin == null ? null : s.fin * 100), borderColor: rgb("--comp-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true }] : [])] },
     options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: modo === "ocup" ? "% ocupación" : "% clases llenas" } },
       x: { title: { display: true, text: "Antes del inicio de la clase" } } }, plugins: { tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.parsed.y)}%` } } } } });
   const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
