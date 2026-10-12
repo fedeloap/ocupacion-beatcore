@@ -373,7 +373,7 @@ function heatmap(ix, titulo, rgb) {
       const k = hr * 7 + d;
       if (!cnt[k]) { h += `<td class="vacio"></td>`; continue; }
       const v = sum[k] / cnt[k];
-      h += `<td class="${v > .6 ? "dark" : ""}" style="--c:${rgb};--o:${v.toFixed(2)}" title="${cnt[k]} clases">${Math.round(v * 100)}</td>`;
+      h += `<td class="${v > .6 ? "dark" : ""}" style="--c:${rgb};--o:${v.toFixed(2)}" title="${cnt[k]} clases">${Math.round(v * 100)}%</td>`;
     }
     h += "</tr>";
   }
