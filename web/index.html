@@ -432,20 +432,18 @@ function ocupacion() {
 
 function curvas() {
   const el = $("#p-curvas");
-  const cps = D.checkpoints, last = cps.length - 1, momentos = [4, 6, 8]; // 24 h, 6 h, 1 h
+  const cps = D.checkpoints, momentos = [4, 5, 6, 8]; // 24 h, 12 h, 6 h, 1 h
   const por = new Map();
   for (const i of [...GA, ...GB]) { const e = D.e[i]; if (!por.has(e)) por.set(e, []); por.get(e).push(i); }
   const calc = ix => {
     const o = { n: ix.length };
     for (const j of momentos) {
-      const oc = []; let sr = 0, sf = 0;
+      const oc = [];
       for (const i of ix) {
-        const r = D.cr[j][i], a = D.a[i], f = D.r[i];
-        if (r == null || !(a > 0)) continue;
-        oc.push(Math.min(1, r / a));
-        if (f != null && f > 0) { sr += r; sf += f; }
+        const r = D.cr[j][i], a = D.a[i];
+        if (r != null && a > 0) oc.push(Math.min(1, r / a));
       }
-      o["o" + j] = mean(oc); o["n" + j] = oc.length; o["p" + j] = sf > 0 ? sr / sf : null;
+      o["o" + j] = mean(oc); o["n" + j] = oc.length;
     }
     const fin = ix.map(i => OCC[i]).filter(v => v != null);
     o.fin = mean(fin); o.nf = fin.length;
@@ -453,24 +451,20 @@ function curvas() {
   };
   const todas = [...por].map(([e, ix]) => ({ _i: e, estudio: EST[e].n, centro: zn(EST[e].z), propio: EST[e].p, ...calc(ix) }));
   const rows = todas.filter(r => momentos.some(j => r["n" + j] > 0));
-  const celda = (j, k) => ({ k: k + j, l: `A ${cps[j]} h antes: ${k === "o" ? "ocupación" : "% de lo final ya reservado"}`, n: 1,
-    h: r => r[k + j] == null ? "–" : `${pct(r[k + j])}${k === "o" ? ` <small>(${r["n" + j]})</small>` : ""}` });
+  const celda = j => ({ k: "o" + j, l: `${cps[j]} h antes`, n: 1,
+    h: r => r["o" + j] == null ? "–" : `${pct(r["o" + j])} <small>(${r["n" + j]})</small>` });
   const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
-    { k: "fin", l: "FINAL: ocupación al empezar la clase", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` },
-    ...momentos.flatMap(j => [celda(j, "o"), celda(j, "p")])];
+    ...momentos.map(celda),
+    { k: "fin", l: "Total (al empezar)", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` }];
   if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
-  el.innerHTML = `<section><h2>Cuánto llevan reservado antes de empezar</h2>
-    <p class="meta">Una fila por estudio. Sirve para ver quién llena con antelación y quién llena sobre la hora.</p>
+  el.innerHTML = `<section><h2>Ocupación antes de empezar la clase</h2>
+    <p class="meta">Qué % de plazas estaba reservado 24, 12, 6 y 1 hora antes de empezar, y cuánto al empezar.</p>
     ${tabla("t-rit", cols, rows, { limit: 300 })}
     <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li><b>FINAL</b>: cuánta gente tenía la clase cuando empezó. Es el punto de llegada: 80 % significa que acabó con el 80 % de las plazas ocupadas.</li>
-      <li><b>A 24 h, 6 h o 1 h antes · ocupación</b>: cuánta gente había apuntada en ese momento, sobre el total de plazas.</li>
-      <li><b>% de lo final ya reservado</b>: de la gente que acabó teniendo la clase, qué parte ya estaba apuntada en ese momento. Cuanto más alto, antes llena ese estudio.
-        <ul><li><b>Cerca del 100 %</b>: casi todo el mundo reserva con antelación.</li>
-        <li><b>40 % o menos</b>: la mayoría reserva en las últimas horas.</li>
-        <li><b>Más del 100 %</b>: hubo cancelaciones.</li></ul></li>
-      <li><b>Ejemplo</b>: si FINAL es 80 % y a 24 h la ocupación es 40 %, el "% de lo final ya reservado" es 50 %: a un día de empezar solo estaba apuntada la mitad de la gente que acabó viniendo.</li>
+      <li>Una fila por estudio. Cada número es el <b>% de plazas reservadas</b> en ese momento, de media entre sus clases.</li>
+      <li><b>Total (al empezar)</b>: la ocupación cuando empezó la clase.</li>
+      <li>Comparando una fila de izquierda a derecha ves <b>cómo se va llenando</b>: si ya está alto a 24 h, llena con antelación; si sube sobre todo en las últimas horas, llena sobre la hora.</li>
       <li><b>Número entre paréntesis</b>: cuántas clases hay detrás de ese dato. Con 1 o 2 es una anécdota, no un patrón.</li>
       <li><b>"–"</b>: todavía no tenemos foto de ese momento para ese estudio.</li>
       <li>Solo salen los estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</li>
