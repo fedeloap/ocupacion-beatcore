@@ -514,15 +514,16 @@ function proximas() {
   const mA = metricas2(rows.filter(r => r.propio)), mB = metricas2(rows.filter(r => !r.propio));
   const cols = [{ k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
     { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
-    { k: "clase", l: "Clase" }, { k: "disc", l: "Disciplina" }, { k: "plat", l: "Plataforma" },
-    { k: "aforo", l: "Plazas", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Reservadas", n: 1 },
+    { k: "clase", l: "Clase" },
     { k: "ocup", l: "Reservado ahora", n: 1, h: r => r.llena === true ? "<b>Llena</b>" : (r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 60)}px"></span>${pct(r.ocup)}`) },
-    { k: "foto", l: "Dato de" }];
+    { k: "aforo", l: "Plazas ofrecidas", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Plazas reservadas", n: 1 },
+    { k: "disc", l: "Disciplina" }, { k: "plat", l: "Plataforma" },
+    { k: "foto", l: "Último dato" }];
   if (!sortState["t-px"]) sortState["t-px"] = { k: "fecha", dir: 1 };
   const dias = [...new Set(P.dic.fecha)].sort();
   const kpi = (cl, v, t) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span></div>`;
   el.innerHTML = `<section><h2>Próximas clases y cuánto llevan reservado</h2>
-    <p class="meta">Reservas en la última foto que tenemos de cada clase (columna "Dato de"). Aún pueden subir o bajar hasta que empiece la clase.</p>
+    <p class="meta">Reservas en la última foto que tenemos de cada clase (columna "Último dato"). Aún pueden subir o bajar hasta que empiece la clase.</p>
     <div class="kpis">${kpi("a", pct(mA.ocup), "BeatCore: reservado ahora (" + mA.n + " clases)")}${kpi("b", pct(mB.ocup), "Competencia: reservado ahora (" + mB.n + " clases)")}</div>
     <div class="row"><label>Día <select id="px-dia"><option value="">Todos</option>${dias.map(d => `<option value="${d}"${d === dia ? " selected" : ""}>${d}</option>`).join("")}</select></label>
     <input type="search" id="px-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar">
