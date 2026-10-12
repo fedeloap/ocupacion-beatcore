@@ -87,6 +87,7 @@ th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--lin
 thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: var(--surface); position: sticky; top: 0; z-index: 1; }
 th.sort { cursor: pointer; user-select: none; }
 td.n, th.n { text-align: right; }
+td.c, th.c { text-align: center; }
 tbody tr.click { cursor: pointer; } tbody tr.click:hover { background: rgb(var(--accent-rgb) / .08); }
 tr.sel { outline: 2px solid var(--accent); outline-offset: -2px; }
 .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: rgb(var(--accent-rgb) / .15); color: var(--accent); }
@@ -293,9 +294,9 @@ function tabla(id, cols, rows, o = {}) {
     const x = a[st.k], y = b[st.k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
     return (typeof x === "string" ? x.localeCompare(y, "es") : x - y) * st.dir; }); }
   const lim = o.limit || 400, vis = data.slice(0, lim);
-  const th = cols.map(c => `<th class="${c.n ? "n " : ""}sort" data-k="${c.k}">${esc(c.l)}${st && st.k === c.k ? (st.dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("");
+  const th = cols.map(c => `<th class="${c.n ? "n " : ""}${c.c ? "c " : ""}sort" data-k="${c.k}">${esc(c.l)}${st && st.k === c.k ? (st.dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("");
   const body = vis.map((r, ix) => `<tr class="${o.click ? "click" : ""}${o.sel && o.sel(r) ? " sel" : ""}" data-i="${r._i ?? ix}">` +
-    cols.map(c => `<td class="${c.n ? "n" : ""}">${c.h ? c.h(r) : esc(c.f ? c.f(r[c.k], r) : r[c.k] ?? "–")}</td>`).join("") + "</tr>").join("");
+    cols.map(c => `<td class="${c.n ? "n" : ""}${c.c ? "c" : ""}">${c.h ? c.h(r) : esc(c.f ? c.f(r[c.k], r) : r[c.k] ?? "–")}</td>`).join("") + "</tr>").join("");
   const extra = data.length > lim ? `<p class="nota">Mostrando ${lim} de ${data.length} filas. Filtra o ordena para ver otras.</p>` : "";
   return `<div class="scroll" data-t="${id}"><table><thead><tr>${th}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length}" class="vacio-msg">Sin datos con estos filtros</td></tr>`}</tbody></table></div>${extra}`;
 }
@@ -366,8 +367,7 @@ function resumen() {
   const cols = [{ k: "centro", l: "Centro" }, { k: "linea", l: "Línea", h: r => r.linea === "BeatCore" ? '<span class="tag">BeatCore</span>' : '<span class="tag b">Competencia</span>' },
     { k: "estudios", l: "Estudios", n: 1 }, { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct },
     { k: "llenas", l: "% clases llenas", n: 1, f: pct }, { k: "res", l: "Reservas/clase", n: 1, f: v => num(v) }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
-  h += `<section><h2>BeatCore vs competencia por centro</h2>${tabla("t-res", cols, filas)}
-    <p class="nota">Ocupación media: clases con aforo conocido o estimado (Momence, Glofox, Mariana Tek y Mindbody). Mindbody sin aforo publicado usa el máximo de plazas libres visto (cota inferior). bsport solo informa de si la clase está llena: cuenta en % llenas, no en ocupación. Las reservas no son asistencia.</p></section>`;
+  h += `<section><h2>BeatCore vs competencia por centro</h2>${tabla("t-res", cols, filas)}</section>`;
 
   // tipos de estudio y cadenas
   const mix = GRUPOS.map(gr => { const e = cat.filter(r => r.grupo === gr); return [gr, e.length, e.filter(r => r.cadena === "Cadena").length]; });
@@ -383,8 +383,7 @@ function resumen() {
       ambos: r.filter(x => x.con_precio && x.con_occ).length, nada: r.filter(x => !x.con_precio && !x.con_occ).length };
   });
   h += `<section><h2>Cobertura por centro (competencia)</h2>${tabla("t-cob", [{ k: "centro", l: "Centro" }, { k: "n", l: "Estudios", n: 1 }, { k: "p", l: "Con precios", n: 1 },
-    { k: "o", l: "Con ocupación", n: 1 }, { k: "ambos", l: "Ambos", n: 1 }, { k: "nada", l: "Sin nada", n: 1 }], cob)}
-    <p class="nota">Catálogo de estudios a 1 km de cada centro. "Con precios" incluye precios parciales. No incluye los 4 centros BeatCore.</p></section>`;
+    { k: "o", l: "Con ocupación", n: 1 }, { k: "ambos", l: "Ambos", n: 1 }, { k: "nada", l: "Sin nada", n: 1 }], cob)}</section>`;
   const el = $("#p-resumen");
   el.innerHTML = h;
   el.querySelectorAll("[data-t]").forEach(n => enlazarTabla(el, n.dataset.t, resumen));
@@ -414,8 +413,7 @@ function heatmap(ix, titulo, rgb) {
   return h + `</tbody></table></div></div>`;
 }
 function ocupacion() {
-  let h = `<section><h2>Mapa de calor: ocupación media por día y hora</h2><div class="heats">${heatmap(GA, "BeatCore", "var(--accent-rgb)")}${heatmap(GB, "Competencia", "var(--comp-rgb)")}</div>
-    <p class="nota">% de ocupación media de las clases que empiezan en cada hora. Pasa el ratón (o mantén pulsado) para ver cuántas clases hay detrás.</p></section>`;
+  let h = `<section><h2>Mapa de calor: ocupación media por día y hora</h2><div class="heats">${heatmap(GA, "BeatCore", "var(--accent-rgb)")}${heatmap(GB, "Competencia", "var(--comp-rgb)")}</div></section>`;
   const por = new Map();
   for (const i of [...GA, ...GB]) {
     const e = D.e[i]; if (!por.has(e)) por.set(e, []);
@@ -426,8 +424,7 @@ function ocupacion() {
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
     { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
-  h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}
-    <p class="nota">Con pocas clases por estudio, la media no es fiable: mira la columna Clases.</p></section>`;
+  h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}</section>`;
   $("#p-ocupacion").innerHTML = h;
   enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
 }
@@ -462,28 +459,13 @@ function curvas() {
   if (!sortState["t-rit"]) sortState["t-rit"] = { k: "estudio", dir: 1 };
   el.innerHTML = `<section><h2>Ocupación antes de empezar la clase</h2>
     <p class="meta">Qué % de plazas estaba reservado 24, 6 y 1 hora antes de empezar, y cuánto al empezar.</p>
-    ${tabla("t-rit", cols, rows, { limit: 300 })}
-    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li>Una fila por estudio. Cada número es el <b>% de plazas reservadas</b> en ese momento, de media entre sus clases.</li>
-      <li><b>Total (al empezar)</b>: la ocupación cuando empezó la clase.</li>
-      <li>Comparando una fila de izquierda a derecha ves <b>cómo se va llenando</b>: si ya está alto a 24 h, llena con antelación; si sube sobre todo en las últimas horas, llena sobre la hora.</li>
-      <li><b>Número entre paréntesis</b>: cuántas clases hay detrás de ese dato. Con 1 o 2 es una anécdota, no un patrón.</li>
-      <li><b>"–"</b>: todavía no tenemos foto de ese momento para ese estudio.</li>
-      <li>Solo salen los estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</li>
-    </ul></div></section>
+    ${tabla("t-rit", cols, rows, { limit: 300 })}</section>
     <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
   const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
     ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
   const fila = (g, nom) => { const s = hf(g); return `<tr><td>${nom}</td><td class="n">${s.n} de ${s.tot}</td><td class="n">${s.n ? pct(s.ya / s.n) : "–"}</td><td class="n">${s.med == null ? "–" : num(s.med) + " h"}</td><td class="n">${s.med2 == null ? "–" : num(s.med2) + " h"}</td></tr>`; };
   $("#c-hf").innerHTML = `<div class="scroll"><table><thead><tr><th>Línea</th><th class="n">Clases que se llenan</th><th class="n">Ya llenas en la 1ª foto</th><th class="n">Mediana (todas)</th><th class="n">Mediana (sin las ya llenas)</th></tr></thead><tbody>
-    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>
-    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li><b>Clases que se llenan</b>: cuántas de las clases medidas acabaron con todas las plazas reservadas.</li>
-      <li><b>Mediana</b>: cuántas horas antes de empezar ya aparecía llena la clase. "12 h" significa que la mitad de las clases ya estaban llenas medio día antes.</li>
-      <li><b>Ya llenas en la 1ª foto</b>: ya estaban llenas la primera vez que las fotografiamos. No sabemos cuándo se llenaron, solo que fue antes, así que su tiempo real es mayor.</li>
-      <li><b>Mediana (sin las ya llenas)</b>: lo mismo sin esas clases. Es la cifra más fiable.</li>
-      <li>Es una estimación: la clase pudo llenarse en cualquier momento entre una foto y la anterior.</li>
-    </ul></div>`;
+    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>`;
   enlazarTabla(el, "t-rit", curvas);
 }
 
@@ -529,7 +511,7 @@ function proximas() {
     <input type="search" id="px-q" placeholder="Buscar estudio, clase o disciplina" value="${esc(el.dataset.q || "")}" aria-label="Buscar">
     <span class="meta">${rows.length} clases</span></div>
     ${tabla("t-px", cols, rows, { limit: 400 })}
-    <p class="nota">* plazas estimadas (Mindbody, cota inferior). Los filtros de arriba (centro, marca, estudio, disciplina, día, horas) también se aplican aquí. Última captura: ${esc(P.ahora)}.</p></section>`;
+    <p class="nota">* plazas estimadas (Mindbody, cota inferior). Última captura: ${esc(P.ahora)}.</p></section>`;
   $("#px-dia").addEventListener("change", e => { el.dataset.dia = e.target.value; proximas(); });
   $("#px-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; proximas(); const n = $("#px-q"); n.focus(); n.setSelectionRange(p, p); });
   enlazarTabla(el, "t-px", proximas);
@@ -571,7 +553,7 @@ function clases() {
     <label class="sw"><input type="checkbox" id="cl-sc"${soloCurva ? " checked" : ""}> Solo clases con curva (con fotos antes de empezar)</label>
     <span class="meta">${rows.length} clases${soloCurva ? ` de ${todas.length}` : ""}</span></div>
     ${tabla("t-cl", cols, rows, { click: true, limit: 300, sel: r => r._i === claseSel })}
-    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥" en la última columna: ya estaba llena en la primera foto. "Sin fotos": de esa clase solo tenemos el dato al empezar, así que no hay curva que ver.</p></section>`;
+    <p class="nota">* aforo estimado (Mindbody, cota inferior). "≥": ya estaba llena en la primera foto.</p></section>`;
   $("#cl-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; clases(); const n = $("#cl-q"); n.focus(); n.setSelectionRange(p, p); });
   $("#cl-sc").addEventListener("change", e => { el.dataset.sc = e.target.checked ? "1" : "0"; clases(); });
   enlazarTabla(el, "t-cl", clases, i => { claseSel = i; clases(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); });
@@ -654,10 +636,10 @@ function precios() {
       comp.push({ centro: zn(z), precio: l, beat: b[k], med: m, dif: m ? b[k] / m - 1 : null, n: v.length });
     }
   }
-  const colsC = [{ k: "centro", l: "Centro" }, { k: "precio", l: "Paquete" }, { k: "beat", l: "BeatCore", n: 1, h: r => `<b>${esc(eur(r.beat))}</b>` },
-    { k: "med", l: "Mediana competencia directa", n: 1, f: eur },
-    { k: "dif", l: "Diferencia", n: 1, f: v => v == null ? "–" : (v > 0 ? "+" : "") + Math.round(v * 100) + " %" },
-    { k: "n", l: "Estudios con ese precio", n: 1 }];
+  const colsC = [{ k: "centro", l: "Centro" }, { k: "precio", l: "Paquete" }, { k: "beat", l: "BeatCore", c: 1, h: r => `<b>${esc(eur(r.beat))}</b>` },
+    { k: "med", l: "Mediana competencia directa", c: 1, f: eur },
+    { k: "dif", l: "Diferencia vs BeatCore", c: 1, f: v => v == null ? "–" : (v > 0 ? "+" : "") + Math.round(v * 100) + " %" },
+    { k: "n", l: "Estudios con ese precio", c: 1 }];
 
   const colsM = [{ k: "grupo", l: "Tipo" }, { k: "zona", l: "Zona" }, { k: "estudios", l: "Estudios", n: 1 }, { k: "con", l: "Con precio", n: 1 },
     { k: "suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro", l: "4/mes", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur },
@@ -674,27 +656,10 @@ function precios() {
     { k: "doce_mes", l: "12/mes", n: 1, f: eur }, { k: "ilimitada", l: "Ilimitada", n: 1, f: eur }, { k: "oferta_entrada", l: "Oferta entrada", n: 1, f: eur }, { k: "precios_publicados", l: "Precios" }];
   const prow = [...propios, ...cat.filter(r => r.con_precio)];
   el.innerHTML = `<section><h2>BeatCore frente a su competencia directa</h2>
-    ${comp.length ? tabla("t-comp-pr", colsC, comp, { limit: 40 }) : '<p class="vacio-msg">No hay precios de BeatCore con estos filtros.</p>'}
-    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li><b>BeatCore</b>: precio de sus membresías publicado en su web (con IVA) para ese centro, y clase suelta (drop in).</li>
-      <li><b>Mediana competencia directa</b>: precio que deja a la mitad de los estudios de reformer y Lagree de la zona por debajo y a la otra mitad por encima.</li>
-      <li><b>Diferencia</b>: cuánto más caro (+) o más barato (−) es BeatCore que esa mediana.</li>
-      <li>Precios de BeatCore tomados de beatcore.co/comprar-beatcore el 12/10/2026. Si no hay precio de BeatCore para un paquete, no sale esa fila.</li>
-    </ul></div></section>
+    ${comp.length ? tabla("t-comp-pr", colsC, comp, { limit: 40 }) : '<p class="vacio-msg">No hay precios de BeatCore con estos filtros.</p>'}</section>
     <section><div class="row"><h2 style="margin:0">Precio de 8 clases al mes</h2><label>Tipo <select id="p-grupo">${grupos}</select></label></div>
-    <div class="chartbox" style="height:auto">${svg}</div>
-    <div class="guia"><h3>Cómo leer el gráfico</h3><ul>
-      <li>Cada <b>punto naranja</b> es un estudio que publica ese precio (con IVA). Pasa el ratón por encima para ver cuál es.</li>
-      <li>La <b>raya blanca</b> es la mediana de la zona: la mitad de los estudios cuesta menos y la otra mitad más.</li>
-      <li>El <b>rombo verde</b> es BeatCore. Aparece siempre, con cualquier tipo, para que tengas la referencia.</li>
-      <li>La <b>escala (0 a 250 €) es siempre la misma</b>, así puedes comparar un tipo con otro.</li>
-      <li>Los puntos con el mismo precio se solapan.</li>
-    </ul></div></section>
-    <section><h2>Medianas por zona y tipo</h2>${tabla("t-med", colsM, med, { limit: 100 })}
-    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
-      <li>Solo servicio grupal. "Con precio" cuenta cuántos estudios publican tarifas.</li>
-      <li>Con menos de 3 estudios con precio, la mediana es orientativa.</li>
-    </ul></div></section>
+    <div class="chartbox" style="height:auto">${svg}</div></section>
+    <section><h2>Medianas por zona y tipo</h2>${tabla("t-med", colsM, med, { limit: 100 })}</section>
     <section><h2>Precios por estudio (${prow.length})</h2>${tabla("t-pre", colsT, prow)}</section>`;
   $("#p-grupo").addEventListener("change", e => { el.dataset.grupo = e.target.value; precios(); });
   ["t-comp-pr", "t-med", "t-pre"].forEach(t => enlazarTabla(el, t, precios));
@@ -712,8 +677,7 @@ function estudios() {
   if (!sortState["t-est"]) sortState["t-est"] = { k: "distancia_m", dir: 1 };
   el.innerHTML = `<section><div class="row"><h2 style="margin:0">Todos los estudios (${rows.length})</h2>
     <input type="search" id="e-q" placeholder="Buscar estudio, disciplina o plataforma" value="${esc(el.dataset.q || "")}" aria-label="Buscar"></div>
-    ${tabla("t-est", cols, rows, { limit: 500 })}
-    <p class="nota">Precios con IVA tal como se publican.</p></section>`;
+    ${tabla("t-est", cols, rows, { limit: 500 })}</section>`;
   const inp = $("#e-q");
   inp.addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; estudios(); const n = $("#e-q"); n.focus(); n.setSelectionRange(p, p); });
   enlazarTabla(el, "t-est", estudios);
