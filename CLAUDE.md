@@ -86,7 +86,7 @@ Interruptor "BeatCore vs resto" para comparar siempre la línea propia con la co
 | Diagonal | 106 | 57 | 29 | 22 | 42 |
 | Valencia | 62 | 24 | 8 | 6 | 36 |
 
-Incluye los 4 BeatCore (con ocupación, sin precios). Competencia: 326 estudios, 163 con precios, 92 con ocupación, 69 con ambos.
+Incluye los 4 BeatCore (con ocupación, sin precios). Competencia (sin BeatCore): 330 estudios, 163 con precios, 96 con ocupación, 69 con ambos.
 
 ## Pendiente
 
