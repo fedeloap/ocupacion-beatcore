@@ -29,7 +29,7 @@ main > *, .panel > * { min-width: 0; }
 h1 { margin: 2px 0 4px; font-family: var(--display); font-weight: 800; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; }
 h2 { margin: 0 0 10px; font-family: var(--display); font-weight: 700; font-size: 19px; }
 h3 { margin: 0 0 6px; font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--muted); }
-.meta, .nota { margin: 0; color: var(--muted); font-size: 13px; max-width: 80ch; }
+.meta, .nota { margin: 0; color: var(--muted); font-size: 13px; max-width: none; }
 .nota { margin-top: 8px; }
 .aviso { background: rgb(var(--comp-rgb) / .12); border: 1px solid rgb(var(--comp-rgb) / .5); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
 details.filtros { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
@@ -609,11 +609,16 @@ function precios() {
   const el = $("#p-precios");
   const grupo = el.dataset.grupo || "Reformer y Lagree";
   const cat = catFiltrado(false), g = grupal(cat);
+  const propios = catFiltrado(true).filter(r => r.propio && r.con_precio);
   const zs = zonasVisibles();
+  const bc = z => propios.find(r => r.zona === z);
+  const directos = z => g.filter(r => r.grupo === "Reformer y Lagree" && r.zona === z);
   const rows = g.filter(r => r.grupo === grupo && r.ocho_mes != null);
+  const verBC = grupo === "Reformer y Lagree";
+
   // tira de puntos: precio de 8 clases al mes por zona
-  const W = 720, band = 58, top = 10, bot = 28, H = top + zs.length * band + bot, L = 120;
-  const max = Math.max(50, ...rows.map(r => r.ocho_mes)) * 1.08;
+  const W = 720, band = 62, top = 12, bot = 28, H = top + zs.length * band + bot, L = 120;
+  const max = Math.max(50, ...rows.map(r => r.ocho_mes), ...(verBC ? zs.map(z => (bc(z) || {}).ocho_mes || 0) : [])) * 1.08;
   const X = v => L + v / max * (W - L - 14);
   let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Precio de 8 clases al mes">`;
   const paso = max > 400 ? 100 : 50;
@@ -621,13 +626,36 @@ function precios() {
   zs.forEach((z, i) => {
     const cy = top + i * band + band / 2, rz = rows.filter(r => r.zona === z).sort((a, b) => a.ocho_mes - b.ocho_mes);
     svg += `<text x="0" y="${cy + 4}" font-size="12" fill="var(--fg)">${esc(zn(z))}</text>`;
-    if (!rz.length) { svg += `<text x="${L}" y="${cy + 4}" font-size="12" fill="var(--muted)">Ningún estudio publica este precio</text>`; return; }
-    const m = median(rz.map(r => r.ocho_mes));
-    svg += `<line x1="${X(m)}" x2="${X(m)}" y1="${cy - 20}" y2="${cy + 20}" stroke="var(--fg)" stroke-width="2"/><text x="${X(m)}" y="${cy - 23}" text-anchor="middle" font-size="11" fill="var(--fg)">${esc(eur(m))}</text>`;
-    rz.forEach((r, k) => { svg += `<circle cx="${X(r.ocho_mes)}" cy="${cy + ((k % 3) - 1) * 8}" r="5" fill="var(--comp)" fill-opacity=".8"><title>${esc(r.estudio)} · ${esc(eur(r.ocho_mes))} (${esc(eur(r.ocho_mes / 8))} por clase)</title></circle>`; });
+    if (!rz.length) svg += `<text x="${L}" y="${cy + 4}" font-size="12" fill="var(--muted)">Ningún estudio publica este precio</text>`;
+    else {
+      const m = median(rz.map(r => r.ocho_mes));
+      svg += `<line x1="${X(m)}" x2="${X(m)}" y1="${cy - 22}" y2="${cy + 22}" stroke="var(--fg)" stroke-width="2"/><text x="${X(m)}" y="${cy - 26}" text-anchor="middle" font-size="11" fill="var(--fg)">${esc(eur(m))}</text>`;
+      rz.forEach((r, k) => { svg += `<circle cx="${X(r.ocho_mes)}" cy="${cy + ((k % 3) - 1) * 8}" r="5" fill="var(--comp)" fill-opacity=".8"><title>${esc(r.estudio)} · ${esc(eur(r.ocho_mes))} (${esc(eur(r.ocho_mes / 8))} por clase)</title></circle>`; });
+    }
+    const b = verBC && bc(z);
+    if (b && b.ocho_mes != null) {
+      const x = X(b.ocho_mes), y = cy;
+      svg += `<polygon points="${x},${y - 9} ${x + 9},${y} ${x},${y + 9} ${x - 9},${y}" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"><title>BeatCore ${esc(zn(z))}: ${esc(eur(b.ocho_mes))}</title></polygon>
+        <text x="${x}" y="${y + 24}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">BeatCore ${esc(eur(b.ocho_mes))}</text>`;
+    }
   });
   svg += "</svg>";
   const grupos = GRUPOS.map(x => `<option${x === grupo ? " selected" : ""}>${esc(x)}</option>`).join("");
+
+  // BeatCore frente a la mediana de su competencia directa
+  const comp = [];
+  for (const z of zs) {
+    const b = bc(z); if (!b) continue;
+    for (const [k, l] of [["cuatro_mes", "4 clases al mes"], ["ocho_mes", "8 clases al mes"], ["ilimitada", "Ilimitada"]]) {
+      if (b[k] == null) continue;
+      const v = directos(z).map(r => r[k]).filter(x => x != null), m = median(v);
+      comp.push({ centro: zn(z), precio: l, beat: b[k], med: m, dif: m ? b[k] / m - 1 : null, n: v.length });
+    }
+  }
+  const colsC = [{ k: "centro", l: "Centro" }, { k: "precio", l: "Paquete" }, { k: "beat", l: "BeatCore", n: 1, h: r => `<b>${esc(eur(r.beat))}</b>` },
+    { k: "med", l: "Mediana competencia directa", n: 1, f: eur },
+    { k: "dif", l: "Diferencia", n: 1, f: v => v == null ? "–" : (v > 0 ? "+" : "") + Math.round(v * 100) + " %" },
+    { k: "n", l: "Estudios con ese precio", n: 1 }];
 
   const colsM = [{ k: "grupo", l: "Tipo" }, { k: "zona", l: "Zona" }, { k: "estudios", l: "Estudios", n: 1 }, { k: "con", l: "Con precio", n: 1 },
     { k: "suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro", l: "4/mes", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur },
@@ -638,18 +666,35 @@ function precios() {
     med.push({ grupo: gr, zona: z === "Todas" ? "Todas" : zn(z), estudios: e.length, con: gg.filter(r => r.con_precio).length, suelta: medDe(gg, "clase_suelta"),
       cuatro: medDe(gg, "cuatro_mes"), ocho: medDe(gg, "ocho_mes"), clase: median(gg.map(r => r.ocho_mes).filter(v => v != null).map(v => v / 8)), ilim: medDe(gg, "ilimitada") });
   }
-  const colsT = [{ k: "estudio", l: "Estudio" }, { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" },
+  const colsT = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" },
     { k: "clase_suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro_mes", l: "4/mes", n: 1, f: eur }, { k: "ocho_mes", l: "8/mes", n: 1, f: eur },
-    { k: "ilimitada", l: "Ilimitada", n: 1, f: eur }, { k: "oferta_entrada", l: "Oferta entrada", n: 1, f: eur }, { k: "precios_publicados", l: "Precios" }];
-  const prow = cat.filter(r => r.con_precio);
-  el.innerHTML = `<section><div class="row"><h2 style="margin:0">Precio de 8 clases al mes</h2><label>Tipo <select id="p-grupo">${grupos}</select></label></div>
+    { k: "doce_mes", l: "12/mes", n: 1, f: eur }, { k: "ilimitada", l: "Ilimitada", n: 1, f: eur }, { k: "oferta_entrada", l: "Oferta entrada", n: 1, f: eur }, { k: "precios_publicados", l: "Precios" }];
+  const prow = [...propios, ...cat.filter(r => r.con_precio)];
+  el.innerHTML = `<section><h2>BeatCore frente a su competencia directa</h2>
+    ${comp.length ? tabla("t-comp-pr", colsC, comp, { limit: 40 }) : '<p class="vacio-msg">No hay precios de BeatCore con estos filtros.</p>'}
+    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
+      <li><b>BeatCore</b>: precio publicado en su web (con IVA) para ese centro.</li>
+      <li><b>Mediana competencia directa</b>: precio que deja a la mitad de los estudios de reformer y Lagree de la zona por debajo y a la otra mitad por encima.</li>
+      <li><b>Diferencia</b>: cuánto más caro (+) o más barato (−) es BeatCore que esa mediana.</li>
+      <li>Precios de BeatCore tomados de beatcore.co/comprar-beatcore el 12/10/2026. Si no hay precio de BeatCore para un paquete, no sale esa fila.</li>
+    </ul></div></section>
+    <section><div class="row"><h2 style="margin:0">Precio de 8 clases al mes</h2><label>Tipo <select id="p-grupo">${grupos}</select></label></div>
     <div class="chartbox" style="height:auto">${svg}</div>
-    <p class="nota">Cada punto es un estudio con ese precio publicado; la raya marca la mediana de la zona. Importes con IVA. Los precios de BeatCore aún no están en el catálogo, así que no se comparan.</p></section>
+    <div class="guia"><h3>Cómo leer el gráfico</h3><ul>
+      <li>Cada <b>punto naranja</b> es un estudio que publica ese precio (con IVA). Pasa el ratón por encima para ver cuál es.</li>
+      <li>La <b>raya blanca</b> es la mediana de la zona: la mitad de los estudios cuesta menos y la otra mitad más.</li>
+      <li>El <b>rombo verde</b> es BeatCore. Solo aparece en "Reformer y Lagree".</li>
+      <li>Los puntos con el mismo precio se solapan.</li>
+    </ul></div></section>
     <section><h2>Medianas por zona y tipo</h2>${tabla("t-med", colsM, med, { limit: 100 })}
-    <p class="nota">Solo servicio grupal. "Con precio" cuenta estudios que publican tarifas; con menos de 3, la mediana es orientativa.</p></section>
+    <div class="guia"><h3>Cómo leer esta tabla</h3><ul>
+      <li>Solo servicio grupal. "Con precio" cuenta cuántos estudios publican tarifas.</li>
+      <li>Con menos de 3 estudios con precio, la mediana es orientativa.</li>
+    </ul></div></section>
     <section><h2>Precios por estudio (${prow.length})</h2>${tabla("t-pre", colsT, prow)}</section>`;
   $("#p-grupo").addEventListener("change", e => { el.dataset.grupo = e.target.value; precios(); });
-  ["t-med", "t-pre"].forEach(t => enlazarTabla(el, t, precios));
+  ["t-comp-pr", "t-med", "t-pre"].forEach(t => enlazarTabla(el, t, precios));
 }
 function estudios() {
   const el = $("#p-estudios");

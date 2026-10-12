@@ -140,7 +140,9 @@ Incluye los 4 BeatCore (con ocupación, sin precios). Competencia (sin BeatCore)
 - Probar plataformas públicas aún no cubiertas: Wix Bookings (Into Barre, Grow Yoga, ADF, HEAT, Studio Calisthenics, WO,
   Wellness Evolution, Funcional Fun, Latte Up), YogaOne (reservas.yogaone.es), Point Barre (Acuity), Ekam (momoyoga),
   Riu Endins (viday), Prado Motion (bewe), LevelOut y Tumbao (Mindbody, widget 128024).
-- Precios de BeatCore (beatcore.co/comprar-beatcore) para compararlos.
+- Precios de BeatCore: HECHO a mano (12/10/2026, capturas de Fede) en `web/precios_beatcore.json`; `web.py` los une al catálogo.
+  Pendiente: automatizarlos desde beatcore.co/comprar-beatcore y confirmar si son membresías mensuales o bonos. Falta el
+  ilimitado de Chamberí y la clase suelta (pestaña "Drop in").
 - Borrar `timp.py`, los secretos TIMP y su paso en el workflow.
 
 ## Reglas que no se negocian

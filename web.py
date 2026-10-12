@@ -291,6 +291,19 @@ def main():
 
     cat_out = cat.copy()
     cat_out["propio"] = cat_out["propio"].astype(int)
+    # precios de BeatCore (web/precios_beatcore.json, dato aportado a mano por Fede)
+    cat_out["doce_mes"] = np.nan
+    if os.path.exists("web/precios_beatcore.json"):
+        pb = json.load(open("web/precios_beatcore.json", encoding="utf-8"))
+        for zona, pr in pb.items():
+            if zona.startswith("_"):
+                continue
+            m = (cat_out["propio"] == 1) & (cat_out["zona"] == zona)
+            for col in ("cuatro_mes", "ocho_mes", "doce_mes", "ilimitada"):
+                if pr.get(col) is not None:
+                    cat_out.loc[m, col] = float(pr[col])
+            if m.any():
+                cat_out.loc[m, "precios_publicados"] = "Sí"
     cat_cols = list(cat_out.columns)
     estudios = {"cols": cat_cols,
                 "rows": [[None if (isinstance(v, float) and np.isnan(v)) else (v.item() if hasattr(v, "item") else v)
