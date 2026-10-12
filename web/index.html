@@ -56,6 +56,10 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 10px; min-width: 0; align-content: start; }
 .card h2, .card h3 { margin: 0; }
 .card .meta { font-size: 13px; }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 12px; margin-top: 10px; max-height: 260px; overflow: auto; }
+.chip { font-size: 13px !important; min-height: 28px !important; }
+.chip small { color: var(--muted); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
 .duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
@@ -410,40 +414,65 @@ function ocupacion() {
   enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
 }
 
+const COLORES = ["#2f7fd1", "#c2570c", "#7a4fd0", "#d1a31f", "#c23b6e", "#2a9d8f", "#8a6f4e", "#6b7280"];
 function curvas() {
   const el = $("#p-curvas");
   const modo = el.dataset.modo || "ocup";
   const cps = D.checkpoints, par = el.dataset.par !== "0";
-  const sA = cps.map((_, j) => mediaCurva(GA, j, modo, par)), sB = cps.map((_, j) => mediaCurva(GB, j, modo, par));
+  // competidores elegibles: los que pasan los filtros globales
+  const cand = [...new Set(GB.map(i => D.e[i]))].sort((x, y) => EST[x].n.localeCompare(EST[y].n, "es"));
+  const sel = JSON.parse(el.dataset.sel || "[]").filter(e => cand.includes(e));
+  const GBs = sel.length ? GB.filter(i => sel.includes(D.e[i])) : GB;
+  const uno = el.dataset.uno === "1" && sel.length > 0 && sel.length <= 8;
+  const serie = ix => cps.map((_, j) => mediaCurva(ix, j, modo, par));
+  const sA = serie(GA), sB = serie(GBs);
+  const porEst = uno ? sel.map(e => ({ e, s: serie(GB.filter(i => D.e[i] === e)) })) : [];
+  const nClases = new Map(); GB.forEach(i => nClases.set(D.e[i], (nClases.get(D.e[i]) || 0) + 1));
+  const lista = cand.map(e => `<label class="sw chip"><input type="checkbox" data-e="${e}"${sel.includes(e) ? " checked" : ""}> ${esc(EST[e].n)} <small>(${nClases.get(e)})</small></label>`).join("");
+  const celdas = s => s.map(x => `<td class="n">${pct(x.v)} <small>(${x.n})</small></td>`).join("");
+  const filas = (uno ? porEst.map((p, k) => `<tr><td><span class="dot" style="background:${COLORES[k]}"></span>${esc(EST[p.e].n)}</td>${celdas(p.s)}</tr>`).join("")
+    : `<tr><td><span class="tag b">Competencia${sel.length ? " (" + sel.length + " estudios)" : ""}</span></td>${celdas(sB)}</tr>`);
   el.innerHTML = `<section><h2>Curvas de reserva</h2>
     <div class="row"><label>Métrica <select id="c-modo"><option value="ocup">% ocupación (sin bsport)</option><option value="llenas">% clases llenas (con bsport)</option></select></label>
     <label class="sw"><input type="checkbox" id="c-par"${par ? " checked" : ""}> Misma muestra en todos los puntos (solo clases con dato también al inicio)</label></div>
+    <details class="filtros" id="c-det"${el.dataset.open === "1" ? " open" : ""}><summary>Competencia: elegir estudios (${sel.length ? sel.length + " de " + cand.length : "todos, " + cand.length})</summary>
+      <div class="row" style="margin-top:10px"><button type="button" id="c-todos">Todos</button>
+      <label class="sw"><input type="checkbox" id="c-uno"${el.dataset.uno === "1" ? " checked" : ""}> Una línea por estudio (hasta 8)</label></div>
+      <div class="chips">${lista || '<p class="vacio-msg">Sin competencia con estos filtros</p>'}</div></details>
     <div class="chartbox"><canvas id="c-canvas" aria-label="Curva de reservas"></canvas></div>
     <div class="scroll"><table><thead><tr><th>Horas antes</th>${cps.map(c => `<th class="n">${c} h</th>`).join("")}</tr></thead><tbody>
-    <tr><td><span class="tag">BeatCore</span></td>${sA.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr>
-    <tr><td><span class="tag b">Competencia</span></td>${sB.map(s => `<td class="n">${pct(s.v)} <small>(${s.n})</small></td>`).join("")}</tr></tbody></table></div>
+    <tr><td><span class="tag">BeatCore</span></td>${celdas(sA)}</tr>${filas}</tbody></table></div>
     <p class="nota">Para cada hora, el último snapshot anterior a esa hora (tolerancia: máx. 1 h o el 50 % de las horas). Entre paréntesis, nº de clases que tienen dato. Con "misma muestra" cada punto usa solo las clases que también tienen dato al inicio, y la línea discontinua es la ocupación final de esas mismas clases: la distancia entre ambas es lo que aún se reserva. Sin ella, cada punto mezcla clases distintas y la curva puede subir y bajar sin que ninguna clase lo haga. La curva larga (7 días) solo hay dos veces al día y empieza cuando empezó la captura.</p></section>
     <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
   $("#c-modo").value = modo;
   $("#c-modo").addEventListener("change", e => { el.dataset.modo = e.target.value; curvas(); });
   $("#c-par").addEventListener("change", e => { el.dataset.par = e.target.checked ? "1" : "0"; curvas(); });
+  $("#c-det").addEventListener("toggle", e => { el.dataset.open = e.target.open ? "1" : "0"; });
+  $("#c-todos").addEventListener("click", () => { el.dataset.sel = "[]"; curvas(); });
+  $("#c-uno").addEventListener("change", e => { el.dataset.uno = e.target.checked ? "1" : "0"; curvas(); });
+  el.querySelectorAll(".chips input").forEach(c => c.addEventListener("change", () => {
+    el.dataset.sel = JSON.stringify([...el.querySelectorAll(".chips input:checked")].map(x => +x.dataset.e)); curvas();
+  }));
   if (chart) chart.destroy();
   const css = getComputedStyle(document.documentElement);
   const rgb = v => `rgb(${css.getPropertyValue(v).trim().split(" ").join(",")})`;
-  chart = new Chart($("#c-canvas"), { type: "line",
-    data: { labels: cps.map(c => c + " h"), datasets: [
-      { label: "BeatCore", data: sA.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--accent-rgb"), backgroundColor: rgb("--accent-rgb"), spanGaps: true, tension: .2 },
-      { label: "Competencia", data: sB.map(s => s.v == null ? null : s.v * 100), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 },
-      ...(par ? [
-        { label: "BeatCore: final de esas mismas clases", data: sA.map(s => s.fin == null ? null : s.fin * 100), borderColor: rgb("--accent-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true },
-        { label: "Competencia: final de esas mismas clases", data: sB.map(s => s.fin == null ? null : s.fin * 100), borderColor: rgb("--comp-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true }] : [])] },
+  const v100 = s => s.map(x => x.v == null ? null : x.v * 100), f100 = s => s.map(x => x.fin == null ? null : x.fin * 100);
+  const ds = [{ label: "BeatCore", data: v100(sA), borderColor: rgb("--accent-rgb"), backgroundColor: rgb("--accent-rgb"), spanGaps: true, tension: .2 }];
+  if (uno) porEst.forEach((p, k) => ds.push({ label: EST[p.e].n, data: v100(p.s), borderColor: COLORES[k], backgroundColor: COLORES[k], spanGaps: true, tension: .2 }));
+  else ds.push({ label: "Competencia", data: v100(sB), borderColor: rgb("--comp-rgb"), backgroundColor: rgb("--comp-rgb"), spanGaps: true, tension: .2 });
+  if (par) {
+    ds.push({ label: "BeatCore: final de esas mismas clases", data: f100(sA), borderColor: rgb("--accent-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true });
+    if (uno) porEst.forEach((p, k) => ds.push({ label: EST[p.e].n + ": final", data: f100(p.s), borderColor: COLORES[k], borderDash: [5, 5], pointRadius: 0, spanGaps: true }));
+    else ds.push({ label: "Competencia: final de esas mismas clases", data: f100(sB), borderColor: rgb("--comp-rgb"), borderDash: [5, 5], pointRadius: 0, spanGaps: true });
+  }
+  chart = new Chart($("#c-canvas"), { type: "line", data: { labels: cps.map(c => c + " h"), datasets: ds },
     options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, title: { display: true, text: modo === "ocup" ? "% ocupación" : "% clases llenas" } },
       x: { title: { display: true, text: "Antes del inicio de la clase" } } }, plugins: { tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.parsed.y)}%` } } } } });
   const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
     ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
   const fila = (g, nom) => { const s = hf(g); return `<tr><td>${nom}</td><td class="n">${s.n} de ${s.tot}</td><td class="n">${s.n ? pct(s.ya / s.n) : "–"}</td><td class="n">${s.med == null ? "–" : num(s.med) + " h"}</td><td class="n">${s.med2 == null ? "–" : num(s.med2) + " h"}</td></tr>`; };
   $("#c-hf").innerHTML = `<div class="scroll"><table><thead><tr><th>Línea</th><th class="n">Clases que se llenan</th><th class="n">Ya llenas en la 1ª foto</th><th class="n">Mediana (todas)</th><th class="n">Mediana (sin las ya llenas)</th></tr></thead><tbody>
-    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>
+    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GBs, '<span class="tag b">Competencia' + (sel.length ? " (" + sel.length + " estudios)" : "") + "</span>")}</tbody></table></div>
     <p class="nota">Horas antes del inicio en que aparece por primera vez una foto con la clase llena. Es una <b>cota superior</b>: se llenó en algún momento entre esa foto y la anterior. Si ya estaba llena en la primera foto que tenemos, el dato real es mayor (columna "ya llenas").</p>`;
 }
 
