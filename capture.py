@@ -273,6 +273,9 @@ def write(rows, path, stamp):
             w.writerow(r)
 
 
+CURVA_HORAS = 6  # cada ejecución guarda también las clases de las próximas 6 h (curva de reservas del mismo día)
+
+
 def main():
     cfg = json.load(open(os.path.join(os.path.dirname(__file__), "studios.json"), encoding="utf-8"))
     ref = now_utc()
@@ -280,15 +283,23 @@ def main():
     stamp = local.strftime("%Y-%m-%d %H:%M:%S")
     day = local.strftime("%Y-%m-%d")
 
-    rows = capture(cfg, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(minutes=AFTER_MIN))
-    write(rows, os.path.join("data", f"{day}.csv"), stamp)
-    print(f"{stamp}: {len(rows)} clases (ocupación final)")
+    # una sola consulta para [ahora - 20 min, ahora + 6 h]
+    rows = capture(cfg, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(hours=CURVA_HORAS))
+    lim = (ref + timedelta(minutes=AFTER_MIN)).astimezone(MADRID).strftime("%Y-%m-%d %H:%M")
+    final = [dict(r) for r in rows if r["inicio_local"] <= lim]
+    write(final, os.path.join("data", f"{day}.csv"), stamp)
+    write([dict(r) for r in rows], os.path.join("data", "curva", f"{day}.csv"), stamp)
+    print(f"{stamp}: {len(final)} clases (ocupación final), {len(rows)} en las próximas {CURVA_HORAS} h")
 
-    plan_path = os.path.join("data", "plan", f"{day}.csv")
-    if (local.hour >= 6 and not os.path.exists(plan_path)) or os.environ.get("FORCE_PLAN"):
+    # planificación a 7 días dos veces al día: mañana (desde las 6) y tarde (desde las 15)
+    turno = "t" if local.hour >= 15 else "m"
+    plan_path = os.path.join("data", "plan", f"{day}_{turno}.csv")
+    viejo = os.path.join("data", "plan", f"{day}.csv")  # formato anterior (una vez al día)
+    hecho = os.path.exists(plan_path) or (turno == "m" and os.path.exists(viejo))
+    if (local.hour >= 6 and not hecho) or os.environ.get("FORCE_PLAN"):
         plan = capture(cfg, ref, ref + timedelta(days=PLAN_DAYS))
         write(plan, plan_path, stamp)
-        print(f"{stamp}: {len(plan)} clases (planificación 7 días)")
+        print(f"{stamp}: {len(plan)} clases (planificación 7 días, turno {turno})")
 
 
 if __name__ == "__main__":
