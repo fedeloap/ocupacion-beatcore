@@ -1,0 +1,1437 @@
+{
+ "BZ55": {
+  "fichas": 9,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SICLO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BATARD": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DISTRITO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PLAYGYM": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "TRIB3": {
+  "fichas": 6,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "JG": {
+  "fichas": 69,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ORANGETHEORY": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "YOGAONE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BEATCORE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CLUB PILATES": {
+  "fichas": 45,
+  "centros": [
+   {
+    "nombre": "abando",
+    "url": "https://www.clubpilates.es/location/abando",
+    "plataforma": "glofox",
+    "id": "6a0492db23c37eab600d69dd",
+    "clases_7d": 29,
+    "pais": "?"
+   },
+   {
+    "nombre": "alcorcon",
+    "url": "https://www.clubpilates.es/location/alcorcon",
+    "plataforma": "glofox",
+    "id": "6a21358937e194afe50a49b1",
+    "clases_7d": 42,
+    "pais": "?"
+   },
+   {
+    "nombre": "alicante",
+    "url": "https://www.clubpilates.es/location/alicante",
+    "plataforma": "glofox",
+    "id": "68d27712f69a8c0731064148",
+    "clases_7d": 38,
+    "pais": "?"
+   },
+   {
+    "nombre": "azca",
+    "url": "https://www.clubpilates.es/location/azca",
+    "plataforma": "glofox",
+    "id": "62cfec1df1492c2e7f5ae699",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "badalona",
+    "url": "https://www.clubpilates.es/location/badalona",
+    "plataforma": "glofox",
+    "id": "672294c4b2074ddd960e671e",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "boadilla",
+    "url": "https://www.clubpilates.es/location/boadilla",
+    "plataforma": "glofox",
+    "id": "65277ea0ffafc9b0d9030f07",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "bonanova",
+    "url": "https://www.clubpilates.es/location/bonanova",
+    "plataforma": "glofox",
+    "id": "60799c7835b8911c8545f043",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "carabanchel",
+    "url": "https://www.clubpilates.es/location/carabanchel",
+    "plataforma": "glofox",
+    "id": "68d68a5cf7176270040f624a",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "castelldefels",
+    "url": "https://www.clubpilates.es/location/castelldefels",
+    "plataforma": "glofox",
+    "id": "69417976483119cfc208fd5f",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "chamberi",
+    "url": "https://www.clubpilates.es/location/chamberi",
+    "plataforma": "glofox",
+    "id": "66eab7ac56c959d0100f24db",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "condeorgaz",
+    "url": "https://www.clubpilates.es/location/condeorgaz",
+    "plataforma": "glofox",
+    "id": "682b4431d6f0676d83002523",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "eixample",
+    "url": "https://www.clubpilates.es/location/eixample",
+    "plataforma": "glofox",
+    "id": "61c07795f4492f7e61243062",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "entenza",
+    "url": "https://www.clubpilates.es/location/entenza",
+    "plataforma": "glofox",
+    "id": "66deaf61cd10d28f140f5581",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "goya",
+    "url": "https://www.clubpilates.es/location/goya",
+    "plataforma": "glofox",
+    "id": "6895fbb175b367c91101f96d",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "granviavalencia",
+    "url": "https://www.clubpilates.es/location/granviavalencia",
+    "plataforma": "glofox",
+    "id": "61bcbcf06f0ee54aa92a366f",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "guindalera",
+    "url": "https://www.clubpilates.es/location/guindalera",
+    "plataforma": "glofox",
+    "id": "648060a55dbb5018470ba2c7",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "imperial",
+    "url": "https://www.clubpilates.es/location/imperial",
+    "plataforma": "glofox",
+    "id": "687a31ae3d5a8d28280c13b9",
+    "clases_7d": 42,
+    "pais": "?"
+   },
+   {
+    "nombre": "indautxu",
+    "url": "https://www.clubpilates.es/location/indautxu",
+    "plataforma": "glofox",
+    "id": "673b56d4a07be6278d0c09a8",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "lamoraleja",
+    "url": "https://www.clubpilates.es/location/lamoraleja",
+    "plataforma": "glofox",
+    "id": "66338ae1b67da376910421b9",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "lapetxina",
+    "url": "https://www.clubpilates.es/location/lapetxina",
+    "plataforma": "glofox",
+    "id": "682af6c133852a1d59072f07",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "lasrozas",
+    "url": "https://www.clubpilates.es/location/lasrozas",
+    "plataforma": "glofox",
+    "id": "66339167ea06e95f9c0d3740",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "majadahonda",
+    "url": "https://www.clubpilates.es/location/majadahonda",
+    "plataforma": "glofox",
+    "id": "66fe80bd18887858ca0fc253",
+    "clases_7d": 46,
+    "pais": "?"
+   },
+   {
+    "nombre": "malagueta",
+    "url": "https://www.clubpilates.es/location/malagueta",
+    "plataforma": "glofox",
+    "id": "68f611fda76e6319bf09cd89",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "pac%C3%ADfico",
+    "url": "https://www.clubpilates.es/location/pac%C3%ADfico",
+    "plataforma": "glofox",
+    "id": "654a426970c402fc1b0e9785",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "palmaavenidas",
+    "url": "https://www.clubpilates.es/location/palmaavenidas",
+    "plataforma": "glofox",
+    "id": "694130a675c25137520446dd",
+    "clases_7d": 40,
+    "pais": "?"
+   },
+   {
+    "nombre": "pinardechamart%C3%ADn",
+    "url": "https://www.clubpilates.es/location/pinardechamart%C3%ADn",
+    "plataforma": "glofox",
+    "id": "673c8522831b36f78509b14d",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "poblenou",
+    "url": "https://www.clubpilates.es/location/poblenou",
+    "plataforma": "glofox",
+    "id": "64919c3d748dc82f5e0e25a5",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "ponzano",
+    "url": "https://www.clubpilates.es/location/ponzano",
+    "plataforma": "glofox",
+    "id": "6a0f33eda77d412112087844",
+    "clases_7d": 3,
+    "pais": "?"
+   },
+   {
+    "nombre": "pozuelo",
+    "url": "https://www.clubpilates.es/location/pozuelo",
+    "plataforma": "glofox",
+    "id": "6274e6a13d2acc4d0e5f4896",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "prosperidad",
+    "url": "https://www.clubpilates.es/location/prosperidad",
+    "plataforma": "glofox",
+    "id": "69008f1a0b1641b6a9017cac",
+    "clases_7d": 44,
+    "pais": "?"
+   },
+   {
+    "nombre": "quintadelosmolinos",
+    "url": "https://www.clubpilates.es/location/quintadelosmolinos",
+    "plataforma": "glofox",
+    "id": "6a268d22712f9ee03b088844",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "romareda",
+    "url": "https://www.clubpilates.es/location/romareda",
+    "plataforma": "glofox",
+    "id": "68d68b082604074ff401b9b5",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "sabadellcentre",
+    "url": "https://www.clubpilates.es/location/sabadellcentre",
+    "plataforma": "glofox",
+    "id": "674ddab221b98a25e20ae1c1",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "sagradafamilia",
+    "url": "https://www.clubpilates.es/location/sagradafamilia",
+    "plataforma": "glofox",
+    "id": "67f7a344297706f6bd0ebb76",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "sanbernardo",
+    "url": "https://www.clubpilates.es/location/sanbernardo",
+    "plataforma": "glofox",
+    "id": "69f9af8bf414e030250e7fe9",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "sanpablo",
+    "url": "https://www.clubpilates.es/location/sanpablo",
+    "plataforma": "glofox",
+    "id": "69fdf0a77653911c3005c5b9",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "sansebastiandelosreyes",
+    "url": "https://www.clubpilates.es/location/sansebastiandelosreyes",
+    "plataforma": "glofox",
+    "id": "686b9d387fc04295320268ac",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "santcugat",
+    "url": "https://www.clubpilates.es/location/santcugat",
+    "plataforma": "glofox",
+    "id": "62729d531d02d33f1b687ce1",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "santgervasi",
+    "url": "https://www.clubpilates.es/location/santgervasi",
+    "plataforma": "glofox",
+    "id": "6583196c7e23ac73cf0547e4",
+    "clases_7d": 50,
+    "pais": "?"
+   },
+   {
+    "nombre": "santgervasi",
+    "url": "https://www.clubpilates.es/location/santgervasi",
+    "plataforma": "glofox",
+    "id": "604f2ef64e76e821766f63a0",
+    "clases_7d": 31,
+    "pais": "?"
+   },
+   {
+    "nombre": "terrassanord",
+    "url": "https://www.clubpilates.es/location/terrassanord",
+    "plataforma": "glofox",
+    "id": "66a7750bf85cf163f30d080e",
+    "clases_7d": 50,
+    "pais": "?"
+   }
+  ],
+  "centros_mundo": 41
+ },
+ "UFIT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PILATES10": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FLOW TRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "QOMBO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "MOVE IT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "MORALES BOX": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "NEXES": {
+  "fichas": 19,
+  "centros": [
+   {
+    "nombre": "nexes-arguelles",
+    "url": "https://nexespilates.com/es/centros/nexes-arguelles/",
+    "plataforma": "mindbody",
+    "id": "5752928",
+    "clases_2d": 15,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-barcelona-pilates",
+    "url": "https://nexespilates.com/es/centros/nexes-barcelona-pilates/",
+    "plataforma": "mindbody",
+    "id": "5742910",
+    "clases_2d": 15,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-bcn-clot",
+    "url": "https://nexespilates.com/es/centros/nexes-bcn-clot/",
+    "plataforma": "mindbody",
+    "id": "5751387",
+    "clases_2d": 12,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-el-masnou",
+    "url": "https://nexespilates.com/es/centros/nexes-el-masnou/",
+    "plataforma": "mindbody",
+    "id": "5751386",
+    "clases_2d": 16,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-logrono",
+    "url": "https://nexespilates.com/es/centros/nexes-logrono/",
+    "plataforma": "mindbody",
+    "id": "5751129",
+    "clases_2d": 18,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-madrid-acacias",
+    "url": "https://nexespilates.com/es/centros/nexes-madrid-acacias/",
+    "plataforma": "mindbody",
+    "id": "5748989",
+    "clases_2d": 13,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-mataro",
+    "url": "https://nexespilates.com/es/centros/nexes-mataro/",
+    "plataforma": "mindbody",
+    "id": "5751239",
+    "clases_2d": 17,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-mollet-pilates",
+    "url": "https://nexespilates.com/es/centros/nexes-mollet-pilates/",
+    "plataforma": "mindbody",
+    "id": "5742911",
+    "clases_2d": 21,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-oviedo",
+    "url": "https://nexespilates.com/es/centros/nexes-oviedo/",
+    "plataforma": "mindbody",
+    "id": "5751388",
+    "clases_2d": 17,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-palma-de-mallorca",
+    "url": "https://nexespilates.com/es/centros/nexes-palma-de-mallorca/",
+    "plataforma": "mindbody",
+    "id": "5751126",
+    "clases_2d": 16,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-pilates-paret",
+    "url": "https://nexespilates.com/es/centros/nexes-pilates-paret/",
+    "plataforma": "mindbody",
+    "id": "5742913",
+    "clases_2d": 20,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-premia-pilates",
+    "url": "https://nexespilates.com/es/centros/nexes-premia-pilates/",
+    "plataforma": "mindbody",
+    "id": "5742914",
+    "clases_2d": 21,
+    "pais": "?"
+   },
+   {
+    "nombre": "nexes-sabadell",
+    "url": "https://nexespilates.com/es/centros/nexes-sabadell/",
+    "plataforma": "mindbody",
+    "id": "5750215",
+    "clases_2d": 13,
+    "pais": "?"
+   }
+  ],
+  "centros_mundo": 13
+ },
+ "B3B WOMAN": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CASA BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SQUARE FITNESS": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CRYS DYAZ": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ACTION BLACK": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BFT EIXAMPLE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "F45": {
+  "fichas": 9,
+  "centros": [
+   {
+    "nombre": "embajadores",
+    "url": "https://f45training.com/es/studio/embajadores/",
+    "plataforma": "mindbody",
+    "id": "5728212",
+    "clases_2d": 14,
+    "pais": "ES"
+   },
+   {
+    "nombre": "lasrozas",
+    "url": "https://f45training.com/es/studio/lasrozas/",
+    "plataforma": "mindbody",
+    "id": "5722691",
+    "clases_2d": 14,
+    "pais": "ES"
+   },
+   {
+    "nombre": "marbella",
+    "url": "https://f45training.com/es/studio/marbella/",
+    "plataforma": "mindbody",
+    "id": "5731958",
+    "clases_2d": 17,
+    "pais": "ES"
+   },
+   {
+    "nombre": "palmaracketclub",
+    "url": "https://f45training.com/es/studio/palmaracketclub/",
+    "plataforma": "mindbody",
+    "id": "5730552",
+    "clases_2d": 15,
+    "pais": "ES"
+   },
+   {
+    "nombre": "plazautrillaszaragoza",
+    "url": "https://f45training.com/es/studio/plazautrillaszaragoza/",
+    "plataforma": "mindbody",
+    "id": "5722598",
+    "clases_2d": 24,
+    "pais": "ES"
+   },
+   {
+    "nombre": "sanbernardo",
+    "url": "https://f45training.com/es/studio/sanbernardo/",
+    "plataforma": "mindbody",
+    "id": "5725154",
+    "clases_2d": 15,
+    "pais": "ES"
+   },
+   {
+    "nombre": "sitges",
+    "url": "https://f45training.com/es/studio/sitges/",
+    "plataforma": "mindbody",
+    "id": "5727112",
+    "clases_2d": 15,
+    "pais": "ES"
+   }
+  ],
+  "centros_mundo": 7
+ },
+ "EDAN": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BIKRAM YOGA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BARRY´S BOOTCAMP": {
+  "fichas": 400,
+  "centros": [],
+  "centros_mundo": 0,
+  "nota": "sedes fuera de España"
+ },
+ "WELFARE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CORE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BIGG": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "GLOVES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CROSS FUNCIONAL 30": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SPACE BY 9F": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FIGHTLAND": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PALEOTRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "KAROON": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "RAW COOFEE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BE BALANCE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PERFORMA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "NACHO MARQUEZ": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FITACTIVA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SANUS VITAE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "AUT CROSSTRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "JW": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FULL CROSSFIT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ROUND TRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "TRAININGBOUTIQUE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "KO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ITRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "HEALTH SPACE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SANO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BROOKLYN FITBOXING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "AFIT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FIT CLUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "URBAN PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "TRAINING PARK": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "WELL": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FIT LOVAS": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "LAIF SPORT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DOMOPERSONAL": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CONCEPT BARRE": {
+  "fichas": 2,
+  "centros": [
+   {
+    "nombre": "eixample",
+    "url": "https://conceptbarre.com/sedes/eixample/",
+    "plataforma": "mindbody",
+    "id": "5731294",
+    "clases_2d": 18,
+    "pais": "?"
+   }
+  ],
+  "centros_mundo": 1
+ },
+ "SPORTUP": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "XTENSALL": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SOLID STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BELAR": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "360 FITNESS STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "REVIVE WELLNESS HUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "RITO FIT HOUSE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "THE FITHUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PILAT3S": {
+  "fichas": 242,
+  "centros": [
+   {
+    "nombre": "pilat3s-avenidas-novas",
+    "url": "https://pilat3s.com/es/studio/pilat3s-avenidas-novas/",
+    "plataforma": "momence",
+    "id": "63552",
+    "clases_7d": 7,
+    "sedes": [
+     "PILAT3S Avenidas Novas"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-braga",
+    "url": "https://pilat3s.com/es/studio/pilat3s-braga/",
+    "plataforma": "momence",
+    "id": "310279",
+    "clases_7d": 32,
+    "sedes": [
+     "PILAT3S Braga"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-chamberi",
+    "url": "https://pilat3s.com/es/studio/pilat3s-chamberi/",
+    "plataforma": "momence",
+    "id": "305099",
+    "clases_7d": 1,
+    "sedes": [
+     "Evento Exterior"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-cherrywood",
+    "url": "https://pilat3s.com/es/studio/pilat3s-cherrywood/",
+    "plataforma": "momence",
+    "id": "47266",
+    "clases_7d": 36,
+    "sedes": [
+     "PILAT3S Studio"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-cuzco",
+    "url": "https://pilat3s.com/es/studio/pilat3s-cuzco/",
+    "plataforma": "momence",
+    "id": "52964",
+    "clases_7d": 41,
+    "sedes": [
+     "PILAT3S STUDIO"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-douro-foz",
+    "url": "https://pilat3s.com/es/studio/pilat3s-douro-foz/",
+    "plataforma": "momence",
+    "id": "42042",
+    "clases_7d": 37,
+    "sedes": [
+     "PILAT3S DOURO FOZ"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-marterey",
+    "url": "https://pilat3s.com/es/studio/pilat3s-marterey/",
+    "plataforma": "momence",
+    "id": "152886",
+    "clases_7d": 24,
+    "sedes": [
+     "PILAT3S Studio"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-middenweg",
+    "url": "https://pilat3s.com/es/studio/pilat3s-middenweg/",
+    "plataforma": "momence",
+    "id": "41161",
+    "clases_7d": 50,
+    "sedes": [
+     "PILAT3S Studio"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-middenweg",
+    "url": "https://pilat3s.com/es/studio/pilat3s-middenweg/",
+    "plataforma": "momence",
+    "id": "65994",
+    "clases_7d": 43,
+    "sedes": [
+     "PILAT3S Studio"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-oeiras",
+    "url": "https://pilat3s.com/es/studio/pilat3s-oeiras/",
+    "plataforma": "momence",
+    "id": "310246",
+    "clases_7d": 28,
+    "sedes": [
+     "PILAT3S Oeiras"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-oudzuid-karperstraat",
+    "url": "https://pilat3s.com/es/studio/pilat3s-oudzuid-karperstraat/",
+    "plataforma": "momence",
+    "id": "260135",
+    "clases_7d": 50,
+    "sedes": [
+     "PILAT3S Studio"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-palacio-sottomayor",
+    "url": "https://pilat3s.com/es/studio/pilat3s-palacio-sottomayor/",
+    "plataforma": "momence",
+    "id": "78140",
+    "clases_7d": 37,
+    "sedes": [
+     "PILAT3S Palácio SottoMayor"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-poblenou",
+    "url": "https://pilat3s.com/es/studio/pilat3s-poblenou/",
+    "plataforma": "momence",
+    "id": "142287",
+    "clases_7d": 50,
+    "sedes": [
+     "PILAT3S",
+     "PILAT3S STUDIO"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-estoril-riviera",
+    "url": "https://pilat3s.com/fr/studio/pilat3s-estoril-riviera/",
+    "plataforma": "momence",
+    "id": "51176",
+    "clases_7d": 26,
+    "sedes": [
+     "PILAT3S Estoril Riviera"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-sagrada-familia",
+    "url": "https://pilat3s.com/fr/studio/pilat3s-sagrada-familia/",
+    "plataforma": "momence",
+    "id": "53798",
+    "clases_7d": 17,
+    "sedes": [
+     "PILAT3S SAGRADA FAMILIA"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-sant-cugat",
+    "url": "https://pilat3s.com/fr/studio/pilat3s-sant-cugat/",
+    "plataforma": "momence",
+    "id": "227048",
+    "clases_7d": 41,
+    "sedes": [
+     "PILAT3S STUDIO"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-sheffield",
+    "url": "https://pilat3s.com/fr/studio/pilat3s-sheffield/",
+    "plataforma": "momence",
+    "id": "75832",
+    "clases_7d": 27,
+    "sedes": [
+     "PILAT3S Sheffield"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-quinta-da-fonte",
+    "url": "https://pilat3s.com/pt/studio/pilat3s-quinta-da-fonte/",
+    "plataforma": "momence",
+    "id": "237543",
+    "clases_7d": 1,
+    "sedes": [
+     "PILAT3S Quinta da Fonte"
+    ],
+    "pais": "?"
+   },
+   {
+    "nombre": "pilat3s-gracia",
+    "url": "https://pilat3s.com/studio/pilat3s-gracia/",
+    "plataforma": "momence",
+    "id": "46614",
+    "clases_7d": 50,
+    "sedes": [
+     "PILAT3S Gracia"
+    ],
+    "pais": "?"
+   }
+  ],
+  "centros_mundo": 19
+ },
+ "COMMANDO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FABRIK TRAINING CLUBS": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ITACA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ESTIRO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "180 TRAINING CLUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "EZEN": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "THE WOD CLUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "AIRGYM": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BATELIER": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SHE BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FUNCTIONAL FEEL": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CLUB BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "RONA PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "POMONA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "WIN FIT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "TRAINING ZONE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "HOTCORE": {
+  "fichas": 4,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DOM FITNESS CONCEPT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DONA10 (GRUPO PILATES10)": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "LEVELOUT": {
+  "fichas": 44,
+  "centros": [],
+  "centros_mundo": 0,
+  "nota": "sedes fuera de España"
+ },
+ "D&O": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "GLOW PILATES (GRUPO DIR)": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "REFORM U": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BECAN PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SWEAT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ARDE BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BEFEEL": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DS7 TRAINING CENTER": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SUMMIT STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SINGULAR WOMEN": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "HOUSE OF BALANCE": {
+  "fichas": 2,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "STONE PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PRANA PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SOMA CLUB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PREMIERFIT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PILATES FLOW": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ULTIMO SPRINT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "PILATES AVENUE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ONNA SALUD Y MOVIMIENTO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "RESET TRAIN": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DENOVO PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "STUDIO NOVA (BATARD)": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "SIAMO PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "VICTORIA STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "MOOD TRAINING STUDIO": {
+  "fichas": 3,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "REN COACH": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "ES BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "KOLEO BARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "DAN´S": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "GENNOX 360": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "WILD FITBOXING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "OWL ATHLETE CENTER": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "FS8": {
+  "fichas": 180,
+  "centros": [
+   {
+    "nombre": "avenidadefrancia",
+    "url": "https://fs8.com/studio/avenidadefrancia/",
+    "plataforma": "mindbody",
+    "id": "5754258",
+    "clases_2d": 14,
+    "pais": "ES"
+   },
+   {
+    "nombre": "chamberi",
+    "url": "https://fs8.com/studio/chamberi/",
+    "plataforma": "mindbody",
+    "id": "5743713",
+    "clases_2d": 13,
+    "pais": "ES"
+   }
+  ],
+  "centros_mundo": 2
+ },
+ "PIKO STUDIOS": {
+  "fichas": 6,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "KORE LAB": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "HYGGE PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "GO PILATES STUDIOS": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "KAIZEN CENTRO ENTRENAMIENTO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CLEVER NUTRITION &TRAINING": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "IBARRE": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "GRATIA": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "AMA STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "MYND PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CM MOVEMENT": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "CTX": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BALANZA PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "N7 PILATES": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "LAGHUM CLUB": {
+  "fichas": 3,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "LUDUS": {
+  "fichas": 3,
+  "centros": [],
+  "centros_mundo": 0
+ },
+ "BARREFIT STUDIO": {
+  "fichas": 0,
+  "centros": [],
+  "centros_mundo": 0
+ }
+}

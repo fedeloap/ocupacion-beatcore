@@ -33,7 +33,27 @@
   },
   {
    "estudio": "PILAT3S",
+   "host_id": 152886,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
    "host_id": 227048,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 237542,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 237543,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 238378,
    "centro_beatcore": ""
   },
   {
@@ -53,12 +73,97 @@
   },
   {
    "estudio": "TRIB3",
+   "host_id": 106748,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
+   "host_id": 168659,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
    "host_id": 204362,
    "centro_beatcore": ""
   },
   {
    "estudio": "TRIB3",
+   "host_id": 214528,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
+   "host_id": 36924,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
+   "host_id": 37769,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
    "host_id": 50060,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 63552,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 305099,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 47266,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 52964,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 42042,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 41161,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 65994,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 310246,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 78140,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 51176,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 53798,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 75832,
    "centro_beatcore": ""
   }
  ],
@@ -106,8 +211,18 @@
    "centro_beatcore": ""
   },
   {
+   "estudio": "FS8 5720741",
+   "ref": "{\"mb_site_id\":5720741,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
    "estudio": "FS8 5720888",
    "ref": "{\"mb_site_id\":5720888,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FS8 5721886",
+   "ref": "{\"mb_site_id\":5721886,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
    "centro_beatcore": ""
   },
   {
@@ -131,16 +246,6 @@
    "centro_beatcore": ""
   },
   {
-   "estudio": "LEVELOUT levelout",
-   "ref": "{\"mb_site_id\":5731034,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
-   "centro_beatcore": ""
-  },
-  {
-   "estudio": "LEVELOUT 5737173",
-   "ref": "{\"mb_site_id\":5737173,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
-   "centro_beatcore": ""
-  },
-  {
    "estudio": "REFORM U rfufitnessclub",
    "ref": "{\"mb_site_id\":5740809,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
    "centro_beatcore": ""
@@ -158,6 +263,106 @@
   {
    "estudio": "THE FITHUB",
    "ref": "{\"mb_site_id\":5738769,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-arguelles",
+   "ref": "{\"mb_site_id\":5752928,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-bcn-clot",
+   "ref": "{\"mb_site_id\":5751387,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-el-masnou",
+   "ref": "{\"mb_site_id\":5751386,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-logrono",
+   "ref": "{\"mb_site_id\":5751129,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-madrid-acacias",
+   "ref": "{\"mb_site_id\":5748989,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-mataro",
+   "ref": "{\"mb_site_id\":5751239,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-mollet-pilates",
+   "ref": "{\"mb_site_id\":5742911,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-oviedo",
+   "ref": "{\"mb_site_id\":5751388,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-palma-de-mallorca",
+   "ref": "{\"mb_site_id\":5751126,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-pilates-paret",
+   "ref": "{\"mb_site_id\":5742913,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-premia-pilates",
+   "ref": "{\"mb_site_id\":5742914,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "NEXES nexes-sabadell",
+   "ref": "{\"mb_site_id\":5750215,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 embajadores",
+   "ref": "{\"mb_site_id\":5728212,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 lasrozas",
+   "ref": "{\"mb_site_id\":5722691,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 marbella",
+   "ref": "{\"mb_site_id\":5731958,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 palmaracketclub",
+   "ref": "{\"mb_site_id\":5730552,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 plazautrillaszaragoza",
+   "ref": "{\"mb_site_id\":5722598,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 sanbernardo",
+   "ref": "{\"mb_site_id\":5725154,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "F45 sitges",
+   "ref": "{\"mb_site_id\":5727112,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FS8 avenidadefrancia",
+   "ref": "{\"mb_site_id\":5754258,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
    "centro_beatcore": ""
   },
   {
@@ -190,6 +395,196 @@
   {
    "estudio": "POMONA",
    "branch_id": "69971a5d4bd15296130b83e4",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES abando",
+   "branch_id": "6a0492db23c37eab600d69dd",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES alcorcon",
+   "branch_id": "6a21358937e194afe50a49b1",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES alicante",
+   "branch_id": "68d27712f69a8c0731064148",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES azca",
+   "branch_id": "62cfec1df1492c2e7f5ae699",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES badalona",
+   "branch_id": "672294c4b2074ddd960e671e",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES boadilla",
+   "branch_id": "65277ea0ffafc9b0d9030f07",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES bonanova",
+   "branch_id": "60799c7835b8911c8545f043",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES carabanchel",
+   "branch_id": "68d68a5cf7176270040f624a",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES castelldefels",
+   "branch_id": "69417976483119cfc208fd5f",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES condeorgaz",
+   "branch_id": "682b4431d6f0676d83002523",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES entenza",
+   "branch_id": "66deaf61cd10d28f140f5581",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES granviavalencia",
+   "branch_id": "61bcbcf06f0ee54aa92a366f",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES guindalera",
+   "branch_id": "648060a55dbb5018470ba2c7",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES imperial",
+   "branch_id": "687a31ae3d5a8d28280c13b9",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES indautxu",
+   "branch_id": "673b56d4a07be6278d0c09a8",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES lamoraleja",
+   "branch_id": "66338ae1b67da376910421b9",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES lapetxina",
+   "branch_id": "682af6c133852a1d59072f07",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES lasrozas",
+   "branch_id": "66339167ea06e95f9c0d3740",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES majadahonda",
+   "branch_id": "66fe80bd18887858ca0fc253",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES malagueta",
+   "branch_id": "68f611fda76e6319bf09cd89",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES pac%C3%ADfico",
+   "branch_id": "654a426970c402fc1b0e9785",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES palmaavenidas",
+   "branch_id": "694130a675c25137520446dd",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES pinardechamart%C3%ADn",
+   "branch_id": "673c8522831b36f78509b14d",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES poblenou",
+   "branch_id": "64919c3d748dc82f5e0e25a5",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES ponzano",
+   "branch_id": "6a0f33eda77d412112087844",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES pozuelo",
+   "branch_id": "6274e6a13d2acc4d0e5f4896",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES prosperidad",
+   "branch_id": "69008f1a0b1641b6a9017cac",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES quintadelosmolinos",
+   "branch_id": "6a268d22712f9ee03b088844",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES romareda",
+   "branch_id": "68d68b082604074ff401b9b5",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES sabadellcentre",
+   "branch_id": "674ddab221b98a25e20ae1c1",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES sagradafamilia",
+   "branch_id": "67f7a344297706f6bd0ebb76",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES sanbernardo",
+   "branch_id": "69f9af8bf414e030250e7fe9",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES sanpablo",
+   "branch_id": "69fdf0a77653911c3005c5b9",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES sansebastiandelosreyes",
+   "branch_id": "686b9d387fc04295320268ac",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES santcugat",
+   "branch_id": "62729d531d02d33f1b687ce1",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES santgervasi",
+   "branch_id": "6583196c7e23ac73cf0547e4",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES santgervasi",
+   "branch_id": "604f2ef64e76e821766f63a0",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "CLUB PILATES terrassanord",
+   "branch_id": "66a7750bf85cf163f30d080e",
    "centro_beatcore": ""
   }
  ],
@@ -331,17 +726,22 @@
  ],
  "trainingym": [
   {
-   "estudio": "ACTION BLACK Alcalá",
+   "estudio": "ACTION BLACK Action Black Alcalá",
    "centro_code": "alcala.actionblack.es",
    "centro_beatcore": ""
   },
   {
-   "estudio": "ACTION BLACK Ortega y Gasset",
+   "estudio": "ACTION BLACK Action Black Ortega y Gasset",
    "centro_code": "ortega.actionblack.es",
    "centro_beatcore": ""
   },
   {
-   "estudio": "SPACE BY 9F Pozuelo",
+   "estudio": "ACTION BLACK Action black Ventas",
+   "centro_code": "ventas.actionblack.es",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "SPACE BY 9F spAce by Nine Fitness 9F Pozuelo",
    "centro_code": "9Fpozuelo",
    "centro_beatcore": ""
   }

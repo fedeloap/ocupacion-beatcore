@@ -193,59 +193,48 @@ def bsport(cfg, a, b):
     return rows
 
 
-# ---------------- Glofox (dato exacto; requiere token de invitado del portal) ----------------
+# ---------------- Glofox (dato exacto; sesión de invitado del portal público) ----------------
 def glofox(cfg, a, b):
-    if not cfg:
-        return []
+    """El portal público de reservas abre una sesión de invitado por centro (POST /2.0/login con GUEST) y con ella
+    lista las clases con plazas (`size`) y reservas (`booked`). Es la misma llamada que hace cualquier visitante."""
     rows = []
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
-        print("[glofox] playwright no instalado", file=sys.stderr)
-        return rows
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        for s in cfg:
-            # contexto nuevo por estudio: el token de invitado se guarda en localStorage
-            # y es propio de cada branch; reutilizarlo devolvería las clases del primer estudio
-            ctx = browser.new_context()
-            page = ctx.new_page()
-            try:
-                page.goto(f"https://app.glofox.com/portal/#/branch/{s['branch_id']}/classes-day-view",
-                          wait_until="networkidle", timeout=60000)
-                token = page.evaluate(
-                    "() => { try { return JSON.parse(localStorage.getItem('ngStorage-tokens'))[0].webPortalToken } catch(e) { return null } }")
-                if not token:
-                    print(f"[glofox] {s['estudio']}: sin token", file=sys.stderr)
+    for s in cfg:
+        try:
+            r = requests.post("https://api.glofox.com/2.0/login", headers={**UA, "Content-Type": "application/json"},
+                              json={"branch_id": s["branch_id"], "login": "GUEST", "password": "GUEST"}, timeout=30)
+            r.raise_for_status()
+            token = r.json().get("token")
+            if not token:
+                print(f"[glofox] {s['estudio']}: sin token", file=sys.stderr)
+                continue
+            data, pg = [], 1
+            while pg <= 20:
+                url = (f"https://api.glofox.com/2.0/events?start={int(a.timestamp())}&end={int(b.timestamp())}"
+                       f"&page={pg}&private=false&sort_by=time_start")
+                rr = requests.get(url, headers={**UA, "Authorization": f"Bearer {token}"}, timeout=30)
+                rr.raise_for_status()
+                j = rr.json()
+                data += j.get("data", [])
+                if not j.get("has_more"):
+                    break
+                pg += 1
+            for x in data:
+                st = datetime.fromtimestamp(int(x["time_start"]), timezone.utc)
+                if not between(st, a, b):
                     continue
-                data, pg = [], 1
-                while pg <= 20:
-                    url = (f"https://api.glofox.com/2.0/events?start={int(a.timestamp())}&end={int(b.timestamp())}"
-                           f"&page={pg}&private=false&sort_by=time_start")
-                    r = requests.get(url, headers={**UA, "Authorization": f"Bearer {token}"}, timeout=30)
-                    j = r.json()
-                    data += j.get("data", [])
-                    if not j.get("has_more"):
-                        break
-                    pg += 1
-                for x in data:
-                    st = datetime.fromtimestamp(int(x["time_start"]), timezone.utc)
-                    if not between(st, a, b):
-                        continue
-                    size, booked = x.get("size"), x.get("booked")
-                    ok = isinstance(size, int) and isinstance(booked, int)
-                    rows.append({
-                        "plataforma": "glofox", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
-                        "sede": s["estudio"], "clase_id": x.get("_id"), "clase": x.get("name", ""),
-                        "inicio_local": to_local(st), "duracion_min": x.get("duration"),
-                        "capacidad": size, "ocupadas": booked, "libres": (size - booked) if ok else "",
-                        "libres_web": "", "llena": (booked >= size) if ok else "",
-                        "cancelada": "", "lista_espera": x.get("waiting", ""),
-                    })
-            except Exception as e:
-                print(f"[glofox] {s['estudio']}: error {e}", file=sys.stderr)
-            ctx.close()
-        browser.close()
+                size, booked = x.get("size"), x.get("booked")
+                ok = isinstance(size, int) and isinstance(booked, int)
+                rows.append({
+                    "plataforma": "glofox", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
+                    "sede": s["estudio"], "clase_id": x.get("_id"), "clase": x.get("name", ""),
+                    "inicio_local": to_local(st), "duracion_min": x.get("duration"),
+                    "capacidad": size, "ocupadas": booked, "libres": (size - booked) if ok else "",
+                    "libres_web": "", "llena": (booked >= size) if ok else "",
+                    "cancelada": "", "lista_espera": x.get("waiting", ""),
+                })
+        except Exception as e:
+            print(f"[glofox] {s['estudio']}: error {e}", file=sys.stderr)
+        time.sleep(0.3)
     return rows
 
 
@@ -343,11 +332,15 @@ def trainingym(cfg, a, b):
         try:
             c = requests.get(f"https://center.trainingym.com/api/v1/public/center/{code}", headers=UA, timeout=30).json()
             token = c["publicToken"]
-            r = requests.get("https://booking.trainingym.com/api/v2/calendar/totem/notauth",
-                             params={"centerToken": token, "startDateTime": d1.isoformat(),
-                                     "endDateTime": d2.isoformat(), "forceViewMap": "true"}, headers=UA, timeout=45)
-            r.raise_for_status()
-            days = r.json().get("calendar", [])
+            days, ini = [], d1
+            while ini <= d2:  # el calendario acepta como mucho unos 7 días por consulta
+                fin = min(ini + timedelta(days=5), d2)
+                r = requests.get("https://booking.trainingym.com/api/v2/calendar/totem/notauth",
+                                 params={"centerToken": token, "startDateTime": ini.isoformat(),
+                                         "endDateTime": fin.isoformat(), "forceViewMap": "true"}, headers=UA, timeout=45)
+                r.raise_for_status()
+                days += r.json().get("calendar", [])
+                ini = fin + timedelta(days=1)
         except Exception as e:
             print(f"[trainingym] {s['estudio']}: error {e}", file=sys.stderr)
             continue
@@ -382,6 +375,21 @@ def capture(cfg, a, b):
             + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b)
             + timp.capture(cfg.get("timp", []), a, b) + marianatek(cfg.get("marianatek", []), a, b)
             + aimharder(cfg.get("aimharder", []), a, b) + trainingym(cfg.get("trainingym", []), a, b))
+
+
+def capture_par(cfg, a, b, workers=10, chunk=5):
+    """Como capture(), pero reparte los estudios en lotes que se consultan a la vez (para cientos de centros)."""
+    from concurrent.futures import ThreadPoolExecutor
+    tareas = []
+    for plat, lst in cfg.items():
+        if isinstance(lst, list):
+            for i in range(0, len(lst), chunk):
+                tareas.append({plat: lst[i:i + chunk]})
+    rows = []
+    with ThreadPoolExecutor(workers) as ex:
+        for r in ex.map(lambda c: capture(c, a, b), tareas):
+            rows += r
+    return rows
 
 
 def cargar_cadenas():
@@ -424,7 +432,7 @@ def main():
     # cadenas nacionales: solo la ocupación final (clases a punto de empezar)
     nac = cargar_cadenas()
     if nac:
-        n_rows = capture(nac, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(minutes=AFTER_MIN))
+        n_rows = capture_par(nac, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(minutes=AFTER_MIN))
         final += [dict(r) for r in n_rows]
         print(f"{stamp}: {len(n_rows)} clases de cadenas nacionales")
     write(final, os.path.join("data", f"{day}.csv"), stamp)
@@ -440,7 +448,7 @@ def main():
         plan = capture(cfg, ref, ref + timedelta(days=PLAN_DAYS))
         if nac:
             # la planificación de las cadenas nacionales sirve para medir su oferta semanal (clases y plazas por día)
-            plan += capture(nac, ref, ref + timedelta(days=PLAN_DAYS))
+            plan += capture_par(nac, ref, ref + timedelta(days=PLAN_DAYS))
         write(plan, plan_path, stamp)
         print(f"{stamp}: {len(plan)} clases (planificación 7 días, turno {turno})")
 

@@ -71,9 +71,12 @@ def candidatos():
     return c
 
 
+CADENAS_FUERA = {"LEVELOUT"}  # sedes en el Reino Unido, no aplican
+
+
 def main():
     ya = ya_capturados()
-    cand = candidatos()
+    cand = {k: v for k, v in candidatos().items() if k not in CADENAS_FUERA}
     out = {"_nota": "Estudios de cadenas nacionales (fuera del radio de BeatCore). Solo captura final. Generado por fuentes_build.py.",
            "momence": [], "bsport": [], "mindbody": [], "glofox": [], "marianatek": [], "aimharder": []}
     resumen = []
@@ -128,6 +131,45 @@ def main():
                 continue
             out["glofox"].append({"estudio": cadena, "branch_id": br, "centro_beatcore": ""})
             resumen.append((cadena, "glofox", br, "sin verificar"))
+    # todos los centros de cada cadena (centros.py: fichas del sitemap con su identificador de agenda)
+    try:
+        cen = json.load(open("web/cadenas_centros.json", encoding="utf-8"))
+    except Exception:
+        cen = {}
+    ya_est = {k: {str(e.get("host_id") or e.get("company_id") or e.get("subdominio") or e.get("branch_id") or
+                    e.get("centro_code") or e.get("ref") or e.get("tenant")) for e in v}
+              for k, v in out.items() if isinstance(v, list)}
+    def nuevo(plat, ident):
+        return not any(str(ident) in s or s == str(ident) for s in ya_est.get(plat, set()))
+    for cadena, d in cen.items():
+        for c in d.get("centros", []):
+            plat, i, slug = c["plataforma"], str(c["id"]), c["nombre"]
+            nombre = f"{cadena} {slug}"
+            if plat == "glofox" and i not in ya["glofox"] and nuevo("glofox", i):
+                out["glofox"].append({"estudio": nombre, "branch_id": i, "centro_beatcore": ""})
+                ya_est.setdefault("glofox", set()).add(i)
+                resumen.append((cadena, "glofox", slug, c.get("clases_7d")))
+            elif plat == "momence" and i not in ya["momence"] and nuevo("momence", i):
+                out["momence"].append({"estudio": cadena, "host_id": int(i), "centro_beatcore": ""})
+                ya_est.setdefault("momence", set()).add(i)
+                resumen.append((cadena, "momence", i, c.get("clases_7d")))
+            elif plat == "bsport" and i not in ya["bsport"] and nuevo("bsport", i):
+                out["bsport"].append({"estudio": cadena, "company_id": int(i), "centro_beatcore": ""})
+                ya_est.setdefault("bsport", set()).add(i)
+                resumen.append((cadena, "bsport", i, c.get("clases_7d")))
+            elif plat == "mindbody" and i not in ya["mindbody"] and nuevo("mindbody", i):
+                ref = json.dumps({"mb_site_id": int(i), "mb_location_id": 1, "inventory_source": "MB"}, separators=(",", ":"))
+                out["mindbody"].append({"estudio": nombre, "ref": ref, "centro_beatcore": ""})
+                ya_est.setdefault("mindbody", set()).add(i)
+                resumen.append((cadena, "mindbody", i, c.get("clases_2d")))
+            elif plat == "aimharder" and nuevo("aimharder", i) and c.get("box"):
+                out["aimharder"].append({"estudio": nombre, "subdominio": i, "box": c["box"], "centro_beatcore": ""})
+                ya_est.setdefault("aimharder", set()).add(i)
+                resumen.append((cadena, "aimharder", i, c.get("clases_dia")))
+            elif plat == "trainingym" and nuevo("trainingym", i):
+                out.setdefault("trainingym", []).append({"estudio": f"{cadena} {c.get('nombre_centro') or slug}", "centro_code": i, "centro_beatcore": ""})
+                ya_est.setdefault("trainingym", set()).add(i)
+                resumen.append((cadena, "trainingym", i, c.get("clases_3d")))
     # fuentes localizadas a mano (web/cadenas_fuentes_manual.json), verificadas igual
     try:
         man = json.load(open("web/cadenas_fuentes_manual.json", encoding="utf-8"))

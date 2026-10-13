@@ -1,0 +1,874 @@
+{
+ "cadenas": [
+  {
+   "cadena": "SICLO",
+   "web": "https://www.siclo.com/",
+   "paginas": 1,
+   "fuentes": []
+  },
+  {
+   "cadena": "BATARD",
+   "web": "https://batard.es/",
+   "paginas": 63,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardcasadecampo",
+     "box": "10773",
+     "clases_dia": 11,
+     "nombre": "Batard Casa de Campo / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardcondecasal",
+     "box": "10908",
+     "clases_dia": 9,
+     "nombre": "Batard Conde Casal / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardmontecarmelo",
+     "box": "11090",
+     "clases_dia": 9,
+     "nombre": "BATARD MONTECARMELO / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardplazacastilla",
+     "box": "10775",
+     "clases_dia": 10,
+     "nombre": "BATARD PLAZA CASTILLA / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardrussafa",
+     "box": "9934",
+     "clases_dia": 9,
+     "nombre": "Batard Crossboxing Studio Russafa"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardstudiochamberi",
+     "box": "10081",
+     "clases_dia": 11,
+     "nombre": "Batard Crossboxing Studio Chamberi / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardstudiodelicias",
+     "box": "10667",
+     "clases_dia": 10,
+     "nombre": "Batard Crossboxing Studio Delicias / Sala Crossboxing"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "batardurbangym",
+     "box": "9872",
+     "clases_dia": 11,
+     "nombre": "Batard Crossboxing Studio Azca / Crossboxing Studio"
+    }
+   ]
+  },
+  {
+   "cadena": "PLAYGYM",
+   "web": "https://playgym.es/",
+   "paginas": 67,
+   "fuentes": []
+  },
+  {
+   "cadena": "TRIB3",
+   "web": "https://trib3.es/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 106748,
+     "clases_7d": 50,
+     "sedes": [
+      "Palma",
+      "SALA PILAT3S",
+      "Sala HIIT"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 168659,
+     "clases_7d": 50,
+     "sedes": [
+      "HIIT",
+      "PILAT3S"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 204362,
+     "clases_7d": 30,
+     "sedes": [
+      "TRIB3 Manchester"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 214528,
+     "clases_7d": 39,
+     "sedes": [
+      "TRIB3 Studio"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 36924,
+     "clases_7d": 27,
+     "sedes": [
+      "The Studio"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 37769,
+     "clases_7d": 32,
+     "sedes": [
+      "The Studio"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "BEATCORE",
+   "web": "https://beatcore.co/",
+   "paginas": 80,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 108035,
+     "clases_7d": 50,
+     "sedes": [
+      "BeatCore Chamberi"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 127455,
+     "clases_7d": 50,
+     "sedes": [
+      "BeatCore Salamanca"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 127869,
+     "clases_7d": 50,
+     "sedes": [
+      "Personal. ",
+      "beatcore"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 127870,
+     "clases_7d": 50,
+     "sedes": [
+      "beatcore Ruzafa"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "FLOW TRAINING",
+   "web": "https://flowtraining.es/",
+   "paginas": 99,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5746895,
+     "clases_2d": 19
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5746896,
+     "clases_2d": 19
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5746924,
+     "clases_2d": 17
+    }
+   ]
+  },
+  {
+   "cadena": "B3B WOMAN",
+   "web": "https://b3bwomanstudio.com/",
+   "paginas": 87,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 225970,
+     "clases_7d": 40,
+     "sedes": [
+      "B3B Retiro",
+      "Running Club - Puerta de Madrid (Parque Retiro)"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 291316,
+     "clases_7d": 50,
+     "sedes": [
+      "B3B Power · Strength · Barre",
+      "B3B Reformer / Barreformer"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 291317,
+     "clases_7d": 49,
+     "sedes": [
+      "B3B CHAMARTIN"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 291318,
+     "clases_7d": 50,
+     "sedes": [
+      "B3B AYALA"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 291319,
+     "clases_7d": 50,
+     "sedes": [
+      "B3B GMC"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "SQUARE FITNESS",
+   "web": "https://www.square-fitness.com/",
+   "paginas": 30,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5741164,
+     "clases_2d": 13
+    }
+   ]
+  },
+  {
+   "cadena": "ACTION BLACK",
+   "web": "https://www.actionblack.es/",
+   "paginas": 29,
+   "fuentes": [
+    {
+     "plataforma": "trainingym",
+     "centro_code": "alcala.actionblack.es",
+     "nombre": "Action Black Alcalá",
+     "clases_3d": 72
+    },
+    {
+     "plataforma": "trainingym",
+     "centro_code": "ortega.actionblack.es",
+     "nombre": "Action Black Ortega y Gasset",
+     "clases_3d": 88
+    },
+    {
+     "plataforma": "trainingym",
+     "centro_code": "ventas.actionblack.es",
+     "nombre": "Action black Ventas",
+     "clases_3d": 48
+    }
+   ]
+  },
+  {
+   "cadena": "EDAN",
+   "web": "https://edanstudios.com/es/",
+   "paginas": 95,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 37858,
+     "clases_7d": 50,
+     "sedes": [
+      "EDAN STUDIOS"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "BARRY´S BOOTCAMP",
+   "web": "https://www.barrys.com/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5735225,
+     "clases_2d": 12
+    }
+   ]
+  },
+  {
+   "cadena": "CORE",
+   "web": "http://www.corestudiobcn.com/",
+   "paginas": 47,
+   "fuentes": [
+    {
+     "plataforma": "bsport",
+     "company_id": 4651,
+     "clases_7d": 31,
+     "establecimientos": [
+      "15688",
+      "15706"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "SPACE BY 9F",
+   "web": "https://spaceby9f.com/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "trainingym",
+     "centro_code": "9Fpozuelo",
+     "nombre": "spAce by Nine Fitness 9F Pozuelo",
+     "clases_3d": 82
+    }
+   ]
+  },
+  {
+   "cadena": "FITACTIVA",
+   "web": "https://www.fitactiva.com/",
+   "paginas": 162,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fitactiva",
+     "box": "11048",
+     "clases_dia": 0,
+     "nombre": ""
+    }
+   ]
+  },
+  {
+   "cadena": "FULL CROSSFIT",
+   "web": "https://www.fullcrossfit.com/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fullcrossfitbenimaclet",
+     "box": "10077",
+     "clases_dia": 11,
+     "nombre": "Full CrossFit Benimaclet"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fullcrossfitmadrid",
+     "box": "9891",
+     "clases_dia": 7,
+     "nombre": "Full CrossFit Madrid"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fullcrossfitvalencia",
+     "box": "6869",
+     "clases_dia": 24,
+     "nombre": "Full CrossFit La Patacona / Box 01"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fulleliana",
+     "box": "10205",
+     "clases_dia": 8,
+     "nombre": "Full CrossFit L´Eliana"
+    }
+   ]
+  },
+  {
+   "cadena": "CONCEPT BARRE",
+   "web": "https://conceptbarre.com/",
+   "paginas": 10,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5731294,
+     "clases_2d": 17
+    }
+   ]
+  },
+  {
+   "cadena": "SOLID STUDIO",
+   "web": "https://www.thesolidstudio.es/",
+   "paginas": 37,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5740876,
+     "clases_2d": 40
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5740877,
+     "clases_2d": 30
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5746768,
+     "clases_2d": 26
+    }
+   ]
+  },
+  {
+   "cadena": "REVIVE WELLNESS HUB",
+   "web": "https://revivespain.com/",
+   "paginas": 98,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 39277,
+     "clases_7d": 50,
+     "sedes": [
+      "RECOVERY ROOM SALAMANCA",
+      "Recovery Room Justicia",
+      "Revive Justicia",
+      "Revive Salamanca "
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "THE FITHUB",
+   "web": "https://thefithub.es/",
+   "paginas": 104,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5738769,
+     "clases_2d": 63
+    }
+   ]
+  },
+  {
+   "cadena": "PILAT3S",
+   "web": "https://pilat3s.com/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 142287,
+     "clases_7d": 50,
+     "sedes": [
+      "PILAT3S",
+      "PILAT3S STUDIO"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 152886,
+     "clases_7d": 24,
+     "sedes": [
+      "PILAT3S Studio"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 227048,
+     "clases_7d": 41,
+     "sedes": [
+      "PILAT3S STUDIO"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 237542,
+     "clases_7d": 36,
+     "sedes": [
+      "PILAT3S Infante Santo"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 237543,
+     "clases_7d": 1,
+     "sedes": [
+      "PILAT3S Quinta da Fonte"
+     ]
+    },
+    {
+     "plataforma": "momence",
+     "host_id": 238378,
+     "clases_7d": 36,
+     "sedes": [
+      "PILAT3S Studio"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "FABRIK TRAINING CLUBS",
+   "web": "https://www.fabriktrainingclub.com/",
+   "paginas": 12,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "fabrikboxtraining",
+     "box": "10321",
+     "clases_dia": 15,
+     "nombre": "Fabrik Training Club - MALLORCA"
+    }
+   ]
+  },
+  {
+   "cadena": "180 TRAINING CLUB",
+   "web": "https://www.180club.es/",
+   "paginas": 10,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "180juancarlosi",
+     "box": "10550",
+     "clases_dia": 22,
+     "nombre": "180 Juan Carlos I"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "180juandeborbon",
+     "box": "9908",
+     "clases_dia": 22,
+     "nombre": "180 Juan de Borbón"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "180rondasur",
+     "box": "9909",
+     "clases_dia": 18,
+     "nombre": "180 Ronda Sur"
+    }
+   ]
+  },
+  {
+   "cadena": "THE WOD CLUB",
+   "web": "https://thewodclub.es/",
+   "paginas": 250,
+   "fuentes": []
+  },
+  {
+   "cadena": "BATELIER",
+   "web": "https://www.batelier.es/",
+   "paginas": 13,
+   "fuentes": [
+    {
+     "plataforma": "bsport",
+     "company_id": 3646,
+     "clases_7d": 159,
+     "establecimientos": [
+      "12488",
+      "12489",
+      "12490"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "SHE BARRE",
+   "web": "https://shebarre.com/",
+   "paginas": 58,
+   "fuentes": []
+  },
+  {
+   "cadena": "CLUB BARRE",
+   "web": "http://www.clubbarre.es/",
+   "paginas": 24,
+   "fuentes": []
+  },
+  {
+   "cadena": "POMONA",
+   "web": "https://pomonaclub.es/",
+   "paginas": 35,
+   "fuentes": [
+    {
+     "plataforma": "glofox",
+     "branch_id": "660d6658f351bda23f05d487",
+     "verificado": false
+    },
+    {
+     "plataforma": "glofox",
+     "branch_id": "69971a5d4bd15296130b83e4",
+     "verificado": false
+    }
+   ]
+  },
+  {
+   "cadena": "HOTCORE",
+   "web": "https://hotcorestudios.com/",
+   "paginas": 59,
+   "fuentes": []
+  },
+  {
+   "cadena": "LEVELOUT",
+   "web": "https://levelout.co/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5731034,
+     "clases_2d": 25
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5735335,
+     "clases_2d": 15
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5735336,
+     "clases_2d": 18
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5737173,
+     "clases_2d": 15
+    }
+   ]
+  },
+  {
+   "cadena": "REFORM U",
+   "web": "https://www.reformustudio.com/",
+   "paginas": 49,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5740809,
+     "clases_2d": 13
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5750879,
+     "clases_2d": 11
+    }
+   ]
+  },
+  {
+   "cadena": "ARDE BARRE",
+   "web": "https://ardebarrestudio.com/",
+   "paginas": 19,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 120742,
+     "clases_7d": 33,
+     "sedes": [
+      "Arde Barre La Moraleja"
+     ]
+    },
+    {
+     "plataforma": "bsport",
+     "company_id": 3558,
+     "clases_7d": 38,
+     "establecimientos": [
+      "12375"
+     ]
+    },
+    {
+     "plataforma": "bsport",
+     "company_id": 5971,
+     "clases_7d": 27,
+     "establecimientos": [
+      "20396"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "HOUSE OF BALANCE",
+   "web": "https://www.houseofbalance.es/",
+   "paginas": 9,
+   "fuentes": []
+  },
+  {
+   "cadena": "DENOVO PILATES",
+   "web": "https://denovopilates.com/",
+   "paginas": 98,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5729300,
+     "clases_2d": 15
+    }
+   ]
+  },
+  {
+   "cadena": "STUDIO NOVA (BATARD)",
+   "web": "https://studionovapilates.com/",
+   "paginas": 11,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "studionovacondecasal",
+     "box": "10921",
+     "clases_dia": 11,
+     "nombre": "Studio Nova Conde Casal / Sala Pilates Reformer"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "studionovaplazacastilla",
+     "box": "10801",
+     "clases_dia": 11,
+     "nombre": "STUDIO NOVA PLAZA CASTILLA / Sala Pilates Reformer"
+    }
+   ]
+  },
+  {
+   "cadena": "VICTORIA STUDIO",
+   "web": "https://www.victoriastudio.es/",
+   "paginas": 11,
+   "fuentes": [
+    {
+     "plataforma": "bsport",
+     "company_id": 5541,
+     "clases_7d": 108,
+     "establecimientos": [
+      "18488",
+      "18508",
+      "18537"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "REN COACH",
+   "web": "https://www.rencoach.es/",
+   "paginas": 11,
+   "fuentes": [
+    {
+     "plataforma": "aimharder",
+     "subdominio": "reancoachlavapies",
+     "box": "10282",
+     "clases_dia": 26,
+     "nombre": "Ren Coach Lavapiés"
+    },
+    {
+     "plataforma": "aimharder",
+     "subdominio": "rencoach",
+     "box": "9959",
+     "clases_dia": 23,
+     "nombre": "Ren Coach Boutique"
+    }
+   ]
+  },
+  {
+   "cadena": "KOLEO BARRE",
+   "web": "https://www.koleobarre.com/",
+   "paginas": 26,
+   "fuentes": []
+  },
+  {
+   "cadena": "DAN´S",
+   "web": "https://www.dans.es/",
+   "paginas": 108,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 33091,
+     "clases_7d": 50,
+     "sedes": [
+      "DAN'S Barcelo - studio CELIA CRUZ",
+      "DAN'S Barcelo - studio FRIDA KAHLO",
+      "DAN'S Barcelo - studio SHAKIRA",
+      "DAN'S Salamanca - studio CELIA CRUZ",
+      "DAN'S Salamanca - studio FRIDA KAHLO",
+      "DAN'S Salamanca - studio SHAKIRA",
+      "DAN'S Salamanca -studio CARMEN MIRANDA"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "FS8",
+   "web": "https://fs8.com/",
+   "paginas": 250,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5720741,
+     "clases_2d": 10
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5720888,
+     "clases_2d": 12
+    },
+    {
+     "plataforma": "mindbody",
+     "site_id": 5721886,
+     "clases_2d": 15
+    }
+   ]
+  },
+  {
+   "cadena": "KORE LAB",
+   "web": "https://www.korelablagree.com/",
+   "paginas": 16,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5749842,
+     "clases_2d": 22
+    }
+   ]
+  },
+  {
+   "cadena": "GRATIA",
+   "web": "https://gratiastudio.com/",
+   "paginas": 58,
+   "fuentes": [
+    {
+     "plataforma": "mindbody",
+     "site_id": 5738228,
+     "clases_2d": 20
+    }
+   ]
+  },
+  {
+   "cadena": "AMA STUDIO",
+   "web": "https://amastudio.es/",
+   "paginas": 21,
+   "fuentes": [
+    {
+     "plataforma": "momence",
+     "host_id": 208081,
+     "clases_7d": 50,
+     "sedes": [
+      "AMA Studio: Juan de Austria",
+      "AMA Studio: Lagasca"
+     ]
+    }
+   ]
+  },
+  {
+   "cadena": "MYND PILATES",
+   "web": "https://myndpilates.com/",
+   "paginas": 17,
+   "fuentes": [
+    {
+     "plataforma": "glofox",
+     "branch_id": "6953fb09c0466d24590cfef7",
+     "verificado": false
+    },
+    {
+     "plataforma": "glofox",
+     "branch_id": "6a69bf1cd48f8d6ca909bee7",
+     "verificado": false
+    }
+   ]
+  },
+  {
+   "cadena": "BARREFIT STUDIO",
+   "web": "https://barrefit.es/",
+   "paginas": 22,
+   "fuentes": []
+  }
+ ]
+}
