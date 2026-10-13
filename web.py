@@ -175,7 +175,20 @@ def _agrega(d, ahora):
             lista_.append({"p": k, "dias": int(g["fecha"].nunique()), "clases": int(len(g)), "plazas": int(g["plazas"].sum()),
                            "reservas": int(yy["reservas"].sum()) if len(yy) else None,
                            "ocup": ocup(yy) if len(yy) else None})
-    return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "ocup": ocup(ya) if len(ya) else None,
+    # celdas día de la semana x hora: permiten filtrar por días y franja horaria en el navegador
+    d["dow"], d["hora"] = d["fecha"].dt.dayofweek, d["inicio_local"].dt.hour
+    ya["dow"], ya["hora"] = ya["fecha"].dt.dayofweek, ya["inicio_local"].dt.hour
+    cel = d.groupby(["dow", "hora"]).agg(c=("kid", "size"), p=("plazas", "sum"))
+    cel = cel.join(ya.groupby(["dow", "hora"]).agg(r=("reservas", "sum"), pm=("plazas", "sum")), how="left").fillna(0)
+    celdas = [{"d": int(i[0]), "h": int(i[1]), "c": int(r["c"]), "p": int(r["p"]), "r": int(r["r"]), "pm": int(r["pm"])}
+              for i, r in cel.iterrows()]
+    top = []
+    for nombre, g in d.groupby("clase"):
+        yy = ya[ya["clase"] == nombre]
+        top.append({"clase": nombre, "c": int(len(g)), "p": int(g["plazas"].sum()), "o": ocup(yy) if len(yy) else None})
+    top.sort(key=lambda x: -x["c"])
+    return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "celdas": celdas, "top": top[:15],
+            "ocup": ocup(ya) if len(ya) else None,
             "reservas": int(ya["reservas"].sum()) if len(ya) else None, "plazas_med": int(ya["plazas"].sum()) if len(ya) else None,
             "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique()), "sin_aforo": int(d["plazas"].isna().sum())}
 
