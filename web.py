@@ -90,6 +90,16 @@ def escribir(nombre, obj):
 
 def cargar_catalogo():
     cat = pd.read_csv("web/estudios.csv")
+    # correcciones de precio dictadas por Fede (web/precios_ajustes.json): pisan lo leído en el catálogo
+    if os.path.exists("web/precios_ajustes.json"):
+        aj = json.load(open("web/precios_ajustes.json", encoding="utf-8"))
+        for k, v in aj.items():
+            if k.startswith("_"):
+                continue
+            for col, val in v.items():
+                if col.startswith("_"):
+                    continue
+                cat.loc[cat["id"] == int(k), col] = np.nan if val is None else val
     mapa = {}
     for _, r in cat.iterrows():
         if isinstance(r["captura"], str):
@@ -221,16 +231,16 @@ def facturacion(a, tarifas, origen):
     """Facturación mensual estimada de un centro: € por sesión x reservas al mes
     (clases de una semana tipo x 52/12 x reservas medias por clase).
     € por sesión, por orden: cuota de 8/mes menos un 10 %, entre 8; cuota de 4/mes menos un 10 %, entre 4;
-    ilimitada entre 10; clase suelta menos un 25 %. Sin reservas conocidas (bsport) no hay estimación."""
+    clase suelta menos un 25 %; ilimitada entre 10. Sin reservas conocidas (bsport) no hay estimación."""
     ocho, cuatro, ilim, suelta = [_num(x) for x in tarifas]
     if ocho:
         ps, base, cuota = ocho * (1 - DESCUENTO_CUOTA) / 8, "8/mes", ocho
     elif cuatro:
         ps, base, cuota = cuatro * (1 - DESCUENTO_CUOTA) / 4, "4/mes", cuatro
-    elif ilim:
-        ps, base, cuota = ilim / SESIONES_ILIMITADA, "ilimitada", None
     elif suelta:
         ps, base, cuota = suelta * (1 - DESCUENTO_SUELTA), "suelta", None
+    elif ilim:
+        ps, base, cuota = ilim / SESIONES_ILIMITADA, "ilimitada", None
     else:
         ps, base, cuota = None, "", None
     cl_mes = a["clases_sem"] * SEMANAS_MES

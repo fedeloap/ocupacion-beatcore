@@ -1,0 +1,13 @@
+{
+  "_fuente": "Correcciones dictadas por Fede el 14/10/2026 que pisan el catalogo (web/estudios.csv).",
+  "62": {
+    "ocho_mes": 57,
+    "ilimitada": null,
+    "_nota": "Dan's vende bonos de creditos (6=44 EUR, 10=69, 16=89, 20=99, 40=129). El catalogo tenia el de 16 como 8/mes y el de 40 como ilimitada. 57 EUR = 8 creditos interpolando entre el bono de 6 y el de 10 (unos 7,1 EUR por credito)."
+  },
+  "116": {
+    "ocho_mes": 57,
+    "ilimitada": null,
+    "_nota": "Igual que id 62 (misma tarifa en dans.es)."
+  }
+}
