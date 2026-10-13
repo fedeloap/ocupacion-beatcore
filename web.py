@@ -163,6 +163,13 @@ def _agrega(d, ahora):
                      "reservas": round(float(mf["reservas"].mean()), 1) if len(mf) else None,
                      "ocup": ocup(yy) if len(yy) else None, "medidas": int(len(yy))})
 
+    # para la facturación: clases en una semana tipo y reservas medias por clase ya dada (bsport no publica reservas)
+    ds_c = [x["clases"] for x in dias if x["clases"] is not None]
+    n_fechas = int(d["fecha"].nunique())
+    clases_sem = sum(ds_c) if n_fechas >= 7 else len(d) / n_fechas * 7
+    yr = d[(d["inicio_local"] <= ahora) & d["reservas"].notna()]
+    res_clase = round(float(yr["reservas"].mean()), 2) if len(yr) else None
+
     d = d.copy()
     ya = ya.copy()
     for t in (d, ya):
@@ -190,11 +197,44 @@ def _agrega(d, ahora):
     return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "celdas": celdas, "top": top[:15],
             "ocup": ocup(ya) if len(ya) else None,
             "reservas": int(ya["reservas"].sum()) if len(ya) else None, "plazas_med": int(ya["plazas"].sum()) if len(ya) else None,
-            "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique()), "sin_aforo": int(d["plazas"].isna().sum())}
+            "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique()), "sin_aforo": int(d["plazas"].isna().sum()),
+            "clases_sem": round(float(clases_sem), 1), "res_clase": res_clase, "n_res": int(len(yr))}
 
 
-def oferta_datos(snap, mapa, propios, lista_cadenas):
-    """Oferta (clases y plazas) y ocupación por estudio y por cadena: por día de la semana, semana y mes."""
+DESCUENTO_CUOTA = 0.10     # cuotas limitadas o más altas que no pagan por sesión (decisión de Fede, 13/10/2026)
+SEMANAS_MES = 52 / 12
+
+
+def _num(v):
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return None
+    return None if np.isnan(v) or v <= 0 else v
+
+
+def facturacion(a, ocho, cuatro, origen):
+    """Facturación mensual estimada de un centro: precio de la cuota de 8 al mes menos un 10 %, entre 8 sesiones,
+    por las reservas al mes (clases de una semana tipo x 52/12 x reservas medias por clase).
+    Sin precio de 8/mes se usa el de 4/mes (marcado). Sin reservas conocidas (bsport) no hay estimación."""
+    ocho, cuatro = _num(ocho), _num(cuatro)
+    if ocho:
+        ps, base, cuota = ocho * (1 - DESCUENTO_CUOTA) / 8, "8/mes", ocho
+    elif cuatro:
+        ps, base, cuota = cuatro * (1 - DESCUENTO_CUOTA) / 4, "4/mes", cuatro
+    else:
+        ps, base, cuota = None, "", None
+    cl_mes = a["clases_sem"] * SEMANAS_MES
+    res_mes = cl_mes * a["res_clase"] if a["res_clase"] is not None else None
+    return {"cuota": cuota, "base": base, "origen": origen if ps else "", "precio_ses": round(ps, 2) if ps else None,
+            "clases_mes": round(cl_mes), "res_clase": a["res_clase"],
+            "res_mes": round(res_mes) if res_mes is not None else None,
+            "fact_mes": round(ps * res_mes) if ps and res_mes is not None else None}
+
+
+def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
+    """Oferta (clases y plazas), ocupación y facturación estimada por estudio y por cadena."""
+    precio_cad, pb = precio_cad or {}, pb or {}
     u = clases_unicas(snap)
     ahora = snap["captured_at"].max()
     # a partir de cuándo está completa la agenda de cada estudio: primer día tras su primera planificación
@@ -225,7 +265,23 @@ def oferta_datos(snap, mapa, propios, lista_cadenas):
         if a:
             mn, nn = g["marca_n"].iloc[0], g["nombre_n"].iloc[0]
             pert = [c_ for c_, n_ in nlista if _coincide(n_, mn, nn)]
-            unidades.append({"estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
+            r = mapa.get(f"{est}|{'' if zona == 'Nacional' else zona}")
+            propio_u = int(g["propio"].iloc[0])
+            ocho = cuatro = None
+            origen = ""
+            if propio_u and zona in pb:
+                ocho, cuatro, origen = pb[zona].get("ocho_mes"), pb[zona].get("cuatro_mes"), "precio publicado"
+            elif r is not None and (_num(r["ocho_mes"]) or _num(r["cuatro_mes"])):
+                ocho, cuatro, origen = r["ocho_mes"], r["cuatro_mes"], "precio del estudio"
+            else:
+                for c_ in pert:
+                    if c_ in precio_cad:
+                        ocho, cuatro = precio_cad[c_]
+                        origen = "mediana de la cadena " + c_
+                        if _num(ocho) or _num(cuatro):
+                            break
+            fact = facturacion(a, ocho, cuatro, origen)
+            unidades.append({"fact": fact, "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
         n = _norm(cad)
@@ -234,8 +290,14 @@ def oferta_datos(snap, mapa, propios, lista_cadenas):
         m = u[[_coincide(n, x, y) for x, y in zip(u["marca_n"], u["nombre_n"])]]
         a = _agrega(m, ahora)
         if a:
+            fu = [u["fact"] for u in unidades if cad in u["cadenas"]]
+            con = [f for f in fu if f["fact_mes"] is not None]
+            fact = {"centros": len(fu), "con_fact": len(con),
+                    "fact_mes": sum(f["fact_mes"] for f in con) if con else None,
+                    "res_mes": sum(f["res_mes"] for f in con) if con else None,
+                    "precio_ses": round(float(np.mean([f["precio_ses"] for f in con])), 2) if con else None}
             cadenas.append({"cadena": cad, "estudios": int(m["estudio"].nunique()), "zonas": sorted(set(m["zona"])),
-                            "parcial": bool(m["parcial"].all()), **a})
+                            "parcial": bool(m["parcial"].all()), "fact": fact, **a})
     return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "unidades": unidades, "cadenas": cadenas}
 
 
@@ -558,7 +620,9 @@ def main():
     cadenas = cadenas_datos(c_cad, filas_cad, cat_out)
     nombres_cadenas = [l.strip() for l in open("web/cadenas_lista.txt", encoding="utf-8") if l.strip()] \
         if os.path.exists("web/cadenas_lista.txt") else []
-    oferta = oferta_datos(snap, mapa, propios, nombres_cadenas)
+    precio_cad = {f["cadena"]: (f["precio"].get("ocho_mes"), f["precio"].get("cuatro_mes")) for f in cadenas["filas"]}
+    pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
+    oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
                                           ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta))}
     for f in ("index.html", "robots.txt"):
