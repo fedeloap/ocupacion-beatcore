@@ -972,9 +972,14 @@ function detalleCentro(box, u, dset, h0, h1) {
     t += "</tr>";
   }
   t += `</tbody></table></div>`;
-  const top = (u.top || []).map(x => ({ clase: x.clase, c: x.c, sem: u.n_dias ? x.c / u.n_dias * 7 : null, p: x.p, o: x.o }));
+  const top = (u.top || []).map(x => { const pl = u.n_dias ? x.p / u.n_dias * 7 : null;
+    return { clase: x.clase, c: x.c, sem: u.n_dias ? x.c / u.n_dias * 7 : null, pl, oc: pl != null && x.o != null ? pl * x.o : null, p: x.p, o: x.o }; });
   if (top.length) t += `<h3>Qué clases tiene</h3>${tabla("t-top-" + u.estudio.replace(/\W/g, ""), [{ k: "clase", l: "Clase" },
-    { k: "sem", l: "Veces / semana", n: 1, f: v => v == null ? "–" : num(v) }, { k: "o", l: "% cubierto", n: 1, f: pct }], top, { limit: 15 })}`;
+    { k: "sem", l: "Veces / semana (clases)", n: 1, f: v => v == null ? "–" : num(v) },
+    { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "o", l: "% cubierto", n: 1, f: pct }], top, { limit: 15 })}
+    <p class="nota">Veces: cuántas clases de ese tipo hay en una semana. Plazas ofertadas: las plazas de esas clases. Plazas ocupadas: las reservadas, según el % cubierto de las clases ya dadas.</p>`;
   box.innerHTML = t + "</div>";
 }
 function ofertaTab() {
