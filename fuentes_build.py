@@ -52,7 +52,7 @@ def slug_mb(site):
 def candidatos():
     """cadena -> {plataforma: set(ids)} uniendo HTML estático y red."""
     c = {}
-    for ruta in ("web/cadenas_fuentes.json", "web/cadenas_red.json"):
+    for ruta in ("web/cadenas_fuentes.json", "web/cadenas_fuentes_prof.json", "web/cadenas_red.json"):
         try:
             datos = json.load(open(ruta, encoding="utf-8"))["cadenas"]
         except Exception:

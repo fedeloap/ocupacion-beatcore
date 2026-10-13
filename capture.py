@@ -438,6 +438,9 @@ def main():
     hecho = os.path.exists(plan_path) or (turno == "m" and os.path.exists(viejo))
     if (local.hour >= 6 and not hecho) or os.environ.get("FORCE_PLAN"):
         plan = capture(cfg, ref, ref + timedelta(days=PLAN_DAYS))
+        if nac:
+            # la planificación de las cadenas nacionales sirve para medir su oferta semanal (clases y plazas por día)
+            plan += capture(nac, ref, ref + timedelta(days=PLAN_DAYS))
         write(plan, plan_path, stamp)
         print(f"{stamp}: {len(plan)} clases (planificación 7 días, turno {turno})")
 

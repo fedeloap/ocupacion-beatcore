@@ -43,8 +43,9 @@ def dom(u):
     return h[4:] if h.startswith("www.") else h
 
 
-def rastrear(web):
-    """HTML de la home y hasta MAX_PAGINAS páginas internas/embebidas relevantes (BFS, prioridad por palabras clave)."""
+def rastrear(web, max_paginas=None):
+    """HTML de la home y hasta max_paginas páginas internas/embebidas relevantes (BFS, prioridad por palabras clave)."""
+    max_paginas = max_paginas or MAX_PAGINAS
     r = get(web)
     if r is None or r.status_code >= 400:
         return {}
@@ -62,14 +63,14 @@ def rastrear(web):
                 cola.append((0 if RX_PRIO.search(u) else 1, u))
 
     anadir(r.text, base)
-    while cola and len(paginas) < MAX_PAGINAS:
+    while cola and len(paginas) < max_paginas:
         cola.sort(key=lambda x: x[0])
         _, u = cola.pop(0)
         rr = get(u)
         if rr is None or rr.status_code >= 400 or "text/html" not in rr.headers.get("content-type", "text/html"):
             continue
         paginas[rr.url] = rr.text
-        if dom(rr.url) == d0 and len(paginas) < MAX_PAGINAS:
+        if dom(rr.url) == d0 and len(paginas) < max_paginas:
             anadir(rr.text, rr.url)
     return paginas
 
@@ -222,8 +223,8 @@ def ver_mindbody(site):
     return {"clases_2d": n} if n else None
 
 
-def descubrir(cadena, web):
-    paginas = rastrear(web)
+def descubrir(cadena, web, max_paginas=None):
+    paginas = rastrear(web, max_paginas)
     txt = "\n".join(paginas.values())
     out = {"cadena": cadena, "web": web, "paginas": len(paginas), "fuentes": []}
     for hid in ids_momence(txt)[:6]:

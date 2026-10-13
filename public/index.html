@@ -70,6 +70,7 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 [data-t="t-rit"] { overflow-x: auto; }
 button.vc { padding: 2px 10px; min-height: 28px; cursor: pointer; font-size: 13px; }
 ul.detalle { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+th.sub { background: var(--bg); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
 .duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
@@ -166,7 +167,7 @@ const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Func
 const zn = z => ZN[z] || z;
 const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["mapa", "Mapa"]];
 
-let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null;           // datos
+let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null, OF = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
 const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
 let tabActual = "resumen", chart = null, claseSel = null;
@@ -178,6 +179,7 @@ async function cargar() {
   [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
   try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
   try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
+  try { OF = await get("data/oferta.json"); } catch (e) { OF = null; }
   N = D.n;
   EST = D.estudios;
   OCC = new Array(N);
@@ -435,10 +437,25 @@ function ocupacion() {
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
     { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
+  if (OF && OF.unidades.length) {
+    const us = OF.unidades.filter(u => u.zona !== "Nacional" && (u.propio || ((!F.centro || u.zona === F.centro) &&
+      (!F.marca || (EST.find(e => e.n === u.estudio) || {}).m === F.marca) && (F.estudio === "" || u.estudio === EST[+F.estudio].n))))
+      .filter(u => !F.centro || u.zona === F.centro);
+    const filas = us.map(u => { const r = resumenOferta(u); return { estudio: u.estudio, zona: zn(u.zona), propio: u.propio, cl_sem: r.clases, pl_sem: r.plazas, ocup: u.ocup,
+      ...Object.fromEntries(u.dias.map(d => ["d" + d.d, d.clases])) }; });
+    const colsO = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "zona", l: "Centro" },
+      { k: "cl_sem", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) }, { k: "pl_sem", l: "Plazas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "ocup", l: "Ocupación", n: 1, f: pct }, ...DIAS_L.map((d, i) => ({ k: "d" + i, l: d, n: 1, f: v => v == null ? "–" : num(v) }))];
+    if (!sortState["t-of"]) sortState["t-of"] = { k: "cl_sem", dir: -1 };
+    h += `<section><h2>Oferta de clases por estudio</h2>
+      <p class="meta">Clases por semana y por día de la semana (media por día), plazas ofertadas y ocupación (reservas sobre plazas).</p>
+      ${tabla("t-of", colsO, filas, { limit: 120 })}</section>`;
+  }
   h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}
     <p class="nota">Con pocas clases por estudio, la media no es fiable: mira la columna Clases.</p></section>`;
   $("#p-ocupacion").innerHTML = h;
   enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
+  enlazarTabla($("#p-ocupacion"), "t-of", ocupacion);
 }
 
 function curvas() {
@@ -567,7 +584,8 @@ function cadenas() {
   const bc = CAD.find(c => /^beatcore$/i.test(c.cadena));
   const filas = CAD.map((c, i) => {
     const op = ocupPublica(c);
-    return { _i: i, cadena: c.cadena, web: c.web, sw: softwareDe(c).join(", "), op: op.t, opk: op.k, centros: c.centros_web, est: c.cat_estudios,
+    const ro = resumenOferta(OF && OF.cadenas.find(x => x.cadena === c.cadena));
+    return { _i: i, cl_sem: ro ? ro.clases : null, pl_sem: ro ? ro.plazas : null, cadena: c.cadena, web: c.web, sw: softwareDe(c).join(", "), op: op.t, opk: op.k, centros: c.centros_web, est: c.cat_estudios,
       medidos: c.ocup.estudios, clases: c.ocup.clases, ocup: c.ocup.ocup, llenas: c.ocup.llenas, plazas: c.ocup.plazas,
       suelta: c.precio.clase_suelta, cuatro: c.precio.cuatro_mes, ocho: c.precio.ocho_mes, ilim: c.precio.ilimitada,
       pweb: c.precios_web.length ? Math.min(...c.precios_web) : null, estado: c.estado };
@@ -583,6 +601,8 @@ function cadenas() {
     { k: "sw", l: "Software de reservas", f: v => v || "–" },
     { k: "op", l: "Ocupación pública", h: r => r.opk === 2 ? "<b>Sí</b>" : esc(r.op) },
     { k: "est", l: "Estudios en zonas BeatCore", n: 1 },
+    { k: "cl_sem", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "pl_sem", l: "Plazas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
     { k: "clases", l: "Clases medidas", n: 1 },
     { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llenas", l: "% llenas", n: 1, f: pct },
     { k: "plazas", l: "Plazas/clase", n: 1, f: v => num(v) },
@@ -624,6 +644,11 @@ function detalleCadena(c, bc) {
   const colsC = [{ k: "estudio", l: "Centro" }, { k: "zona", l: "Zona BeatCore" }, { k: "plat", l: "Plataforma" }, { k: "clases", l: "Clases", n: 1 },
     { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llenas", l: "% llenas", n: 1, f: pct }];
   const colsT = [{ k: "clase", l: "Clase" }, { k: "n", l: "Veces", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct }];
+  const uC = OF && OF.cadenas.find(x => x.cadena === c.cadena), bcU = OF && OF.cadenas.find(x => /^beatcore$/i.test(x.cadena));
+  const ofItems = [];
+  if (uC) ofItems.push({ nombre: c.cadena, u: uC });
+  if (bcU && bcU !== uC) ofItems.push({ nombre: "BeatCore", u: bcU });
+  const ofBloque = ofItems.length ? bloqueOferta($("#p-cadenas"), ofItems, "cad") : null;
   const ejemplos = (c.centros_ejemplos || []).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.replace(/^https?:\/\/(www\.)?/, ""))}</a>`).join(" · ");
   $("#cad-det").innerHTML = `<div class="card"><h2>${esc(c.cadena)}</h2>
     <p class="meta">${c.web ? `<a href="${esc(c.web)}" target="_blank" rel="noopener noreferrer">${esc(c.web)}</a>` : "Web sin localizar"}${c.titulo ? " · " + esc(c.titulo) : ""}</p>
@@ -636,11 +661,52 @@ function detalleCadena(c, bc) {
     ${precios ? `<h3>Precios</h3><ul class="detalle">${precios}</ul>` : ""}
     ${(c.precios_items || []).length ? `<h3>Importes que aparecen en su web${c.precios_url ? ` · <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}</h3>
       ${tabla("t-cad-p", colsP, c.precios_items, { limit: 30 })}` : ""}
+    ${ofBloque ? `<h3>Oferta de clases y ocupación${bcU && uC !== bcU ? " frente a BeatCore" : ""}</h3>${ofBloque.html}` : ""}
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
     <p class="nota"><button type="button" id="cd-cerrar">Cerrar</button></p></div>`;
   $("#cd-cerrar").addEventListener("click", () => { delete $("#p-cadenas").dataset.sel; cadenas(); });
+  if (ofBloque) ofBloque.bind();
   ["t-cad-c", "t-cad-t", "t-cad-p"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
+}
+
+/* ---------- oferta de clases (por día de la semana, semana y mes) ---------- */
+const DIAS_L = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+function resumenOferta(u) {
+  if (!u) return null;
+  const ds = u.dias.filter(d => d.clases != null);
+  const completo = ds.length === 7;
+  const clases = completo ? ds.reduce((s, d) => s + d.clases, 0) : (u.n_dias ? u.n_clases / u.n_dias * 7 : null);
+  const plazas = completo ? ds.reduce((s, d) => s + d.plazas, 0) : (u.n_dias ? ds.reduce((s, d) => s + d.plazas, 0) / ds.length * 7 : null);
+  return { clases, plazas, ocup: u.ocup, completo, dias: u.n_dias };
+}
+function ofertaPorDia(items) {
+  // items: [{nombre, u}] -> tabla con clases/día, plazas/día y ocupación por día de la semana
+  const cab = DIAS_L.map(d => `<th class="n">${d}</th>`).join("");
+  const fila = (nom, u, k, f) => `<tr><td>${nom}</td>${u.dias.map(d => `<td class="n">${d[k] == null ? "–" : f(d[k])}</td>`).join("")}</tr>`;
+  const bloque = (titulo, k, f) => `<tr><th colspan="8" class="sub">${titulo}</th></tr>` + items.map(it => fila(it.nombre, it.u, k, f)).join("");
+  return `<div class="scroll"><table><thead><tr><th></th>${cab}</tr></thead><tbody>
+    ${bloque("Clases por día (media)", "clases", v => num(v))}${bloque("Plazas ofertadas por día (media)", "plazas", v => Math.round(v))}
+    ${bloque("Ocupación (reservas / plazas)", "ocup", pct)}</tbody></table></div>`;
+}
+function ofertaPeriodo(items, clave) {
+  // items: [{nombre, u}]; clave: "semanas" | "meses"
+  const per = [...new Set(items.flatMap(it => it.u[clave].map(x => x.p)))].sort().reverse();
+  const cols = items.map(it => `<th class="n" colspan="3">${esc(it.nombre)}</th>`).join("");
+  const sub = items.map(() => `<th class="n">Clases</th><th class="n">Plazas</th><th class="n">Ocup.</th>`).join("");
+  const filas = per.map(p => `<tr><td>${esc(p)}</td>${items.map(it => {
+    const x = it.u[clave].find(y => y.p === p);
+    return x ? `<td class="n">${x.clases}${x.dias < (clave === "semanas" ? 7 : 28) ? ` <small>(${x.dias} d)</small>` : ""}</td><td class="n">${x.plazas}</td><td class="n">${pct(x.ocup)}</td>` : `<td class="n">–</td><td class="n">–</td><td class="n">–</td>`;
+  }).join("")}</tr>`).join("");
+  return `<div class="scroll"><table><thead><tr><th>${clave === "semanas" ? "Semana" : "Mes"}</th>${cols}</tr><tr><th></th>${sub}</tr></thead><tbody>${filas}</tbody></table></div>`;
+}
+function bloqueOferta(el, items, key) {
+  const modo = el.dataset["of" + key] || "dia";
+  const sel = `<div class="row"><label>Ver <select id="of-${key}"><option value="dia"${modo === "dia" ? " selected" : ""}>Por día de la semana</option>
+    <option value="semanas"${modo === "semanas" ? " selected" : ""}>Por semana</option><option value="meses"${modo === "meses" ? " selected" : ""}>Por mes</option></select></label></div>`;
+  const cuerpo = modo === "dia" ? ofertaPorDia(items) : ofertaPeriodo(items, modo);
+  const parcial = items.some(it => it.u.parcial) ? '<p class="nota">Datos parciales: aún no hay una semana completa capturada para alguno de ellos.</p>' : "";
+  return { html: sel + cuerpo + parcial, bind: () => $("#of-" + key).addEventListener("change", e => { el.dataset["of" + key] = e.target.value; render(); }) };
 }
 
 function claseCols() {

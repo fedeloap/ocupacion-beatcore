@@ -110,6 +110,101 @@ def cargar_snapshots():
                     "centro_beatcore", "cancelada", "duracion_min"]]
 
 
+def clases_unicas(snap):
+    """Una fila por clase (última foto): plazas, reservas y fecha. Incluye clases programadas y ya dadas."""
+    s = snap.copy()
+    s["kid"] = clave_clase(s)
+    s["libres_n"] = pd.to_numeric(s["libres"], errors="coerce")
+    g = ["plataforma", "estudio", "sede", "kid"]
+    ml = s.groupby(g)["libres_n"].max().rename("max_libres")
+    s = s.sort_values("captured_at").groupby(g, as_index=False).tail(1)
+    s = s.merge(ml, left_on=g, right_index=True, how="left")
+    s = s[s["cancelada"].astype(str).str.lower() != "true"].copy()
+    cap = pd.to_numeric(s["capacidad"], errors="coerce")
+    est = (s["plataforma"] == "mindbody") & ~(cap > 0) & (s["max_libres"] > 0) & (s["max_libres"] <= analisis.AFORO_MAX_PLAUSIBLE)
+    s["plazas"] = cap.where(cap > 0, s["max_libres"].where(est))
+    occ = pd.to_numeric(s["ocupadas"], errors="coerce")
+    occ = occ.where(occ.notna(), s["plazas"] - s["libres_n"])
+    r = occ.where(s["plataforma"] != "bsport").clip(lower=0)
+    s["reservas"] = r.where(s["plazas"].isna(), r.clip(upper=s["plazas"]))
+    s["zona"] = s["centro_beatcore"].fillna("").replace("", "Nacional")
+    s["fecha"] = s["inicio_local"].dt.normalize()
+    return s.reset_index(drop=True)
+
+
+def _agrega(d, ahora):
+    """Clases, plazas y ocupación (reservas/plazas) por día de la semana, semana y mes."""
+    if d.empty:
+        return None
+    ya = d[(d["inicio_local"] <= ahora) & d["reservas"].notna() & (d["plazas"] > 0)]
+
+    def ocup(g):
+        p = g["plazas"].sum()
+        return round(float(g["reservas"].sum() / p), 3) if p > 0 else None
+
+    por_fecha = d.groupby("fecha").agg(clases=("kid", "size"), plazas=("plazas", "sum"))
+    dias = []
+    for w in range(7):
+        pf = por_fecha[por_fecha.index.dayofweek == w]
+        yy = ya[ya["fecha"].dt.dayofweek == w]
+        dias.append({"d": w, "fechas": int(len(pf)), "clases": round(float(pf["clases"].mean()), 1) if len(pf) else None,
+                     "plazas": round(float(pf["plazas"].mean()), 1) if len(pf) else None,
+                     "ocup": ocup(yy) if len(yy) else None, "medidas": int(len(yy))})
+
+    d = d.copy()
+    ya = ya.copy()
+    for t in (d, ya):
+        t["semana"] = t["fecha"].dt.strftime("%G-W%V")
+        t["mes"] = t["fecha"].dt.strftime("%Y-%m")
+    semanas, meses = [], []
+    for col, lista_ in (("semana", semanas), ("mes", meses)):
+        for k, g in d.groupby(col):
+            yy = ya[ya[col] == k]
+            lista_.append({"p": k, "dias": int(g["fecha"].nunique()), "clases": int(len(g)), "plazas": int(g["plazas"].sum()),
+                           "ocup": ocup(yy) if len(yy) else None})
+    return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "ocup": ocup(ya) if len(ya) else None,
+            "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique())}
+
+
+def oferta_datos(snap, mapa, propios, lista_cadenas):
+    """Oferta (clases y plazas) y ocupación por estudio y por cadena: por día de la semana, semana y mes."""
+    u = clases_unicas(snap)
+    ahora = snap["captured_at"].max()
+    # a partir de cuándo está completa la agenda de cada estudio: primer día tras su primera planificación
+    plan = analisis.leer("data/plan/*.csv")
+    desde_plan = {}
+    if len(plan):
+        plan["captured_at"] = pd.to_datetime(plan["captured_at"])
+        desde_plan = (plan.groupby("estudio")["captured_at"].min().dt.normalize() + pd.Timedelta(days=1)).to_dict()
+    filas, _, _ = fichas(u.assign(centro_beatcore=u["zona"].where(u["zona"] != "Nacional", "")), mapa, propios)
+    u["marca_n"] = [_norm(f[2]) for f in filas]
+    u["nombre_n"] = [_norm(f[1]) for f in filas]
+    u["propio"] = [int(f[3]) for f in filas]
+    u["nombre"] = [f[1] for f in filas]
+    # días válidos por estudio
+    u["desde"] = u["estudio"].map(desde_plan)
+    primera = u.groupby("estudio")["inicio_local"].transform("min").dt.normalize() + pd.Timedelta(days=1)
+    u["parcial"] = u["desde"].isna()
+    u["desde"] = u["desde"].fillna(primera)
+    u = u[u["fecha"] >= u["desde"]]
+    unidades, cadenas = [], []
+    for (est, zona), g in u.groupby(["estudio", "zona"]):
+        a = _agrega(g, ahora)
+        if a:
+            unidades.append({"estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
+                             "plat": g["plataforma"].iloc[0], "parcial": bool(g["parcial"].all()), **a})
+    for cad in lista_cadenas:
+        n = _norm(cad)
+        if not n:
+            continue
+        m = u[[_coincide(n, x, y) for x, y in zip(u["marca_n"], u["nombre_n"])]]
+        a = _agrega(m, ahora)
+        if a:
+            cadenas.append({"cadena": cad, "estudios": int(m["estudio"].nunique()), "zonas": sorted(set(m["zona"])),
+                            "parcial": bool(m["parcial"].all()), **a})
+    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "unidades": unidades, "cadenas": cadenas}
+
+
 def clave_clase(d):
     """Identificador de la clase estable entre capturas.
 
@@ -426,8 +521,11 @@ def main():
     else:
         c_cad, filas_cad = c, filas
     cadenas = cadenas_datos(c_cad, filas_cad, cat_out)
+    nombres_cadenas = [l.strip() for l in open("web/cadenas_lista.txt", encoding="utf-8") if l.strip()] \
+        if os.path.exists("web/cadenas_lista.txt") else []
+    oferta = oferta_datos(snap, mapa, propios, nombres_cadenas)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
-                                          ("proximas.json", prox), ("cadenas.json", cadenas))}
+                                          ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta))}
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))
