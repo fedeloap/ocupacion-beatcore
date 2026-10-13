@@ -595,7 +595,7 @@ function cadenas() {
     const ro = resumenOferta(OF && OF.cadenas.find(x => x.cadena === c.cadena));
     const unidC = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)) : [];
     const pcs = unidC.map(u => u.ocup).filter(v => v != null);
-    return { _i: i, n_cen: unidC.length, min_pc: pcs.length ? Math.min(...pcs) : null, max_pc: pcs.length ? Math.max(...pcs) : null, cl_sem: ro ? ro.clases : null, pl_sem: ro ? ro.plazas : null, cadena: c.cadena, web: c.web, sw: softwareDe(c).join(", "), op: op.t, opk: op.k, centros: c.centros_web, est: c.cat_estudios,
+    return { _i: i, n_cen: unidC.length, min_pc: pcs.length ? Math.min(...pcs) : null, max_pc: pcs.length ? Math.max(...pcs) : null, cl_sem: ro ? ro.clases : null, pl_sem: ro ? ro.plazas : null, cl_cen: ro && unidC.length ? ro.clases / unidC.length : null, pl_cen: ro && unidC.length ? ro.plazas / unidC.length : null, cadena: c.cadena, web: c.web, sw: softwareDe(c).join(", "), op: op.t, opk: op.k, centros: c.centros_web, est: c.cat_estudios,
       medidos: c.ocup.estudios, clases: c.ocup.clases, ocup: c.ocup.ocup, llenas: c.ocup.llenas, plazas: c.ocup.plazas,
       suelta: c.precio.clase_suelta, cuatro: c.precio.cuatro_mes, ocho: c.precio.ocho_mes, ilim: c.precio.ilimitada,
       pweb: c.precios_web.length ? Math.min(...c.precios_web) : null, estado: c.estado,
@@ -616,6 +616,8 @@ function cadenas() {
     { k: "est", l: "Estudios en zonas BeatCore", n: 1 },
     { k: "cl_sem", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
     { k: "pl_sem", l: "Plazas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "cl_cen", l: "Clases / semana por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "pl_cen", l: "Plazas / semana por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
     { k: "clases", l: "Clases medidas", n: 1 },
     { k: "fact", l: "Facturación / mes (est.)", n: 1, f: eur0 },
     { k: "ocup", l: "Ocupación media", n: 1, f: pct },
