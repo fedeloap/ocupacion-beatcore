@@ -683,7 +683,8 @@ function detalleCadena(c, bc) {
   const colsT = [{ k: "clase", l: "Clase" }, { k: "n", l: "Veces", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct }];
   const uC = OF && OF.cadenas.find(x => x.cadena === c.cadena), bcU = OF && OF.cadenas.find(x => /^beatcore$/i.test(x.cadena));
   const ofItems = [];
-  if (uC) ofItems.push({ nombre: c.cadena, u: uC });
+  const nCentros = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)).length : 0;
+  if (uC) ofItems.push({ nombre: c.cadena, u: uC, n: nCentros });
   const ofBloque = ofItems.length ? bloqueOferta($("#p-cadenas"), ofItems, "cad") : null;
   const unidCad = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)) : [];
   const centrosOf = unidCad.length ? tablaCentros($("#p-cadenas"), "cc", unidCad, c.cadena) : null;
@@ -701,7 +702,7 @@ function detalleCadena(c, bc) {
       ${tabla("t-cad-p", colsP, c.precios_items, { limit: 30 })}` : ""}
     ${ofBloque ? `<h3>Oferta de clases y ocupación</h3>${ofBloque.html}
       <div class="guia"><ul>
-        <li><b>Clases por día</b>: cuántas clases da la cadena ese día de la semana, sumando todos sus centros (media de los días capturados).</li>
+        <li><b>Clases por día</b>: cuántas clases da la cadena ese día de la semana (media de los días capturados). "Total" suma todos sus centros; "Media por centro" lo divide entre el número de centros.</li>
         <li><b>Plazas ofertadas por día</b>: las plazas de esas clases, es decir, cuánta gente cabría.</li>
         <li><b>Ocupación</b>: reservas entre plazas, solo de clases ya dadas. "–" es que aún no hay ningún día de esa semana con clases dadas y reservas conocidas.</li>
         <li>Los centros sin aforo publicado cuentan en clases, no en plazas.</li>
@@ -830,20 +831,26 @@ function resumenOferta(u) {
 function ofertaPorDia(items) {
   // items: [{nombre, u}] -> tabla con clases/día, plazas/día y ocupación por día de la semana
   const cab = DIAS_L.map(d => `<th class="n">${d}</th>`).join("");
-  const fila = (nom, u, k, f) => `<tr><td>${nom}</td>${u.dias.map(d => `<td class="n">${d[k] == null ? "–" : f(d[k])}</td>`).join("")}</tr>`;
-  const bloque = (titulo, k, f) => `<tr><th colspan="8" class="sub">${titulo}</th></tr>` + items.map(it => fila(it.nombre, it.u, k, f)).join("");
+  const fila = (nom, u, k, f, div) => `<tr><td>${nom}</td>${u.dias.map(d => `<td class="n">${d[k] == null ? "–" : f(d[k] / (div || 1))}</td>`).join("")}</tr>`;
+  const uno = items.length === 1 && items[0].n > 1 ? items[0] : null;   // una sola cadena: total y media por centro
+  const bloque = (titulo, k, f) => `<tr><th colspan="8" class="sub">${titulo}</th></tr>` + (uno
+    ? fila(`Total (${uno.n} centros)`, uno.u, k, f) + fila("Media por centro", uno.u, k, f, uno.n)
+    : items.map(it => fila(items.length === 1 ? "Total" : it.nombre, it.u, k, f)).join(""));
+  const ocup = `<tr><th colspan="8" class="sub">Ocupación (reservas / plazas)</th></tr>` + items.map(it => fila(items.length === 1 ? "Media" : it.nombre, it.u, "ocup", pct)).join("");
   return `<div class="scroll"><table><thead><tr><th></th>${cab}</tr></thead><tbody>
     ${bloque("Clases por día (media)", "clases", v => num(v))}${bloque("Plazas ofertadas por día (media)", "plazas", v => Math.round(v))}
-    ${bloque("Ocupación (reservas / plazas)", "ocup", pct)}</tbody></table></div>`;
+    ${ocup}</tbody></table></div>`;
 }
 function ofertaPeriodo(items, clave) {
   // items: [{nombre, u}]; clave: "semanas" | "meses"
   const per = [...new Set(items.flatMap(it => it.u[clave].map(x => x.p)))].sort().reverse();
-  const cols = items.map(it => `<th class="n" colspan="3">${esc(it.nombre)}</th>`).join("");
-  const sub = items.map(() => `<th class="n">Clases</th><th class="n">Plazas</th><th class="n">Ocup.</th>`).join("");
+  const unoP = items.length === 1 && items[0].n > 1 ? items[0] : null;
+  const cols = items.map(it => `<th class="n" colspan="${unoP ? 5 : 3}">${items.length === 1 ? "Total" + (unoP ? ` (${unoP.n} centros) y media por centro` : "") : esc(it.nombre)}</th>`).join("");
+  const sub = items.map(() => `<th class="n">Clases</th><th class="n">Plazas</th><th class="n">Ocup.</th>${unoP ? '<th class="n">Clases / centro</th><th class="n">Plazas / centro</th>' : ""}`).join("");
   const filas = per.map(p => `<tr><td>${esc(p)}</td>${items.map(it => {
     const x = it.u[clave].find(y => y.p === p);
-    return x ? `<td class="n">${x.clases}${x.dias < (clave === "semanas" ? 7 : 28) ? ` <small>(${x.dias} d)</small>` : ""}</td><td class="n">${x.plazas}</td><td class="n">${pct(x.ocup)}</td>` : `<td class="n">–</td><td class="n">–</td><td class="n">–</td>`;
+    const pc = unoP ? (x ? `<td class="n">${num(x.clases / unoP.n)}</td><td class="n">${Math.round(x.plazas / unoP.n)}</td>` : `<td class="n">–</td><td class="n">–</td>`) : "";
+    return x ? `<td class="n">${x.clases}${x.dias < (clave === "semanas" ? 7 : 28) ? ` <small>(${x.dias} d)</small>` : ""}</td><td class="n">${x.plazas}</td><td class="n">${pct(x.ocup)}</td>${pc}` : `<td class="n">–</td><td class="n">–</td><td class="n">–</td>${pc}`;
   }).join("")}</tr>`).join("");
   return `<div class="scroll"><table><thead><tr><th>${clave === "semanas" ? "Semana" : "Mes"}</th>${cols}</tr><tr><th></th>${sub}</tr></thead><tbody>${filas}</tbody></table></div>`;
 }
