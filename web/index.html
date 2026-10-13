@@ -716,6 +716,7 @@ function detalleCadena(c, bc) {
 
 
 /* ---------- facturación estimada (todos los centros y cadenas, por mes) ---------- */
+const BASES = { "8/mes": "cuota de 8", "4/mes": "cuota de 4", "ilimitada": "ilimitada ÷ 10", "suelta": "clase suelta − 25 %" };
 const MES_N = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const mesL = p => MES_N[+p.slice(5) - 1] + " " + p.slice(0, 4);
 function facturacion() {
@@ -782,7 +783,7 @@ function facturacion() {
     { k: "cuota", l: "Cuota 8/mes", n: 1, h: r => r.cuota == null ? "–" : eur(r.cuota) + (r.base === "4/mes" ? " <small>(4/mes)</small>" : "") },
     { k: "ps", l: "€ / sesión", n: 1, f: eur }, ...colsMes,
     { k: "rm", l: "Reservas mes (est.)", n: 1, f: v => v == null ? "–" : new Intl.NumberFormat("es-ES", { useGrouping: "always", maximumFractionDigits: 0 }).format(v) },
-    { k: "origen", l: "Precio usado" }];
+    { k: "origen", l: "Precio usado", h: r => esc(r.origen) + (r.ps != null && r.base ? ` <small>(${esc(BASES[r.base] || r.base)})</small>` : "") }];
   const clave = ultimo ? "e_" + ultimo : "nombre";
   ["t-fm", "t-fc", "t-fa"].forEach(t => { if (!sortState[t]) sortState[t] = { k: t === "t-fm" ? "mes" : clave, dir: t === "t-fm" ? 1 : -1 }; });
   const sinPrecio = todas.filter(u => u.fact.precio_ses == null).length;
@@ -796,7 +797,7 @@ function facturacion() {
     <div class="guia"><ul>
       <li><b>Llevamos</b>: reservas de las clases ya dadas que hemos capturado x € por sesión. Sube cada día.</li>
       <li><b>Estimado mes completo</b>: lo capturado más el resto del mes (clases programadas o de su semana tipo x reservas medias por clase).</li>
-      <li><b>€ por sesión</b> = cuota de 8 al mes menos un 10 %, entre 8 sesiones. Precios publicados con IVA.</li>
+      <li><b>€ por sesión</b> = cuota de 8 al mes menos un 10 %, entre 8. Sin ella: la de 4 menos un 10 %, entre 4; si no, la ilimitada entre 10; si no, la clase suelta menos un 25 %. Precios con IVA.</li>
       <li>Los meses anteriores a la primera captura no tienen dato. Cada mes nuevo se añade solo.</li>
       <li>En blanco: centro sin precio o sin reservas publicadas (bsport). Los totales suman solo lo que tiene estimación.</li>
       <li>Aquí salen todos los centros y cadenas, sin BeatCore y sin los filtros de arriba.</li>

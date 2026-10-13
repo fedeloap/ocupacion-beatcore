@@ -213,15 +213,24 @@ def _num(v):
     return None if np.isnan(v) or v <= 0 else v
 
 
-def facturacion(a, ocho, cuatro, origen):
-    """Facturación mensual estimada de un centro: precio de la cuota de 8 al mes menos un 10 %, entre 8 sesiones,
-    por las reservas al mes (clases de una semana tipo x 52/12 x reservas medias por clase).
-    Sin precio de 8/mes se usa el de 4/mes (marcado). Sin reservas conocidas (bsport) no hay estimación."""
-    ocho, cuatro = _num(ocho), _num(cuatro)
+SESIONES_ILIMITADA = 10        # sesiones al mes que se suponen a una cuota ilimitada (decisión de Fede, 14/10/2026)
+DESCUENTO_SUELTA = 0.25        # la clase suelta se rebaja un 25 % (decisión de Fede, 14/10/2026)
+
+
+def facturacion(a, tarifas, origen):
+    """Facturación mensual estimada de un centro: € por sesión x reservas al mes
+    (clases de una semana tipo x 52/12 x reservas medias por clase).
+    € por sesión, por orden: cuota de 8/mes menos un 10 %, entre 8; cuota de 4/mes menos un 10 %, entre 4;
+    ilimitada entre 10; clase suelta menos un 25 %. Sin reservas conocidas (bsport) no hay estimación."""
+    ocho, cuatro, ilim, suelta = [_num(x) for x in tarifas]
     if ocho:
         ps, base, cuota = ocho * (1 - DESCUENTO_CUOTA) / 8, "8/mes", ocho
     elif cuatro:
         ps, base, cuota = cuatro * (1 - DESCUENTO_CUOTA) / 4, "4/mes", cuatro
+    elif ilim:
+        ps, base, cuota = ilim / SESIONES_ILIMITADA, "ilimitada", None
+    elif suelta:
+        ps, base, cuota = suelta * (1 - DESCUENTO_SUELTA), "suelta", None
     else:
         ps, base, cuota = None, "", None
     cl_mes = a["clases_sem"] * SEMANAS_MES
@@ -313,20 +322,21 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             pert = [c_ for c_, n_ in nlista if _coincide(n_, mn, nn)]
             r = mapa.get(f"{est}|{'' if zona == 'Nacional' else zona}")
             propio_u = int(g["propio"].iloc[0])
-            ocho = cuatro = None
+            tar = (None, None, None, None)
             origen = ""
             if propio_u and zona in pb:
-                ocho, cuatro, origen = pb[zona].get("ocho_mes"), pb[zona].get("cuatro_mes"), "precio publicado"
-            elif r is not None and (_num(r["ocho_mes"]) or _num(r["cuatro_mes"])):
-                ocho, cuatro, origen = r["ocho_mes"], r["cuatro_mes"], "precio del estudio"
+                tar = tuple(pb[zona].get(k) for k in ("ocho_mes", "cuatro_mes", "ilimitada", "clase_suelta"))
+                origen = "precio publicado"
+            elif r is not None and any(_num(r[k]) for k in ("ocho_mes", "cuatro_mes", "ilimitada", "clase_suelta")):
+                tar = tuple(r[k] for k in ("ocho_mes", "cuatro_mes", "ilimitada", "clase_suelta"))
+                origen = "precio del estudio"
             else:
                 for c_ in pert:
-                    if c_ in precio_cad:
-                        ocho, cuatro = precio_cad[c_]
+                    if c_ in precio_cad and any(_num(x) for x in precio_cad[c_]):
+                        tar = precio_cad[c_]
                         origen = "mediana de la cadena " + c_
-                        if _num(ocho) or _num(cuatro):
-                            break
-            fact = facturacion(a, ocho, cuatro, origen)
+                        break
+            fact = facturacion(a, tar, origen)
             unidades.append({"fact": fact, "marca": g["marca"].iloc[0],
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
@@ -667,7 +677,8 @@ def main():
     cadenas = cadenas_datos(c_cad, filas_cad, cat_out)
     nombres_cadenas = [l.strip() for l in open("web/cadenas_lista.txt", encoding="utf-8") if l.strip()] \
         if os.path.exists("web/cadenas_lista.txt") else []
-    precio_cad = {f["cadena"]: (f["precio"].get("ocho_mes"), f["precio"].get("cuatro_mes")) for f in cadenas["filas"]}
+    precio_cad = {f["cadena"]: tuple(f["precio"].get(k) for k in ("ocho_mes", "cuatro_mes", "ilimitada", "clase_suelta"))
+                  for f in cadenas["filas"]}
     pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
     oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
