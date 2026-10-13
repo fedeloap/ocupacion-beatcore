@@ -177,7 +177,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 const pct = v => v == null || isNaN(v) ? "–" : Math.round(v * 100) + "%";
 const num = (v, d = 1) => v == null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
 const eur = v => v == null ? "–" : v.toFixed(v % 1 ? 2 : 0).replace(".", ",") + " €";
-const eur0 = v => v == null || isNaN(v) ? "–" : Math.round(v).toLocaleString("es-ES") + " €";
+const eur0 = v => v == null || isNaN(v) ? "–" : new Intl.NumberFormat("es-ES", { useGrouping: "always", maximumFractionDigits: 0 }).format(v) + " €";
 const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
 const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -715,93 +715,101 @@ function detalleCadena(c, bc) {
 }
 
 
-/* ---------- facturación estimada ---------- */
-function unidadesFiltradas() {
-  const nombreMarca = u => (EST.find(e => e.n === u.estudio) || {}).m;
-  return OF.unidades.filter(u => u.zona !== "Nacional" && (u.propio || (
-    (!F.centro || u.zona === F.centro) && (!F.marca || nombreMarca(u) === F.marca) && (F.estudio === "" || u.estudio === EST[+F.estudio].n))))
-    .filter(u => !F.centro || u.zona === F.centro);
-}
+/* ---------- facturación estimada (todos los centros y cadenas, por mes) ---------- */
+const MES_N = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const mesL = p => MES_N[+p.slice(5) - 1] + " " + p.slice(0, 4);
 function facturacion() {
   const el = $("#p-facturacion");
   if (!OF || !OF.unidades.length) { el.innerHTML = '<p class="vacio-msg">Todavía no hay datos de facturación.</p>'; return; }
-  const us = unidadesFiltradas();
-  const fila = u => ({ nombre: u.estudio, zona: u.zona, zn: zn(u.zona), propio: u.propio, base: u.fact.base, origen: u.fact.origen, cuota: u.fact.cuota,
-    ps: u.fact.precio_ses, cl: u.fact.clases_mes, rc: u.fact.res_clase, rm: u.fact.res_mes, fm: u.fact.fact_mes, oc: u.ocup, parcial: u.parcial });
-  const filas = us.map(fila);
-  const con = filas.filter(r => r.fm != null);
-  const bc = con.filter(r => r.propio), comp = con.filter(r => !r.propio);
-  const suma = a => a.reduce((s, r) => s + r.fm, 0);
-  const maxFm = Math.max(0, ...con.map(r => r.fm));
-  const kpi = (cl, v, t, sub) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
-  // BeatCore frente a la competencia, por centro
-  const zonas = (F.centro ? [F.centro] : D.dic.centro).filter(z => z !== "Nacional");
-  const porZona = zonas.map(z => {
-    const b = con.filter(r => r.propio && r.zona === z), c = comp.filter(r => r.zona === z);
-    const mejor = c.length ? c.reduce((a, x) => x.fm > a.fm ? x : a) : null;
-    const nz = filas.filter(r => !r.propio && r.zona === z).length;
-    const med = median(c.map(r => r.fm));
-    return { zona: zn(z), bc: b.length ? suma(b) : null, bc_p: b.length ? b[0].ps : null, n: c.length, de: nz, med, tot: c.length ? suma(c) : null,
-      mejor: mejor ? mejor.nombre : null, mejor_v: mejor ? mejor.fm : null, vs: b.length && c.length ? suma(b) / med : null };
-  });
-  const colsZ = [{ k: "zona", l: "Centro BeatCore" },
-    { k: "bc", l: "BeatCore / mes", n: 1, f: eur0 }, { k: "bc_p", l: "BeatCore € / sesión", n: 1, f: eur },
-    { k: "n", l: "Competidores con estimación", n: 1, h: r => `${r.n} <small>de ${r.de}</small>` },
-    { k: "med", l: "Mediana competidor / mes", n: 1, f: eur0 }, { k: "vs", l: "BeatCore vs mediana", n: 1, f: v => v == null ? "–" : "x" + num(v) },
-    { k: "mejor_v", l: "Mayor competidor / mes", n: 1, h: r => r.mejor ? `${eur0(r.mejor_v)} <small>${esc(r.mejor)}</small>` : "–" },
-    { k: "tot", l: "Suma competencia / mes", n: 1, f: eur0 }];
-  const colsE = [
-    { k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? " <small>(parcial)</small>" : "") },
-    { k: "zn", l: "Zona" },
-    { k: "cuota", l: "Cuota 8/mes", n: 1, h: r => r.cuota == null ? "–" : eur(r.cuota) + (r.base === "4/mes" ? " <small>(4/mes)</small>" : "") },
-    { k: "ps", l: "€ / sesión", n: 1, f: eur },
-    { k: "cl", l: "Clases / mes", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "rc", l: "Reservas / clase", n: 1, f: v => num(v) },
-    { k: "rm", l: "Reservas / mes", n: 1, f: v => v == null ? "–" : Math.round(v).toLocaleString("es-ES") },
-    { k: "fm", l: "Facturación / mes", n: 1, h: r => r.fm == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.fm / (maxFm || 1) * 70)}px"></span><b>${eur0(r.fm)}</b>` },
-    { k: "origen", l: "Precio usado" }];
-  if (!sortState["t-fa"]) sortState["t-fa"] = { k: "fm", dir: -1 };
-  if (!sortState["t-fc"]) sortState["t-fc"] = { k: "fm", dir: -1 };
-  // cadenas (toda España)
+  // sin los centros BeatCore; sin filtros globales: todos los centros y cadenas
+  const todas = OF.unidades.filter(u => !u.propio && u.fmeses);
+  const norm = s => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  const nMarca = new Map();
+  todas.forEach(u => nMarca.set(norm(u.marca), (nMarca.get(norm(u.marca)) || 0) + 1));
+  const cadDe = u => (u.cadenas || []).find(c => !/^beatcore$/i.test(c)) || (nMarca.get(norm(u.marca)) >= 2 ? u.marca : "");
+  const meses = [...new Set(todas.flatMap(u => u.fmeses.map(m => m.p)))].sort();
+  const mesAct = (OF.ahora || "").slice(0, 7);
   const q = (el.dataset.q || "").toLowerCase();
-  const cad = OF.cadenas.filter(c => c.fact && c.fact.con_fact > 0 && (!q || c.cadena.toLowerCase().includes(q)))
-    .map(c => ({ cadena: c.cadena, cen: c.fact.centros, con: c.fact.con_fact, fm: c.fact.fact_mes, media: c.fact.fact_mes / c.fact.con_fact,
-      ps: c.fact.precio_ses, rm: c.fact.res_mes, oc: c.ocup }));
+  const M = (u, p) => u.fmeses.find(m => m.p === p);
+  const suma = (arr, f) => { const v = arr.map(f).filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) : null; };
+  const lab = p => p === mesAct ? "llevamos" : "facturado";
+  const colsMes = meses.flatMap(p => [
+    { k: "o_" + p, l: `${mesL(p)}: ${lab(p)}`, n: 1, f: eur0 },
+    { k: "e_" + p, l: `${mesL(p)}: estimado mes completo`, n: 1, f: eur0 }]);
+  const ultimo = meses[meses.length - 1];
+  // centros
+  const filas = todas.map(u => {
+    const r = { nombre: u.estudio, cadena: cadDe(u), zn: zn(u.zona), cuota: u.fact.cuota, base: u.fact.base, ps: u.fact.precio_ses,
+      origen: u.fact.origen || "sin precio", parcial: u.parcial };
+    meses.forEach(p => { const m = M(u, p); r["o_" + p] = m ? m.fact_obs : null; r["e_" + p] = m ? m.fact_est : null; r["r_" + p] = m ? m.res_est : null; });
+    r.rm = ultimo ? r["r_" + ultimo] : null;
+    return r;
+  }).filter(r => !q || (r.nombre + " " + r.cadena).toLowerCase().includes(q));
+  // cadenas
+  const grupos = new Map();
+  todas.forEach(u => { const c = cadDe(u); if (c) { if (!grupos.has(c)) grupos.set(c, []); grupos.get(c).push(u); } });
+  const cad = [...grupos.entries()].filter(([c]) => !q || c.toLowerCase().includes(q)).map(([c, us]) => {
+    const r = { cadena: c, cen: us.length, con: us.filter(u => u.fact.precio_ses != null && u.fmeses.length).length,
+      ps: mean(us.map(u => u.fact.precio_ses).filter(v => v != null)) };
+    meses.forEach(p => { r["o_" + p] = suma(us, u => (M(u, p) || {}).fact_obs); r["e_" + p] = suma(us, u => (M(u, p) || {}).fact_est);
+      r["r_" + p] = suma(us, u => (M(u, p) || {}).res_est); });
+    r.rm = ultimo ? r["r_" + ultimo] : null;
+    r.media = ultimo && r["e_" + ultimo] != null && r.con ? r["e_" + ultimo] / r.con : null;
+    return r;
+  });
+  // total por mes
+  const tot = meses.map(p => {
+    const ms = todas.map(u => M(u, p)).filter(Boolean);
+    const conF = ms.filter(m => m.fact_est != null);
+    return { mes: mesL(p), p, dias: Math.max(0, ...ms.map(m => m.dias_obs)), diasMes: ms.length ? ms[0].dias_mes : null,
+      desde: ms.map(m => m.desde).filter(Boolean).sort()[0] || null, cen: conF.length, de: ms.length,
+      obs: suma(conF, m => m.fact_obs), est: suma(conF, m => m.fact_est), res: suma(ms, m => m.res_est) };
+  });
+  const tAct = tot.find(t => t.p === mesAct) || tot[tot.length - 1];
+  const kpi = (cl, v, t, sub) => `<div class="kpi ${cl}"><b>${v}</b><span>${t}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  const colsT = [{ k: "mes", l: "Mes" },
+    { k: "dias", l: "Días capturados", n: 1, h: r => `${r.dias} <small>de ${r.diasMes ?? "–"}</small>` },
+    { k: "desde", l: "Desde", f: v => v ? v.split("-").reverse().join("/") : "–" },
+    { k: "cen", l: "Centros con estimación", n: 1, h: r => `${r.cen} <small>de ${r.de}</small>` },
+    { k: "obs", l: "Facturado hasta hoy", n: 1, f: eur0 }, { k: "est", l: "Estimado mes completo", n: 1, f: eur0 },
+    { k: "res", l: "Reservas mes (est.)", n: 1, f: v => v == null ? "–" : new Intl.NumberFormat("es-ES", { useGrouping: "always", maximumFractionDigits: 0 }).format(v) }];
   const colsC = [{ k: "cadena", l: "Cadena", h: r => `<b>${esc(r.cadena)}</b>` },
     { k: "con", l: "Centros con estimación", n: 1, h: r => `${r.con} <small>de ${r.cen}</small>` },
-    { k: "fm", l: "Facturación / mes", n: 1, f: eur0 }, { k: "media", l: "Media por centro / mes", n: 1, f: eur0 },
-    { k: "ps", l: "€ / sesión (media)", n: 1, f: eur }, { k: "rm", l: "Reservas / mes", n: 1, f: v => v == null ? "–" : Math.round(v).toLocaleString("es-ES") },
-    { k: "oc", l: "% cubierto", n: 1, f: pct }];
-  const sinPrecio = filas.filter(r => r.ps == null).length, sinRes = filas.filter(r => r.ps != null && r.rm == null).length;
-  el.innerHTML = `<section><h2>Facturación mensual estimada</h2>
+    { k: "ps", l: "€ / sesión (media)", n: 1, f: eur }, ...colsMes,
+    { k: "media", l: "Media por centro / mes", n: 1, f: eur0 }];
+  const colsE = [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.parcial ? " <small>(parcial)</small>" : "") },
+    { k: "cadena", l: "Cadena" }, { k: "zn", l: "Zona" },
+    { k: "cuota", l: "Cuota 8/mes", n: 1, h: r => r.cuota == null ? "–" : eur(r.cuota) + (r.base === "4/mes" ? " <small>(4/mes)</small>" : "") },
+    { k: "ps", l: "€ / sesión", n: 1, f: eur }, ...colsMes,
+    { k: "rm", l: "Reservas mes (est.)", n: 1, f: v => v == null ? "–" : new Intl.NumberFormat("es-ES", { useGrouping: "always", maximumFractionDigits: 0 }).format(v) },
+    { k: "origen", l: "Precio usado" }];
+  const clave = ultimo ? "e_" + ultimo : "nombre";
+  ["t-fm", "t-fc", "t-fa"].forEach(t => { if (!sortState[t]) sortState[t] = { k: t === "t-fm" ? "mes" : clave, dir: t === "t-fm" ? 1 : -1 }; });
+  const sinPrecio = todas.filter(u => u.fact.precio_ses == null).length;
+  el.innerHTML = `<section><h2>Facturación estimada por mes</h2>
     <div class="kpis">
-      ${kpi("a", eur0(bc.length ? suma(bc) : null), "BeatCore al mes", `${bc.length} centros`)}
-      ${kpi("b", eur0(comp.length ? suma(comp) : null), "Competencia visible al mes", `${comp.length} centros con estimación`)}
-      ${kpi("a", eur(bc.length ? mean(bc.map(r => r.ps)) : null), "BeatCore: € por sesión", "")}
-      ${kpi("b", eur(median(comp.map(r => r.ps).filter(v => v != null))), "Competencia: € por sesión (mediana)", "")}
+      ${tAct ? kpi("b", eur0(tAct.obs), `${mesL(tAct.p)}: llevamos`, `desde el ${(tAct.desde || "").split("-").reverse().join("/")} · ${tAct.cen} centros`) : ""}
+      ${tAct ? kpi("b", eur0(tAct.est), `${mesL(tAct.p)}: estimado mes completo`, `${tAct.cen} de ${tAct.de} centros con precio`) : ""}
+      ${kpi("b", cad.length, "Cadenas y marcas con 2 o más centros", "")}
+      ${kpi("b", todas.length, "Centros con clases capturadas", `${sinPrecio} sin precio`)}
     </div>
     <div class="guia"><ul>
-      <li><b>€ por sesión</b> = cuota de 8 al mes menos un 10 %, entre 8 sesiones.</li>
-      <li><b>Facturación al mes</b> = € por sesión x reservas al mes (clases de una semana tipo x 52/12 x reservas medias por clase).</li>
-      <li>El 10 % descuenta cuotas limitadas y cuotas más altas que pagan menos por sesión.</li>
-      <li>Es una <b>estimación</b>: reservas, no asistencia, y precios publicados con IVA.</li>
-      <li>Sin estimación: ${sinPrecio} centros sin precio y ${sinRes} sin reservas conocidas (bsport no las publica). Quedan en blanco.</li>
-      <li>"Precio usado": el del propio estudio, el publicado de BeatCore o la mediana de su cadena si el estudio no lo tiene.</li>
-    </ul></div></section>
-    <section><h2>BeatCore frente a la competencia, por centro</h2>
-    ${tabla("t-fz", colsZ, porZona, { limit: 20 })}</section>
+      <li><b>Llevamos</b>: reservas de las clases ya dadas que hemos capturado x € por sesión. Sube cada día.</li>
+      <li><b>Estimado mes completo</b>: lo capturado más el resto del mes (clases programadas o de su semana tipo x reservas medias por clase).</li>
+      <li><b>€ por sesión</b> = cuota de 8 al mes menos un 10 %, entre 8 sesiones. Precios publicados con IVA.</li>
+      <li>Los meses anteriores a la primera captura no tienen dato. Cada mes nuevo se añade solo.</li>
+      <li>En blanco: centro sin precio o sin reservas publicadas (bsport). Los totales suman solo lo que tiene estimación.</li>
+      <li>Aquí salen todos los centros y cadenas, sin BeatCore y sin los filtros de arriba.</li>
+    </ul></div>
+    ${tabla("t-fm", colsT, tot, { limit: 36 })}</section>
+    <section><h2>Cadenas y marcas (${cad.length})</h2>
+    <div class="row"><input type="search" id="fa-q" placeholder="Buscar cadena o centro" value="${esc(el.dataset.q || "")}" aria-label="Buscar"></div>
+    ${tabla("t-fc", colsC, cad, { limit: 300 })}</section>
     <section><h2>Cada centro (${filas.length})</h2>
-    ${tabla("t-fa", colsE, filas, { limit: 400 })}</section>
-    <section><h2>Cadenas (toda España)</h2>
-    <div class="row"><input type="search" id="fa-q" placeholder="Buscar cadena" value="${esc(el.dataset.q || "")}" aria-label="Buscar"><span class="meta">${cad.length} cadenas con estimación</span></div>
-    ${tabla("t-fc", colsC, cad, { limit: 200 })}
-    <div class="guia"><ul>
-      <li>Suma solo los centros con estimación: si faltan centros, la cifra real es mayor.</li>
-      <li>Los centros de cadena sin precio propio usan la mediana de su cadena.</li>
-    </ul></div></section>`;
+    ${tabla("t-fa", colsE, filas, { limit: 500 })}</section>`;
   const inp = $("#fa-q");
   inp.addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; facturacion(); const n = $("#fa-q"); n.focus(); n.setSelectionRange(p, p); });
-  ["t-fz", "t-fa", "t-fc"].forEach(t => enlazarTabla(el, t, facturacion));
+  ["t-fm", "t-fc", "t-fa"].forEach(t => enlazarTabla(el, t, facturacion));
 }
 
 /* ---------- oferta de clases (por día de la semana, semana y mes) ---------- */

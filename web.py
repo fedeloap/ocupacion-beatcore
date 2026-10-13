@@ -232,6 +232,51 @@ def facturacion(a, ocho, cuatro, origen):
             "fact_mes": round(ps * res_mes) if ps and res_mes is not None else None}
 
 
+def facturacion_meses(g, a, ahora, ps):
+    """Reservas y facturación por mes natural de un centro.
+
+    'obs': lo ya capturado (clases dadas con reservas conocidas; el mes empieza a contar el día que se empezó a capturar).
+    'est': mes completo estimado. Cada día cuenta con lo observado si ya pasó; si no, con las clases programadas (o, sin
+    planificación, las de su día de la semana en una semana tipo) x reservas medias por clase. Va afinándose cada día."""
+    rc = a["res_clase"]
+    if rc is None:
+        return []
+    hoy = ahora.normalize()
+    dadas = g[(g["inicio_local"] <= ahora) & g["reservas"].notna()]
+    obs_f = dadas.groupby("fecha")["reservas"].sum()
+    n_f = g.groupby("fecha").size()
+    cl_dow = {x["d"]: (x["clases"] or 0) for x in a["dias"]}
+    out = []
+    meses = sorted({f.strftime("%Y-%m") for f in g["fecha"].unique()})
+    for ym in meses:
+        ini = pd.Timestamp(ym + "-01")
+        fin = ini + pd.offsets.MonthEnd(0)
+        res_obs, res_est, dias_obs = 0.0, 0.0, 0
+        desde = None
+        for d in pd.date_range(ini, fin):
+            previstas = n_f.get(d, cl_dow.get(d.dayofweek, 0)) * rc
+            if d in obs_f.index and d < hoy:
+                v = float(obs_f[d])
+                res_obs += v
+                res_est += v
+                dias_obs += 1
+                desde = desde or d
+            elif d == hoy:
+                v = float(obs_f.get(d, 0.0))
+                res_obs += v
+                res_est += max(v, previstas)
+                if v > 0:
+                    dias_obs += 1
+                    desde = desde or d
+            else:
+                res_est += previstas
+        out.append({"p": ym, "dias_obs": dias_obs, "dias_mes": int(fin.day),
+                    "desde": desde.strftime("%Y-%m-%d") if desde is not None else None,
+                    "res_obs": round(res_obs), "res_est": round(res_est),
+                    "fact_obs": round(res_obs * ps) if ps else None, "fact_est": round(res_est * ps) if ps else None})
+    return out
+
+
 def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     """Oferta (clases y plazas), ocupación y facturación estimada por estudio y por cadena."""
     precio_cad, pb = precio_cad or {}, pb or {}
@@ -248,6 +293,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     u["nombre_n"] = [_norm(f[1]) for f in filas]
     u["propio"] = [int(f[3]) for f in filas]
     u["nombre"] = [f[1] for f in filas]
+    u["marca"] = [f[2] for f in filas]
     # días válidos por estudio
     u["desde"] = u["estudio"].map(desde_plan)
     primera = u.groupby("estudio")["inicio_local"].transform("min").dt.normalize() + pd.Timedelta(days=1)
@@ -281,7 +327,8 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                         if _num(ocho) or _num(cuatro):
                             break
             fact = facturacion(a, ocho, cuatro, origen)
-            unidades.append({"fact": fact, "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
+            unidades.append({"fact": fact, "marca": g["marca"].iloc[0],
+                             "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
         n = _norm(cad)
