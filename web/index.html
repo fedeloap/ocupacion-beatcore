@@ -980,6 +980,14 @@ function detalleCentro(box, u, dset, h0, h1) {
     { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
     { k: "o", l: "% cubierto", n: 1, f: pct }], top, { limit: 15 })}
     <p class="nota">Veces: cuántas clases de ese tipo hay en una semana. Plazas ofertadas: las plazas de esas clases. Plazas ocupadas: las reservadas, según el % cubierto de las clases ya dadas.</p>`;
+  if ((u.extras || []).length) {
+    const ex = u.extras.map(x => ({ s: x.s, sem: x.sem, pl: x.pl, pp: x.pp, o: x.o, m: x.m }));
+    t += `<h3>Otros servicios (no cuentan en clases, plazas, medias ni facturación)</h3>${tabla("t-ex-" + u.estudio.replace(/\W/g, ""), [
+      { k: "s", l: "Servicio" }, { k: "sem", l: "Sesiones / semana", n: 1, f: v => v == null ? "–" : num(v) },
+      { k: "pp", l: "Plazas por sesión", n: 1, f: v => v == null ? "–" : num(v) },
+      { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "o", l: "% cubierto", n: 1, f: pct }, { k: "m", l: "Sesiones medidas", n: 1 }], ex, { limit: 10 })}`;
+  }
   box.innerHTML = t + "</div>";
 }
 function ofertaTab() {

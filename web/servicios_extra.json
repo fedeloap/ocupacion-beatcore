@@ -1,0 +1,7 @@
+{
+  "_nota": "Sesiones que no son clases: no cuentan en clases, plazas, medias, totales ni facturacion. Se muestran aparte en el detalle de cada centro. 'estudios_contienen': trozos del nombre del estudio a los que se aplica; 'patron': expresion regular sobre el nombre de la clase.",
+  "estudios_contienen": [
+    "pomona"
+  ],
+  "patron": "recovery|sauna|open gym"
+}

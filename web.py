@@ -116,6 +116,22 @@ def excluidos():
         return set()
 
 
+EXTRAS = []       # sesiones de servicios que no son clases (recovery, sauna, open gym): se miden aparte
+
+
+def es_extra(df):
+    """Sesiones que no cuentan como clase en medias, totales ni facturación (web/servicios_extra.json)."""
+    try:
+        cfg = json.load(open("web/servicios_extra.json", encoding="utf-8"))
+    except Exception:
+        return pd.Series(False, index=df.index)
+    est = df["estudio"].astype(str).str.lower()
+    de_estudio = pd.Series(False, index=df.index)
+    for t in cfg.get("estudios_contienen", []):
+        de_estudio |= est.str.contains(t.lower(), regex=False)
+    return de_estudio & df["clase"].astype(str).str.contains(cfg.get("patron", "$^"), case=False, regex=True)
+
+
 def cargar_snapshots():
     partes = [analisis.leer(p) for p in ("data/*.csv", "data/curva/*.csv", "data/plan/*.csv")]
     s = pd.concat([p for p in partes if len(p)], ignore_index=True)
@@ -125,6 +141,10 @@ def cargar_snapshots():
     s["clase_id"] = s["clase_id"].astype(str)
     s = s.drop_duplicates(KEY + ["captured_at"])
     s["inicio_local"] = pd.to_datetime(s["inicio_local"])
+    m = es_extra(s)
+    EXTRAS.clear()
+    EXTRAS.append(s[m])
+    s = s[~m]
     return s[KEY + ["clase", "inicio_local", "captured_at", "capacidad", "ocupadas", "libres", "llena",
                     "centro_beatcore", "cancelada", "duracion_min"]]
 
@@ -323,6 +343,26 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     if len(plan):
         hasta = plan["captured_at"].max().normalize() + pd.Timedelta(days=6)
         u = u[u["fecha"] <= hasta]
+    # servicios que no son clase (recovery, sauna, open gym): sesiones, plazas y ocupación, fuera de totales y medias
+    extras_u = {}
+    if EXTRAS and len(EXTRAS[0]):
+        ue = clases_unicas(EXTRAS[0])
+        ue["desde"] = ue["estudio"].map(desde_plan)
+        ue["desde"] = ue["desde"].fillna(ue.groupby("estudio")["inicio_local"].transform("min").dt.normalize() + pd.Timedelta(days=1))
+        ue = ue[ue["fecha"] >= ue["desde"]]
+        if len(plan):
+            ue = ue[ue["fecha"] <= plan["captured_at"].max().normalize() + pd.Timedelta(days=6)]
+        for (est_e, zona_e), ge in ue.groupby(["estudio", "zona"]):
+            n_d = max(1, int(ge["fecha"].nunique()))
+            lista_s = []
+            for nom, gs in ge.groupby("clase"):
+                ya_s = gs[(gs["inicio_local"] <= ahora) & gs["reservas"].notna() & (gs["plazas"] > 0)]
+                lista_s.append({"s": nom, "n": int(len(gs)), "sem": round(len(gs) / n_d * 7, 1),
+                                "pl": round(float(gs["plazas"].sum()) / n_d * 7), "pp": float(gs["plazas"].mean()) if gs["plazas"].notna().any() else None,
+                                "o": round(float(ya_s["reservas"].sum() / ya_s["plazas"].sum()), 3) if len(ya_s) else None,
+                                "m": int(len(ya_s))})
+            lista_s.sort(key=lambda x: -x["n"])
+            extras_u[(est_e, zona_e)] = lista_s
     unidades, cadenas = [], []
     nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
     for (est, zona), g in u.groupby(["estudio", "zona"]):
@@ -347,7 +387,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                         origen = "mediana de la cadena " + c_
                         break
             fact = facturacion(a, tar, origen)
-            unidades.append({"fact": fact, "marca": g["marca"].iloc[0],
+            unidades.append({"fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
@@ -598,6 +638,7 @@ def main():
     # Los festivos NO se excluyen en la web (hay clases ese día); se marcan para poder filtrarlos.
     raw = analisis.cargar()
     raw = raw[~raw["estudio"].isin(excluidos())]
+    raw = raw[~es_extra(raw)]
     # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
     sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
     nac = raw[sin_centro].copy()
