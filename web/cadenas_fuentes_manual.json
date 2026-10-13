@@ -1,0 +1,12 @@
+{
+  "_nota": "Fuentes de agenda pública localizadas a mano o por pistas del usuario (13/10/2026). fuentes_build.py las fusiona en studios_cadenas.json.",
+  "mindbody": [
+    {"estudio": "SICLO Fernando VI", "site_id": 5754694, "centro_beatcore": "", "origen": "api.siclo.com/api/v7/countries/ES/regions (público)"},
+    {"estudio": "SICLO Paseo de la Habana", "site_id": 5754693, "centro_beatcore": "", "origen": "api.siclo.com/api/v7/countries/ES/regions (público)"}
+  ],
+  "trainingym": [
+    {"estudio": "ACTION BLACK Alcalá", "centro_code": "alcala.actionblack.es", "centro_beatcore": ""},
+    {"estudio": "ACTION BLACK Ortega y Gasset", "centro_code": "ortega.actionblack.es", "centro_beatcore": ""},
+    {"estudio": "SPACE BY 9F Pozuelo", "centro_code": "9Fpozuelo", "centro_beatcore": ""}
+  ]
+}

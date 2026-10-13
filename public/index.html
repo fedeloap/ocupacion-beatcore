@@ -615,8 +615,11 @@ function detalleCadena(c, bc) {
     .filter(([k]) => c.precio[k] != null).map(([k, l]) => {
       const b = bc && bc.precio[k];
       const d = b != null && bc !== c ? ` <small>(BeatCore ${eur(b)}, ${c.precio[k] / b - 1 >= 0 ? "+" : ""}${Math.round((c.precio[k] / b - 1) * 100)} %)</small>` : "";
-      return `<li>${l}: <b>${eur(c.precio[k])}</b>${d}</li>`;
+      const fu = c.precio_fuente && c.precio_fuente[k] === "web" ? ' <small>(leído en su web)</small>' : "";
+      return `<li>${l}: <b>${eur(c.precio[k])}</b>${fu}${d}</li>`;
     }).join("");
+  const colsP = [{ k: "e", l: "Etiqueta en su web" }, { k: "i", l: "Importe", n: 1, f: eur },
+    { k: "t", l: "Tipo", f: v => ({ clase_suelta: "Clase suelta", cuatro_mes: "4 al mes", ocho_mes: "8 al mes", doce_mes: "12 al mes", ilimitada: "Ilimitada", matricula: "Matrícula", oferta: "Oferta" }[v] || "–") }];
   const cent = c.centros.map(x => ({ estudio: x.estudio, zona: zn(x.zona), plat: x.plat, clases: x.clases, ocup: x.ocup, llenas: x.llenas }));
   const colsC = [{ k: "estudio", l: "Centro" }, { k: "zona", l: "Zona BeatCore" }, { k: "plat", l: "Plataforma" }, { k: "clases", l: "Clases", n: 1 },
     { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llenas", l: "% llenas", n: 1, f: pct }];
@@ -630,13 +633,14 @@ function detalleCadena(c, bc) {
       <li>Software de reservas: <b>${sw.length ? esc(sw.join(", ")) : "sin identificar"}</b> · ocupación pública: <b>${esc(op.t)}</b>${c.capturable ? " · " + esc(c.capturable) : ""}</li>
       <li>Ocupación medida: ${c.ocup.clases ? `<b>${pct(c.ocup.ocup)}</b>${dif(c.ocup.ocup, bc && bc.ocup.ocup)} en ${c.ocup.clases} clases de ${c.ocup.estudios} centros · ${pct(c.ocup.llenas)} llenas` : "todavía sin clases medidas"}</li>
     </ul>
-    ${precios ? `<h3>Precios (mediana en catálogo)</h3><ul class="detalle">${precios}</ul>` : ""}
-    ${c.precios_web.length ? `<h3>Importes encontrados en su web</h3><p class="meta">${c.precios_web.map(v => eur(v)).join(" · ")} ${c.precios_url ? `· <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}<br>Son importes sueltos de la página, sin etiquetar: sirven de pista, no como tarifa.</p>` : ""}
+    ${precios ? `<h3>Precios</h3><ul class="detalle">${precios}</ul>` : ""}
+    ${(c.precios_items || []).length ? `<h3>Importes que aparecen en su web${c.precios_url ? ` · <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}</h3>
+      ${tabla("t-cad-p", colsP, c.precios_items, { limit: 30 })}` : ""}
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
     <p class="nota"><button type="button" id="cd-cerrar">Cerrar</button></p></div>`;
   $("#cd-cerrar").addEventListener("click", () => { delete $("#p-cadenas").dataset.sel; cadenas(); });
-  ["t-cad-c", "t-cad-t"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
+  ["t-cad-c", "t-cad-t", "t-cad-p"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
 }
 
 function claseCols() {

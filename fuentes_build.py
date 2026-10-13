@@ -61,7 +61,8 @@ def candidatos():
             d = c.setdefault(r["cadena"], {})
             for f in r.get("fuentes", []):
                 k = f["plataforma"]
-                v = f.get("host_id") or f.get("company_id") or f.get("tenant") or f.get("subdominio") or f.get("site_id") or f.get("branch_id")
+                v = (f.get("host_id") or f.get("company_id") or f.get("tenant") or f.get("subdominio") or f.get("site_id")
+                     or f.get("branch_id") or f.get("centro_code"))
                 if v is not None:
                     d.setdefault(k, set()).add(str(v))
             for k, vals in (r.get("ids") or {}).items():
@@ -117,11 +118,35 @@ def main():
                 nombre = cadena if len(plats.get("mindbody", [])) == 1 else f"{cadena} {slug}"
                 out["mindbody"].append({"estudio": nombre, "ref": ref, "centro_beatcore": ""})
                 resumen.append((cadena, "mindbody", site, v.get("clases_2d")))
+        for code in sorted(plats.get("trainingym", [])):
+            v = F.ver_trainingym(code)
+            if v:
+                out.setdefault("trainingym", []).append({"estudio": f"{cadena} {v['nombre']}", "centro_code": code, "centro_beatcore": ""})
+                resumen.append((cadena, "trainingym", code, v.get("clases_3d")))
         for br in sorted(plats.get("glofox", [])):
             if br in ya["glofox"]:
                 continue
             out["glofox"].append({"estudio": cadena, "branch_id": br, "centro_beatcore": ""})
             resumen.append((cadena, "glofox", br, "sin verificar"))
+    # fuentes localizadas a mano (web/cadenas_fuentes_manual.json), verificadas igual
+    try:
+        man = json.load(open("web/cadenas_fuentes_manual.json", encoding="utf-8"))
+    except Exception:
+        man = {}
+    for e in man.get("mindbody", []):
+        if str(e["site_id"]) in ya["mindbody"] or any(str(e["site_id"]) in x["ref"] for x in out["mindbody"]):
+            continue
+        if F.ver_mindbody(str(e["site_id"])):
+            ref = json.dumps({"mb_site_id": int(e["site_id"]), "mb_location_id": 1, "inventory_source": "MB"}, separators=(",", ":"))
+            out["mindbody"].append({"estudio": e["estudio"], "ref": ref, "centro_beatcore": ""})
+            resumen.append((e["estudio"], "mindbody", e["site_id"], "manual"))
+    for e in man.get("trainingym", []):
+        if any(x["centro_code"] == e["centro_code"] for x in out.get("trainingym", [])):
+            continue
+        v = F.ver_trainingym(e["centro_code"])
+        if v:
+            out.setdefault("trainingym", []).append({"estudio": e["estudio"], "centro_code": e["centro_code"], "centro_beatcore": ""})
+            resumen.append((e["estudio"], "trainingym", e["centro_code"], v.get("clases_3d")))
     json.dump(out, open("studios_cadenas.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for r in resumen:
         print(r)

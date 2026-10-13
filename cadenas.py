@@ -28,7 +28,7 @@ import requests
 
 H = {"User-Agent": "Mozilla/5.0 (compatible; BeatCoreResearch/1.0; +https://github.com/fedeloap/ocupacion-beatcore)"}
 TIMEOUT = 15
-MAX_PAGINAS = 9
+MAX_PAGINAS = 14
 
 # plataforma: patrón que aparece en el HTML (scripts, iframes, enlaces)
 SOFTWARE = {
@@ -115,6 +115,68 @@ def euros(texto):
     return vals
 
 
+RX_FUERA_PRECIO = re.compile(r"cookie|iva incluido|envio|env[ií]o|gastos|devoluci|descuento del|ahorra|hasta \d+ ?%|pol[ií]tica", re.I)
+
+
+def lineas(html):
+    """Texto visible por líneas (bloques), para leer 'etiqueta + importe'."""
+    t = re.sub(r"<script.*?</script>|<style.*?</style>|<noscript.*?</noscript>|<svg.*?</svg>", " ", html, flags=re.S | re.I)
+    t = re.sub(r"</?(p|div|li|ul|ol|h[1-6]|tr|td|th|section|article|br|table|header|footer|dd|dt)\b[^>]*>", "\n", t, flags=re.I)
+    t = unescape(re.sub(r"<[^>]+>", " ", t))
+    out = [re.sub(r"\s+", " ", x).strip() for x in t.split("\n")]
+    return [x for x in out if x]
+
+
+def clasifica(label):
+    s = unicodedata.normalize("NFD", label.lower()).encode("ascii", "ignore").decode()
+    if re.search(r"matricula|inscripcion|cuota de entrada|alta ", s):
+        return "matricula"
+    if re.search(r"ilimitad|unlimited|sin limite|acceso libre|libre acceso|todas las clases", s):
+        return "ilimitada"
+    if re.search(r"suelta|drop.?in|clase individual|sesion individual|clase unica|sesion suelta|single class|1 clase\b|una clase\b|por clase|clase de prueba|class\b$", s) and not re.search(r"mes|mensual", s):
+        return "clase_suelta"
+    m = re.search(r"(\d{1,2})\s*(?:clases|sesiones|entrenos|entrenamientos|classes|sessions)\b", s)
+    sem = re.search(r"(\d)\s*(?:veces|dias|clases|sesiones)?\s*(?:por|a la|/)\s*semana", s)
+    if m and re.search(r"mes|mensual|month|membres|abono|cuota", s):
+        n = int(m.group(1))
+        return {4: "cuatro_mes", 8: "ocho_mes", 12: "doce_mes"}.get(n)
+    if sem and not m:
+        return {1: "cuatro_mes", 2: "ocho_mes", 3: "doce_mes"}.get(int(sem.group(1)))
+    if re.search(r"prueba|primera|intro|bienvenida|gratis|first|trial", s):
+        return "oferta"
+    return None
+
+
+def precios_etiquetados(htmls):
+    """Lista de {url, etiqueta, importe, tipo}: importe en € con la etiqueta que lo acompaña en la página."""
+    items, vistos = [], set()
+    for u, h in htmls.items():
+        ls = lineas(h)
+        for i, l in enumerate(ls):
+            if len(l) > 220:
+                continue
+            for m in list(RX_EURO.finditer(l)) + list(RX_EURO2.finditer(l)):
+                try:
+                    v = float(m.group(1).replace(",", "."))
+                except ValueError:
+                    continue
+                if not (3 <= v <= 600):
+                    continue
+                label = (l[:m.start()] + " " + l[m.end():]).strip(" -:·|/")
+                if len(re.sub(r"[^a-zA-Záéíóúñ]", "", label)) < 4:
+                    # el importe va solo: la etiqueta está en las líneas anteriores
+                    label = " ".join(ls[max(0, i - 2): i]).strip()
+                if RX_FUERA_PRECIO.search(label) or not label:
+                    continue
+                label = label[:90]
+                key = (label.lower(), v)
+                if key in vistos:
+                    continue
+                vistos.add(key)
+                items.append({"url": u, "etiqueta": label, "importe": v, "tipo": clasifica(label)})
+    return items
+
+
 def analizar(cadena, web):
     out = {"cadena": cadena, "web": web, "estado": "", "titulo": "", "software": [], "capturable": "",
            "centros_n": None, "centros_ejemplos": [], "precios_url": "", "precios": [], "paginas": 0}
@@ -190,6 +252,15 @@ def analizar(cadena, web):
                 mejor = (u, v)
     out["precios_url"] = mejor[0]
     out["precios"] = sorted(set(mejor[1]))[:14]
+    items = precios_etiquetados(htmls)
+    tip = {}
+    for it in items:
+        if it["tipo"] and (it["tipo"] not in tip or it["importe"] < tip[it["tipo"]]):
+            tip[it["tipo"]] = it["importe"]
+    out["precios_tipados"] = tip
+    out["precios_items"] = items[:40]
+    if items and not out["precios_url"]:
+        out["precios_url"] = items[0]["url"]
     out["estado"] = "ok"
     return out
 

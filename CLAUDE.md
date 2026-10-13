@@ -158,6 +158,12 @@ Incluye los 4 BeatCore (con ocupación, sin precios). Competencia (sin BeatCore)
   sin `centro_beatcore`, `web.py` los agrupa como zona "Nacional" y solo se usan en la pestaña Cadenas.
 - Decisión de Fede (13/10/2026): no excluir ninguna plataforma por definición; se intenta con todas las que tengan agenda
   pública. Se mantiene: sin login, sin credenciales, sin saltarse Cloudflare ni desafíos anti-bot (15 webs lo muestran y se dejan).
+- Trainingym (13/10/2026): su calendario público "easy" (`easy.trainingym.com/<centro>/booking/calendar`) carga sin login desde
+  `booking.trainingym.com/api/v2/calendar/totem/notauth?centerToken=...` (token público en `center.trainingym.com/api/v1/public/center/<centro>`)
+  con plazas (`capacityAssistant`) y reservas (`bookingInfo.bookedPlaces`). Ya está en `capture.py`.
+- Siclo España usa Mindbody (site ids públicos en `api.siclo.com/api/v7/countries/ES/regions`). Fuentes a mano en `web/cadenas_fuentes_manual.json`.
+- Sin agenda pública utilizable: TIMP (web Flutter sin datos visibles), Wodbuster (solo registro de invitado), Provis (pide login),
+  Commando (API con clave de acceso: no se usa, y las claves no van al repo).
 - Hallazgo 13/10/2026: la agenda de AimHarder (`https://<box>.aimharder.com/api/bookings?day=AAAAMMDD&familyId=&box=<id>`)
   devuelve JSON público, sin login ni Cloudflare, con `limit` (plazas) y `ocupation` (reservas) por clase. CLAUDE.md
   la tenía excluida: no se ha activado en `capture.py` hasta que Fede lo confirme.

@@ -11,6 +11,7 @@ Salida: web/cadenas_red.json
 
 import asyncio
 import json
+import os
 import re
 import sys
 from urllib.parse import urljoin, urlparse
@@ -56,9 +57,14 @@ async def sniff(ctx, cadena, web, sem):
 
         page.on("request", on_req)
         try:
-            await page.goto(web, wait_until="networkidle", timeout=35000)
+            # "load" + espera corta: varias webs nunca llegan a networkidle (analítica, mapas, vídeos)
+            await page.goto(web, wait_until="load", timeout=60000)
+            await page.wait_for_timeout(6000)
             html = await page.content()
-            if re.search(r"just a moment|attention required|captcha", html[:4000], re.I):
+            titulo = (re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I) or [None, ""])[1]
+            # desafío real de Cloudflare u otro: título característico o marcas del desafío (no basta la palabra "captcha",
+            # que sale en casi todos los formularios de contacto)
+            if re.search(r"just a moment|attention required|un momento|verifying you are human|cf-chl|challenge-platform/h/b", titulo + html[:6000], re.I):
                 estado = "desafio anti-bot"
             else:
                 cuerpos.append(html)
@@ -69,7 +75,8 @@ async def sniff(ctx, cadena, web, sem):
                             enlaces.append(href)
                 for u in enlaces[:MAX_LINKS]:
                     try:
-                        await page.goto(u, wait_until="networkidle", timeout=30000)
+                        await page.goto(u, wait_until="load", timeout=45000)
+                        await page.wait_for_timeout(4000)
                         cuerpos.append(await page.content())
                     except Exception:
                         continue
@@ -87,10 +94,18 @@ async def sniff(ctx, cadena, web, sem):
 async def main(salida="web/cadenas_red.json"):
     inv = json.load(open("web/cadenas_inventario.json", encoding="utf-8"))["filas"]
     tareas = [(f["cadena"], f["web"]) for f in inv if f.get("web") and f.get("estado") == "ok"]
+    previo = {}
+    if os.path.exists(salida):
+        previo = {r["cadena"]: r for r in json.load(open(salida, encoding="utf-8"))["cadenas"]}
+    if os.environ.get("SNIFF_SOLO") == "pendientes":
+        # solo las nuevas y las que dieron error o tiempo agotado (los desafíos anti-bot no se reintentan)
+        # (los "desafío anti-bot" de la primera pasada se repiten: el detector anterior daba falsos positivos)
+        tareas = [(c, w) for c, w in tareas if c not in previo or previo[c]["estado"].startswith("error")
+                  or previo[c]["estado"] == "desafio anti-bot"]
+        print(len(tareas), "webs pendientes")
     sem = asyncio.Semaphore(4)
     async with async_playwright() as p:
         import glob
-        import os
         # en Windows puede haber solo el Chromium completo (sin "headless shell"): se usa si existe
         exe = (glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\ms-playwright\chromium-*\chrome-win64\chrome.exe")) or [None])[-1]
         browser = None
@@ -108,6 +123,8 @@ async def main(salida="web/cadenas_red.json"):
                                                    "(KHTML, like Gecko) Chrome/130.0 Safari/537.36", locale="es-ES")
         res = await asyncio.gather(*[sniff(ctx, c, w, sem) for c, w in tareas])
         await browser.close()
+    previo.update({r["cadena"]: r for r in res})
+    res = list(previo.values())
     json.dump({"cadenas": res}, open(salida, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     con = [r for r in res if r["ids"]]
     print(f"{len(res)} webs; con identificadores: {len(con)}")

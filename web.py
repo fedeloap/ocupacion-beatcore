@@ -242,6 +242,14 @@ def cadenas_datos(c, filas, cat_out):
         idx = [k for k in range(len(cat_out)) if _coincide(n, cat_m[k], cat_e[k])]
         sub = cat_out.iloc[idx]
         precio = {k: med(sub[k]) for k in ("clase_suelta", "cuatro_mes", "ocho_mes", "doce_mes", "ilimitada")}
+        # si el catálogo no tiene el precio, se usa el que se lee en su web (etiquetado), indicando la fuente
+        tip = i.get("precios_tipados", {}) or {}
+        fuente_p = {}
+        for k in precio:
+            if precio[k] is not None:
+                fuente_p[k] = "catálogo"
+            elif tip.get(k) is not None:
+                precio[k], fuente_p[k] = tip[k], "web"
         sw_cat = sorted({p for p in sub["plataforma"].dropna() if p and p != "No identificada"})
         # ocupación medida
         m = cdf[[_coincide(n, a, b) for a, b in zip(cdf["marca"], cdf["nombre"])]]
@@ -265,7 +273,9 @@ def cadenas_datos(c, filas, cat_out):
             "precios_url": i.get("precios_url", ""), "precios_web": i.get("precios", []),
             "cat_estudios": int(len(sub)), "cat_zonas": sorted(set(sub["zona"])),
             "cat_con_ocup": int((sub["ocupacion_medida"] == "Sí").sum()) if len(sub) else 0,
-            "precio": precio,
+            "precio": precio, "precio_fuente": fuente_p,
+            "precios_items": [{"e": x["etiqueta"], "i": x["importe"], "t": x.get("tipo") or ""} for x in i.get("precios_items", [])][:30],
+            "oferta_web": tip.get("oferta"), "matricula_web": tip.get("matricula"),
             "ocup": {"estudios": len(centros), "clases": int(len(m)),
                      "ocup": round(float(mo["ocupacion"].mean()), 3) if len(mo) else None,
                      "llenas": round(float(m["llena_b"].mean()), 3) if m["llena_b"].notna().any() else None,

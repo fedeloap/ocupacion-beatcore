@@ -333,12 +333,55 @@ def aimharder(cfg, a, b):
     return rows
 
 
+# ---------------- Trainingym (calendario público de reservas "easy": plazas y reservas por clase, sin login) ----------------
+def trainingym(cfg, a, b):
+    rows = []
+    d1 = a.astimezone(MADRID).date()
+    d2 = b.astimezone(MADRID).date()
+    for s in cfg:
+        code = s["centro_code"]
+        try:
+            c = requests.get(f"https://center.trainingym.com/api/v1/public/center/{code}", headers=UA, timeout=30).json()
+            token = c["publicToken"]
+            r = requests.get("https://booking.trainingym.com/api/v2/calendar/totem/notauth",
+                             params={"centerToken": token, "startDateTime": d1.isoformat(),
+                                     "endDateTime": d2.isoformat(), "forceViewMap": "true"}, headers=UA, timeout=45)
+            r.raise_for_status()
+            days = r.json().get("calendar", [])
+        except Exception as e:
+            print(f"[trainingym] {s['estudio']}: error {e}", file=sys.stderr)
+            continue
+        for d in days:
+            for x in d.get("schedules") or []:
+                try:
+                    hh, mm = x["timeStart"].split(":")[:2]
+                    dd = datetime.fromisoformat(d["dateProgram"])
+                    st = datetime(dd.year, dd.month, dd.day, int(hh), int(mm), tzinfo=MADRID).astimezone(timezone.utc)
+                except Exception:
+                    continue
+                if not between(st, a, b):
+                    continue
+                bi = x.get("bookingInfo") or {}
+                cap = x.get("capacityAssistant") or bi.get("maxSeatOnline")
+                occ = bi.get("bookedPlaces")
+                ok = isinstance(cap, int) and isinstance(occ, int)
+                rows.append({
+                    "plataforma": "trainingym", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
+                    "sede": c.get("name") or s["estudio"], "clase_id": x.get("id"), "clase": (x.get("activity") or {}).get("name", ""),
+                    "inicio_local": to_local(st), "duracion_min": x.get("duration"),
+                    "capacidad": cap, "ocupadas": occ, "libres": (cap - occ) if ok else "", "libres_web": "",
+                    "llena": (occ >= cap) if ok else "", "cancelada": "", "lista_espera": "",
+                })
+        time.sleep(0.5)
+    return rows
+
+
 def capture(cfg, a, b):
     import timp
     return (momence(cfg.get("momence", []), a, b) + mindbody(cfg.get("mindbody", []), a, b)
             + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b)
             + timp.capture(cfg.get("timp", []), a, b) + marianatek(cfg.get("marianatek", []), a, b)
-            + aimharder(cfg.get("aimharder", []), a, b))
+            + aimharder(cfg.get("aimharder", []), a, b) + trainingym(cfg.get("trainingym", []), a, b))
 
 
 def cargar_cadenas():

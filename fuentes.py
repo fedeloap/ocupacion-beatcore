@@ -101,6 +101,32 @@ def ids_aimharder(txt):
     return sorted(set(re.findall(r"https?://([a-z0-9\-]+)\.aimharder\.com", txt, re.I)) - {"www", "app", "api"})
 
 
+def ids_trainingym(txt):
+    return sorted(set(re.findall(r"easy\.trainingym\.com/([A-Za-z0-9_.\-]+)/", txt)) - {"assets", "api"})
+
+
+def ver_trainingym(code):
+    """Calendario público de reservas (easy): plazas y reservas por clase sin login."""
+    r = get(f"https://center.trainingym.com/api/v1/public/center/{code}", True)
+    if r is None or r.status_code != 200:
+        return None
+    try:
+        c = r.json()
+        tok = c["publicToken"]
+    except Exception:
+        return None
+    d1 = datetime.now().date()
+    x = get("https://booking.trainingym.com/api/v2/calendar/totem/notauth", True,
+            params={"centerToken": tok, "startDateTime": d1.isoformat(), "endDateTime": (d1 + timedelta(days=3)).isoformat(), "forceViewMap": "true"})
+    if x is None or x.status_code != 200:
+        return None
+    try:
+        n = sum(len(d.get("schedules") or []) for d in x.json().get("calendar", []))
+    except Exception:
+        return None
+    return {"nombre": c.get("name"), "clases_3d": n} if n else None
+
+
 def ids_mindbody(txt):
     ids = set(re.findall(r"""(?:site[_-]?id|data-site-id|studio[_-]?id|mb_site_id|location[_-]?id)["'\s:=]+["']?(\d{4,8})""", txt, re.I))
     ids |= set(re.findall(r"mindbodyonline\.com/[^\"'\s<>]*?(?:studioid|siteID)=(\d{4,8})", txt, re.I))
@@ -139,15 +165,24 @@ def ver_bsport(cid):
 
 
 def ver_mariana(tenant):
-    r = get(f"https://{tenant}.marianatek.com/api/customer/v1/locations", True)
-    if r is None or r.status_code != 200:
-        return None
-    try:
-        j = r.json()
-    except Exception:
-        return None
-    locs = j.get("results", j if isinstance(j, list) else [])
-    out = [{"id": str(x.get("id")), "nombre": x.get("name")} for x in locs if isinstance(x, dict)]
+    url, locs = f"https://{tenant}.marianatek.com/api/customer/v1/locations?page_size=100", []
+    for _ in range(10):
+        r = get(url, True)
+        if r is None or r.status_code != 200:
+            break
+        try:
+            j = r.json()
+        except Exception:
+            break
+        locs += j.get("results", j if isinstance(j, list) else [])
+        url = (j.get("links") or {}).get("next") or j.get("next") if isinstance(j, dict) else None
+        if not url:
+            break
+    # solo sedes en España (zona horaria de Madrid o dirección en España)
+    def es(x):
+        dir_ = " ".join(x.get("formatted_address") or []) if isinstance(x.get("formatted_address"), list) else str(x.get("formatted_address"))
+        return str(x.get("timezone", "")).startswith("Europe/Madrid") or re.search(r"\b(spain|españa)\b", dir_, re.I) is not None
+    out = [{"id": str(x.get("id")), "nombre": x.get("name")} for x in locs if isinstance(x, dict) and es(x)]
     return {"locations": out} if out else None
 
 
@@ -207,6 +242,10 @@ def descubrir(cadena, web):
         v = ver_aimharder(sub)
         if v:
             out["fuentes"].append({"plataforma": "aimharder", "subdominio": sub, **v})
+    for code in ids_trainingym(txt)[:10]:
+        v = ver_trainingym(code)
+        if v:
+            out["fuentes"].append({"plataforma": "trainingym", "centro_code": code, **v})
     for gid in ids_glofox(txt)[:6]:
         out["fuentes"].append({"plataforma": "glofox", "branch_id": gid, "verificado": False})
     for site in ids_mindbody(txt)[:4]:

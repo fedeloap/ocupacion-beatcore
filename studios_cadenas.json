@@ -22,6 +22,36 @@
    "centro_beatcore": ""
   },
   {
+   "estudio": "EDAN",
+   "host_id": 37858,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 142287,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 227048,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 260135,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "PILAT3S",
+   "host_id": 310279,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "REVIVE WELLNESS HUB",
+   "host_id": 39277,
+   "centro_beatcore": ""
+  },
+  {
    "estudio": "TRIB3",
    "host_id": 204362,
    "centro_beatcore": ""
@@ -37,9 +67,19 @@
    "estudio": "ARDE BARRE",
    "company_id": 3558,
    "centro_beatcore": ""
+  },
+  {
+   "estudio": "ARDE BARRE",
+   "company_id": 5971,
+   "centro_beatcore": ""
   }
  ],
  "mindbody": [
+  {
+   "estudio": "BARRY´S BOOTCAMP",
+   "ref": "{\"mb_site_id\":5735225,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
   {
    "estudio": "DENOVO PILATES",
    "ref": "{\"mb_site_id\":5729300,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
@@ -66,6 +106,26 @@
    "centro_beatcore": ""
   },
   {
+   "estudio": "FS8 5720888",
+   "ref": "{\"mb_site_id\":5720888,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FS8 5733522",
+   "ref": "{\"mb_site_id\":5733522,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FS8 5739328",
+   "ref": "{\"mb_site_id\":5739328,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FS8 5740780",
+   "ref": "{\"mb_site_id\":5740780,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
    "estudio": "GRATIA",
    "ref": "{\"mb_site_id\":5738228,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
    "centro_beatcore": ""
@@ -81,14 +141,85 @@
    "centro_beatcore": ""
   },
   {
+   "estudio": "REFORM U rfufitnessclub",
+   "ref": "{\"mb_site_id\":5740809,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "REFORM U 5750879",
+   "ref": "{\"mb_site_id\":5750879,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
    "estudio": "SOLID STUDIO solidstudiocaleido",
    "ref": "{\"mb_site_id\":5746768,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
    "centro_beatcore": ""
+  },
+  {
+   "estudio": "THE FITHUB",
+   "ref": "{\"mb_site_id\":5738769,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "SICLO Fernando VI",
+   "ref": "{\"mb_site_id\":5754694,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "SICLO Paseo de la Habana",
+   "ref": "{\"mb_site_id\":5754693,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
   }
  ],
- "glofox": [],
- "marianatek": [],
+ "glofox": [
+  {
+   "estudio": "KOLEO BARRE",
+   "branch_id": "67e69cb45babb4ad250480cb",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "MYND PILATES",
+   "branch_id": "6953fb09c0466d24590cfef7",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "MYND PILATES",
+   "branch_id": "6a69bf1cd48f8d6ca909bee7",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "POMONA",
+   "branch_id": "69971a5d4bd15296130b83e4",
+   "centro_beatcore": ""
+  }
+ ],
+ "marianatek": [
+  {
+   "estudio": "BARRY´S BOOTCAMP Barcelona",
+   "tenant": "barrysbootcamp",
+   "location_id": "10273",
+   "centro_beatcore": ""
+  }
+ ],
  "aimharder": [
+  {
+   "estudio": "180 TRAINING CLUB 180 Juan Carlos I",
+   "subdominio": "180juancarlosi",
+   "box": "10550",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "180 TRAINING CLUB 180 Juan de Borbón",
+   "subdominio": "180juandeborbon",
+   "box": "9908",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "180 TRAINING CLUB 180 Ronda Sur",
+   "subdominio": "180rondasur",
+   "box": "9909",
+   "centro_beatcore": ""
+  },
   {
    "estudio": "Batard Casa de Campo / Sala Crossboxing",
    "subdominio": "batardcasadecampo",
@@ -138,9 +269,80 @@
    "centro_beatcore": ""
   },
   {
+   "estudio": "FABRIK TRAINING CLUBS Fabrik Training Club - MALLORCA",
+   "subdominio": "fabrikboxtraining",
+   "box": "10321",
+   "centro_beatcore": ""
+  },
+  {
    "estudio": "fitactiva",
    "subdominio": "fitactiva",
    "box": "11048",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Full CrossFit Benimaclet",
+   "subdominio": "fullcrossfitbenimaclet",
+   "box": "10077",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Full CrossFit Madrid",
+   "subdominio": "fullcrossfitmadrid",
+   "box": "9891",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Full CrossFit La Patacona / Box 01",
+   "subdominio": "fullcrossfitvalencia",
+   "box": "6869",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Full CrossFit L´Eliana",
+   "subdominio": "fulleliana",
+   "box": "10205",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Ren Coach Lavapiés",
+   "subdominio": "reancoachlavapies",
+   "box": "10282",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Ren Coach Boutique",
+   "subdominio": "rencoach",
+   "box": "9959",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Studio Nova Conde Casal / Sala Pilates Reformer",
+   "subdominio": "studionovacondecasal",
+   "box": "10921",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "STUDIO NOVA PLAZA CASTILLA / Sala Pilates Reformer",
+   "subdominio": "studionovaplazacastilla",
+   "box": "10801",
+   "centro_beatcore": ""
+  }
+ ],
+ "trainingym": [
+  {
+   "estudio": "ACTION BLACK Alcalá",
+   "centro_code": "alcala.actionblack.es",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "ACTION BLACK Ortega y Gasset",
+   "centro_code": "ortega.actionblack.es",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "SPACE BY 9F Pozuelo",
+   "centro_code": "9Fpozuelo",
    "centro_beatcore": ""
   }
  ]
