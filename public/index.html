@@ -88,6 +88,8 @@ table.heat.peq td.vacio { background: transparent; }
 tr.subfila > td { background: var(--bg); padding: 10px 12px; white-space: normal; }
 .subpanel { display: grid; gap: 10px; min-width: 0; }
 button.exp { min-width: 44px; }
+.cab-det { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+button.cerrar { cursor: pointer; font-weight: 600; white-space: nowrap; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
 .duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
@@ -635,7 +637,10 @@ function cadenas() {
     <p class="nota">Precios de 4/mes, 8/mes e ilimitada: mediana de los estudios de la cadena a 1 km de algún BeatCore (catálogo). "Centros (web)" es una estimación a partir de su web.</p></section>`;
   $("#cd-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; cadenas(); const n = $("#cd-q"); n.focus(); n.setSelectionRange(p, p); });
   $("#cd-solo").addEventListener("change", e => { el.dataset.solo = e.target.value; cadenas(); });
-  enlazarTabla(el, "t-cad", cadenas, i => { el.dataset.sel = i; cadenas(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); });
+  enlazarTabla(el, "t-cad", cadenas, i => {
+    if (el.dataset.sel != null && +el.dataset.sel === i) { delete el.dataset.sel; cadenas(); return; }
+    el.dataset.sel = i; cadenas(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" });
+  });
   if (sel != null) detalleCadena(CAD[sel], bc);
   // desplegables de centros dentro de la tabla
   el.querySelectorAll("button.exp").forEach(b => b.addEventListener("click", ev => {
@@ -681,7 +686,7 @@ function detalleCadena(c, bc) {
   const unidCad = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)) : [];
   const centrosOf = unidCad.length ? tablaCentros($("#p-cadenas"), "cc", unidCad, c.cadena) : null;
   const ejemplos = (c.centros_ejemplos || []).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.replace(/^https?:\/\/(www\.)?/, ""))}</a>`).join(" · ");
-  $("#cad-det").innerHTML = `<div class="card"><h2>${esc(c.cadena)}</h2>
+  $("#cad-det").innerHTML = `<div class="card"><div class="cab-det"><h2 style="margin:0">${esc(c.cadena)}</h2><button type="button" class="cerrar" id="cd-cerrar-top">✕ Cerrar</button></div>
     <p class="meta">${c.web ? `<a href="${esc(c.web)}" target="_blank" rel="noopener noreferrer">${esc(c.web)}</a>` : "Web sin localizar"}${c.titulo ? " · " + esc(c.titulo) : ""}</p>
     <ul class="detalle">
       <li>Centros según su web: <b>${c.centros_web ?? "sin dato"}</b>${ejemplos ? " · " + ejemplos : ""}</li>
@@ -697,7 +702,9 @@ function detalleCadena(c, bc) {
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
     <p class="nota"><button type="button" id="cd-cerrar">Cerrar</button></p></div>`;
-  $("#cd-cerrar").addEventListener("click", () => { delete $("#p-cadenas").dataset.sel; cadenas(); });
+  const cerrarCad = () => { delete $("#p-cadenas").dataset.sel; cadenas(); };
+  $("#cd-cerrar").addEventListener("click", cerrarCad);
+  $("#cd-cerrar-top").addEventListener("click", cerrarCad);
   if (ofBloque) ofBloque.bind();
   if (centrosOf) centrosOf.bind();
   ["t-cad-c", "t-cad-t", "t-cad-p"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
@@ -813,8 +820,15 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
     const a = $("#h0-" + key), b = $("#h1-" + key);
     if (a) a.addEventListener("change", e => { el.dataset["h0" + key] = e.target.value; if (+el.dataset["h1" + key] <= +e.target.value) el.dataset["h1" + key] = +e.target.value + 1; render(); });
     if (b) b.addEventListener("change", e => { el.dataset["h1" + key] = e.target.value; render(); });
-    enlazarTabla(el, id, render, per === "dia" ? i => { el.dataset["sel" + key] = i; render(); } : null);
-    if (sel != null && per === "dia" && unidades[sel]) detalleCentro($("#dc-" + key), unidades[sel], dset, h0, h1);
+    enlazarTabla(el, id, render, per === "dia" ? i => {
+      if (el.dataset["sel" + key] != null && +el.dataset["sel" + key] === i) delete el.dataset["sel" + key]; else el.dataset["sel" + key] = i;
+      render();
+    } : null);
+    if (sel != null && per === "dia" && unidades[sel]) {
+      detalleCentro($("#dc-" + key), unidades[sel], dset, h0, h1);
+      const x = $("#dc-" + key + " .cerrar");
+      if (x) x.addEventListener("click", () => { delete el.dataset["sel" + key]; render(); });
+    }
   } };
 }
 function detalleCentro(box, u, dset, h0, h1) {
@@ -823,7 +837,7 @@ function detalleCentro(box, u, dset, h0, h1) {
   if (!cel.length) { box.innerHTML = '<p class="vacio-msg">Sin clases con estos filtros.</p>'; return; }
   const hmin = Math.min(...cel.map(c => c.h)), hmax = Math.max(...cel.map(c => c.h));
   const mapa = new Map(cel.map(c => [c.d * 100 + c.h, c]));
-  let t = `<div class="card"><h3>${esc(u.estudio)} · clases y ocupación por hora</h3>
+  let t = `<div class="card"><div class="cab-det"><h3 style="margin:0">${esc(u.estudio)} · clases y ocupación por hora</h3><button type="button" class="cerrar">✕ Cerrar</button></div>
     <ul class="detalle"><li><b>Número grande</b>: cuántas clases tiene el centro a esa hora en una semana tipo (1,0 = una clase cada semana; 0,5 = una cada dos semanas; 2,0 = dos clases a la vez).</li>
     <li><b>Porcentaje pequeño</b>: % de plazas cubiertas con reservas en esas clases. Solo cuenta clases ya dadas; si no hay, no sale.</li>
     <li>Cuanto más verde, más llena.</li></ul>
@@ -904,13 +918,14 @@ function detalleClase(i) {
     const v = bs ? (D.cl[j][i] == null ? "–" : D.cl[j][i] ? "Llena" : "No llena") : (D.cr[j][i] == null ? "–" : `${D.cr[j][i]} de ${D.a[i] ?? "?"} plazas (${vals[j] == null ? "–" : Math.round(vals[j]) + "%"})`);
     return `<tr><td>${c === 0 ? "Al empezar" : c + " h antes"}</td><td>${v}</td></tr>`;
   }).filter((_, j) => vals[j] != null).join("");
-  $("#cl-det").innerHTML = `<div class="card"><h2>${esc(r.clase)} · ${esc(r.estudio)}</h2>
+  $("#cl-det").innerHTML = `<div class="card"><div class="cab-det"><h2 style="margin:0">${esc(r.clase)} · ${esc(r.estudio)}</h2><button type="button" class="cerrar" id="cl-cerrar-top">✕ Cerrar</button></div>
     <p class="meta">${r.fecha} ${r.hora} · ${esc(r.centro)} · ${esc(r.plat)} · ${r.aforo ?? "–"} plazas · ${r.res ?? "–"} reservas al empezar${bs ? " · bsport solo indica si está llena" : ""}</p>
     <div class="chartbox"><canvas id="cl-canvas"></canvas></div>
     ${filas ? `<div class="scroll"><table><thead><tr><th>Momento</th><th>Reservas</th></tr></thead><tbody>${filas}</tbody></table></div>`
       : '<p class="nota">Esta clase aún no tiene fotos previas: solo conocemos el estado al empezar.</p>'}
     <p class="nota"><button type="button" id="cl-cerrar">Cerrar</button></p></div>`;
   $("#cl-cerrar").addEventListener("click", () => { claseSel = null; clases(); });
+  $("#cl-cerrar-top").addEventListener("click", () => { claseSel = null; clases(); });
   if (chart) chart.destroy();
   const css = getComputedStyle(document.documentElement);
   const c = `rgb(${css.getPropertyValue(r.propio ? "--accent-rgb" : "--comp-rgb").trim().split(" ").join(",")})`;
@@ -1054,6 +1069,13 @@ function activar(t) {
   render();
 }
 function refrescar() { leerFiltros(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  const c = $("#p-cadenas");
+  if (tabActual === "cadenas" && c && c.dataset.sel != null) { delete c.dataset.sel; cadenas(); }
+  if (tabActual === "clases" && claseSel != null) { claseSel = null; clases(); }
+});
 
 (async function () {
   try { await cargar(); } catch (e) { $("#meta").textContent = "No se han podido cargar los datos: " + e.message; return; }
