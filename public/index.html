@@ -391,14 +391,18 @@ function resumen() {
   el.querySelectorAll("[data-t]").forEach(n => enlazarTabla(el, n.dataset.t, resumen));
 }
 
-function heatmap(ix, titulo, rgb) {
+// rango de horas común a BeatCore y competencia, para que las dos tablas queden alineadas fila a fila
+function rangoHoras(...grupos) {
+  let a = 24, b = 0;
+  for (const g of grupos) for (const i of g) { if (OCC[i] == null) continue; const h = Math.floor(D.h[i] / 60); a = Math.min(a, h); b = Math.max(b, h); }
+  return [a, b];
+}
+function heatmap(ix, titulo, rgb, [hmin, hmax]) {
   const sum = {}, cnt = {};
-  let hmin = 24, hmax = 0;
   for (const i of ix) {
     if (OCC[i] == null) continue;
     const h = Math.floor(D.h[i] / 60), k = h * 7 + D.w[i];
     sum[k] = (sum[k] || 0) + OCC[i]; cnt[k] = (cnt[k] || 0) + 1;
-    hmin = Math.min(hmin, h); hmax = Math.max(hmax, h);
   }
   if (hmin > hmax) return `<div><h3>${titulo}</h3><p class="vacio-msg">Sin datos con ocupación</p></div>`;
   let h = `<div><h3>${titulo}</h3><div class="scroll"><table class="heat"><thead><tr><th></th>${DIAS.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
@@ -415,7 +419,8 @@ function heatmap(ix, titulo, rgb) {
   return h + `</tbody></table></div></div>`;
 }
 function ocupacion() {
-  let h = `<section><h2>Mapa de calor: ocupación media por día y hora</h2><div class="heats">${heatmap(GA, "BeatCore", "var(--accent-rgb)")}${heatmap(GB, "Competencia", "var(--comp-rgb)")}</div>
+  const rango = rangoHoras(GA, GB);
+  let h = `<section><h2>Mapa de calor: ocupación media por día y hora</h2><div class="heats">${heatmap(GA, "BeatCore", "var(--accent-rgb)", rango)}${heatmap(GB, "Competencia", "var(--comp-rgb)", rango)}</div>
     <p class="nota">% de ocupación media de las clases que empiezan en cada hora. Pasa el ratón (o mantén pulsado) para ver cuántas clases hay detrás.</p></section>`;
   const por = new Map();
   for (const i of [...GA, ...GB]) {
