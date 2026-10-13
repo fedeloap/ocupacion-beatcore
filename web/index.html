@@ -671,8 +671,7 @@ function detalleCadena(c, bc) {
   const dif = (a, b) => a == null || b == null ? "" : ` <small>(${a >= b ? "+" : ""}${Math.round((a - b) * 100)} pp vs BeatCore)</small>`;
   const precios = [["clase_suelta", "Clase suelta"], ["cuatro_mes", "4 al mes"], ["ocho_mes", "8 al mes"], ["doce_mes", "12 al mes"], ["ilimitada", "Ilimitada"]]
     .filter(([k]) => c.precio[k] != null).map(([k, l]) => {
-      const b = bc && bc.precio[k];
-      const d = b != null && bc !== c ? ` <small>(BeatCore ${eur(b)}, ${c.precio[k] / b - 1 >= 0 ? "+" : ""}${Math.round((c.precio[k] / b - 1) * 100)} %)</small>` : "";
+      const d = "";
       const fu = c.precio_fuente && c.precio_fuente[k] === "web" ? ' <small>(leído en su web)</small>' : "";
       return `<li>${l}: <b>${eur(c.precio[k])}</b>${fu}${d}</li>`;
     }).join("");
@@ -685,7 +684,6 @@ function detalleCadena(c, bc) {
   const uC = OF && OF.cadenas.find(x => x.cadena === c.cadena), bcU = OF && OF.cadenas.find(x => /^beatcore$/i.test(x.cadena));
   const ofItems = [];
   if (uC) ofItems.push({ nombre: c.cadena, u: uC });
-  if (bcU && bcU !== uC) ofItems.push({ nombre: "BeatCore", u: bcU });
   const ofBloque = ofItems.length ? bloqueOferta($("#p-cadenas"), ofItems, "cad") : null;
   const unidCad = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)) : [];
   const centrosOf = unidCad.length ? tablaCentros($("#p-cadenas"), "cc", unidCad, c.cadena) : null;
@@ -696,12 +694,18 @@ function detalleCadena(c, bc) {
       <li>Centros según su web: <b>${c.centros_web ?? "sin dato"}</b>${ejemplos ? " · " + ejemplos : ""}</li>
       <li>Estudios a 1 km de algún BeatCore: <b>${c.cat_estudios}</b>${c.cat_zonas.length ? " (" + c.cat_zonas.map(zn).join(", ") + ")" : ""}</li>
       <li>Software de reservas: <b>${sw.length ? esc(sw.join(", ")) : "sin identificar"}</b> · ocupación pública: <b>${esc(op.t)}</b>${c.capturable ? " · " + esc(c.capturable) : ""}</li>
-      <li>Ocupación medida: ${c.ocup.clases ? `<b>${pct(c.ocup.ocup)}</b>${dif(c.ocup.ocup, bc && bc.ocup.ocup)} en ${c.ocup.clases} clases de ${c.ocup.estudios} centros · ${pct(c.ocup.llenas)} llenas` : "todavía sin clases medidas"}</li>
+      <li>Ocupación medida: ${c.ocup.clases ? `<b>${pct(c.ocup.ocup)}</b> en ${c.ocup.clases} clases de ${c.ocup.estudios} centros · ${pct(c.ocup.llenas)} llenas` : "todavía sin clases medidas"}</li>
     </ul>
     ${precios ? `<h3>Precios</h3><ul class="detalle">${precios}</ul>` : ""}
     ${(c.precios_items || []).length ? `<h3>Importes que aparecen en su web${c.precios_url ? ` · <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}</h3>
       ${tabla("t-cad-p", colsP, c.precios_items, { limit: 30 })}` : ""}
-    ${ofBloque ? `<h3>Oferta de clases y ocupación${bcU && uC !== bcU ? " frente a BeatCore" : ""}</h3>${ofBloque.html}` : ""}
+    ${ofBloque ? `<h3>Oferta de clases y ocupación</h3>${ofBloque.html}
+      <div class="guia"><ul>
+        <li><b>Clases por día</b>: cuántas clases da la cadena ese día de la semana, sumando todos sus centros (media de los días capturados).</li>
+        <li><b>Plazas ofertadas por día</b>: las plazas de esas clases, es decir, cuánta gente cabría.</li>
+        <li><b>Ocupación</b>: reservas entre plazas, solo de clases ya dadas. "–" es que aún no hay ningún día de esa semana con clases dadas y reservas conocidas.</li>
+        <li>Los centros sin aforo publicado cuentan en clases, no en plazas.</li>
+      </ul></div>` : ""}
     ${centrosOf ? `<h3>Cada centro de ${esc(c.cadena)}: clases, plazas y ocupación</h3>${centrosOf.html}` : ""}
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
