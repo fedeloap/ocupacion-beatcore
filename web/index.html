@@ -505,19 +505,7 @@ function curvas() {
       <li><b>"–"</b>: todavía no tenemos foto de ese momento para ese estudio.</li>
       <li>Solo salen los estudios con alguna clase fotografiada antes de empezar (${rows.length} de ${todas.length}).</li>
     </ul></div></section>
-    <section><h2>Horas antes de llenarse</h2><div id="c-hf"></div></section>`;
-  const hf = ix => { const v = ix.filter(i => D.hf[i] != null); return { n: v.length, tot: ix.length, med: median(v.map(i => D.hf[i])),
-    ya: v.filter(i => D.hf0[i] === 1).length, med2: median(v.filter(i => D.hf0[i] !== 1).map(i => D.hf[i])) }; };
-  const fila = (g, nom) => { const s = hf(g); return `<tr><td>${nom}</td><td class="n">${s.n} de ${s.tot}</td><td class="n">${s.n ? pct(s.ya / s.n) : "–"}</td><td class="n">${s.med == null ? "–" : num(s.med) + " h"}</td><td class="n">${s.med2 == null ? "–" : num(s.med2) + " h"}</td></tr>`; };
-  $("#c-hf").innerHTML = `<div class="scroll"><table><thead><tr><th>Línea</th><th class="n">Clases que se llenan</th><th class="n">Ya llenas en la 1ª foto</th><th class="n">Mediana (todas)</th><th class="n">Mediana (sin las ya llenas)</th></tr></thead><tbody>
-    ${fila(GA, '<span class="tag">BeatCore</span>')}${fila(GB, '<span class="tag b">Competencia</span>')}</tbody></table></div>
-    <div class="guia"><ul>
-      <li><b>Clases que se llenan</b>: cuántas de las clases medidas acabaron con todas las plazas reservadas.</li>
-      <li><b>Mediana</b>: cuántas horas antes de empezar ya aparecía llena la clase. "12 h" significa que la mitad de las clases ya estaban llenas medio día antes.</li>
-      <li><b>Ya llenas en la 1ª foto</b>: ya estaban llenas la primera vez que las fotografiamos. No sabemos cuándo se llenaron, solo que fue antes, así que su tiempo real es mayor.</li>
-      <li><b>Mediana (sin las ya llenas)</b>: lo mismo sin esas clases. Es la cifra más fiable.</li>
-      <li>Es una estimación: la clase pudo llenarse en cualquier momento entre una foto y la anterior.</li>
-    </ul></div>`;
+  `;
   enlazarTabla(el, "t-rit", curvas);
 }
 
