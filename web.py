@@ -98,9 +98,18 @@ def cargar_catalogo():
     return cat, mapa
 
 
+def excluidos():
+    """Estudios que no se quieren en el dashboard (web/excluidos.json)."""
+    try:
+        return set(json.load(open("web/excluidos.json", encoding="utf-8")).get("estudios", []))
+    except Exception:
+        return set()
+
+
 def cargar_snapshots():
     partes = [analisis.leer(p) for p in ("data/*.csv", "data/curva/*.csv", "data/plan/*.csv")]
     s = pd.concat([p for p in partes if len(p)], ignore_index=True)
+    s = s[~s["estudio"].isin(excluidos())]
     s["captured_at"] = pd.to_datetime(s["captured_at"])
     s["sede"] = s["sede"].fillna("").astype(str)
     s["clase_id"] = s["clase_id"].astype(str)
@@ -446,6 +455,7 @@ def main():
 
     # Los festivos NO se excluyen en la web (hay clases ese día); se marcan para poder filtrarlos.
     raw = analisis.cargar()
+    raw = raw[~raw["estudio"].isin(excluidos())]
     # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
     sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
     nac = raw[sin_centro].copy()
