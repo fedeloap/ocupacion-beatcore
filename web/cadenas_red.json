@@ -1,0 +1,977 @@
+{
+ "cadenas": [
+  {
+   "cadena": "BZ55",
+   "web": "https://bz-55.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SICLO",
+   "web": "https://www.siclo.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BATARD",
+   "web": "https://batard.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 384,
+   "ids": {
+    "aimharder": [
+     "batardcasadecampo",
+     "batardcondecasal",
+     "batardmontecarmelo",
+     "batardplazacastilla",
+     "batardrussafa",
+     "batardstudiochamberi",
+     "batardstudiodelicias",
+     "batardurbangym"
+    ]
+   },
+   "dominios": [
+    "aimharder.com",
+    "batardcasadecampo.aimharder.com",
+    "batardcondecasal.aimharder.com",
+    "batardmontecarmelo.aimharder.com",
+    "batardplazacastilla.aimharder.com",
+    "batardrussafa.aimharder.com",
+    "batardstudiochamberi.aimharder.com",
+    "batardstudiodelicias.aimharder.com",
+    "batardurbangym.aimharder.com"
+   ]
+  },
+  {
+   "cadena": "DISTRITO",
+   "web": "https://distrito280madridcondeduque.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PLAYGYM",
+   "web": "https://playgym.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {
+    "mindbody": [
+     "593569"
+    ]
+   },
+   "dominios": []
+  },
+  {
+   "cadena": "TRIB3",
+   "web": "https://trib3.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "JG",
+   "web": "https://jgfitness.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ORANGETHEORY",
+   "web": "https://aribau.orangetheoryspain.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "YOGAONE",
+   "web": "https://www.yogaone.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CLUB PILATES",
+   "web": "https://www.clubpilates.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "UFIT",
+   "web": "https://ufit.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PILATES10",
+   "web": "https://www.pilates10.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FLOW TRAINING",
+   "web": "https://flowtraining.es/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "MOVE IT",
+   "web": "https://move-it.fit/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "MORALES BOX",
+   "web": "https://www.moralesbox.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "NEXES",
+   "web": "https://nexespilates.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "B3B WOMAN",
+   "web": "https://b3bwomanstudio.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CASA BARRE",
+   "web": "https://casabarre.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SQUARE FITNESS",
+   "web": "https://www.square-fitness.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CRYS DYAZ",
+   "web": "https://crysdyazandco.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BFT EIXAMPLE",
+   "web": "https://www.bft.studio/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "F45",
+   "web": "https://f45training.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BARRY´S BOOTCAMP",
+   "web": "https://www.barrys.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "WELFARE",
+   "web": "https://www.welfarecoworking.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CORE",
+   "web": "http://www.corestudiobcn.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BIGG",
+   "web": "https://bigg.fit/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "GLOVES",
+   "web": "https://glovesfit.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SPACE BY 9F",
+   "web": "https://spaceby9f.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 33,
+   "ids": {},
+   "dominios": [
+    "gateway.services.virtuagym.com",
+    "spacebyninefitness.virtuagym.com",
+    "static.virtuagym.com",
+    "trainingymapp.com"
+   ]
+  },
+  {
+   "cadena": "FIGHTLAND",
+   "web": "http://www.fightland.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PALEOTRAINING",
+   "web": "https://paleotraining.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BE BALANCE",
+   "web": "http://www.bebalancefp.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PERFORMA",
+   "web": "https://performa.es/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FITACTIVA",
+   "web": "https://www.fitactiva.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SANUS VITAE",
+   "web": "https://sanusvitae.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FULL CROSSFIT",
+   "web": "https://www.fullcrossfit.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ROUND TRAINING",
+   "web": "https://www.roundtrainingclub.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "TRAININGBOUTIQUE",
+   "web": "https://www.trainingboutique.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ITRAINING",
+   "web": "https://itraining.es/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "HEALTH SPACE",
+   "web": "https://www.healthspace.fit/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SANO",
+   "web": "https://sanocenter.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BROOKLYN FITBOXING",
+   "web": "https://www.brooklynfitboxing.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "AFIT",
+   "web": "https://www.afit.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FIT CLUB",
+   "web": "https://fitclub.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "URBAN PILATES",
+   "web": "http://urbanpilates.es/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "TRAINING PARK",
+   "web": "https://trainingpark.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FIT LOVAS",
+   "web": "https://fitlovas.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "DOMOPERSONAL",
+   "web": "https://domopersonal.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CONCEPT BARRE",
+   "web": "https://conceptbarre.com/",
+   "estado": "ok",
+   "peticiones": 126,
+   "ids": {},
+   "dominios": [
+    "bam.nr-data.net",
+    "brandedweb-assets.mindbodyonline.com",
+    "brandedweb.mindbodyonline.com",
+    "cart.mindbodyonline.com",
+    "go.mindbodyonline.com",
+    "sd.mindbodyonline.com",
+    "widgets.mindbodyonline.com",
+    "www.facebook.com"
+   ]
+  },
+  {
+   "cadena": "SPORTUP",
+   "web": "https://www.sportup.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "XTENSALL",
+   "web": "https://www.xtensall.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SOLID STUDIO",
+   "web": "https://www.thesolidstudio.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {
+    "mindbody": [
+     "5740876",
+     "5740877",
+     "5746768"
+    ]
+   },
+   "dominios": []
+  },
+  {
+   "cadena": "RITO FIT HOUSE",
+   "web": "https://www.ritofithouse.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "THE FITHUB",
+   "web": "https://thefithub.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PILAT3S",
+   "web": "https://pilat3s.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "COMMANDO",
+   "web": "https://es.commandostudio.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ITACA",
+   "web": "https://itacapilates.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ESTIRO",
+   "web": "https://estiro.es/",
+   "estado": "ok",
+   "peticiones": 70,
+   "ids": {},
+   "dominios": [
+    "bam.nr-data.net",
+    "brandedweb.mindbodyonline.com",
+    "estiro.es",
+    "go.mindbodyonline.com",
+    "region1.analytics.google.com",
+    "sd.mindbodyonline.com",
+    "www.facebook.com"
+   ]
+  },
+  {
+   "cadena": "THE WOD CLUB",
+   "web": "https://thewodclub.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BATELIER",
+   "web": "https://www.batelier.es/",
+   "estado": "ok",
+   "peticiones": 45,
+   "ids": {
+    "bsport": [
+     "3646"
+    ]
+   },
+   "dominios": [
+    "api.production.bsport.io",
+    "backoffice.bsport.io",
+    "cdn.bsport.io",
+    "unleash.tooling.bsport.io"
+   ]
+  },
+  {
+   "cadena": "SHE BARRE",
+   "web": "https://shebarre.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FUNCTIONAL FEEL",
+   "web": "http://www.functionalfeel.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CLUB BARRE",
+   "web": "http://www.clubbarre.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "RONA PILATES",
+   "web": "https://www.ronapilates.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 10,
+   "ids": {},
+   "dominios": [
+    "cdn.wodbuster.com",
+    "cdn3.wodbuster.com"
+   ]
+  },
+  {
+   "cadena": "POMONA",
+   "web": "https://pomonaclub.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "WIN FIT",
+   "web": "https://winfit.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "TRAINING ZONE",
+   "web": "https://trainingzone.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "HOTCORE",
+   "web": "https://hotcorestudios.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "DONA10 (GRUPO PILATES10)",
+   "web": "https://www.dona10.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "LEVELOUT",
+   "web": "https://levelout.co/",
+   "estado": "error TimeoutError",
+   "peticiones": 20,
+   "ids": {},
+   "dominios": [
+    "brandedweb-assets.mindbodyonline.com",
+    "levelout.co",
+    "widgets.mindbodyonline.com"
+   ]
+  },
+  {
+   "cadena": "GLOW PILATES (GRUPO DIR)",
+   "web": "https://www.dir.cat/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BECAN PILATES",
+   "web": "https://www.becanpilates.com/centro-becan/home",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ARDE BARRE",
+   "web": "https://ardebarrestudio.com/",
+   "estado": "ok",
+   "peticiones": 240,
+   "ids": {
+    "momence": [
+     "120742"
+    ],
+    "bsport": [
+     "3558"
+    ]
+   },
+   "dominios": [
+    "api.production.bsport.io",
+    "assets.production.bsport.io",
+    "backoffice.bsport.io",
+    "cdn.bsport.io",
+    "images.momence.com",
+    "momence.com",
+    "readonly-api.momence.com",
+    "unleash.tooling.bsport.io"
+   ]
+  },
+  {
+   "cadena": "BEFEEL",
+   "web": "https://befeel.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "DS7 TRAINING CENTER",
+   "web": "https://ds7trainingcenter.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SUMMIT STUDIO",
+   "web": "https://summitstudio.fit/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "HOUSE OF BALANCE",
+   "web": "https://www.houseofbalance.es/",
+   "estado": "ok",
+   "peticiones": 18,
+   "ids": {},
+   "dominios": [
+    "brandedweb-assets.mindbodyonline.com",
+    "widgets.mindbodyonline.com"
+   ]
+  },
+  {
+   "cadena": "PRANA PILATES",
+   "web": "https://pranapilatesreformer.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "SOMA CLUB",
+   "web": "https://somaclub.es/",
+   "estado": "ok",
+   "peticiones": 88,
+   "ids": {
+    "bsport": [
+     "6410"
+    ]
+   },
+   "dominios": [
+    "api.production.bsport.io",
+    "assets.production.bsport.io",
+    "backoffice.bsport.io",
+    "cdn.bsport.io",
+    "unleash.tooling.bsport.io"
+   ]
+  },
+  {
+   "cadena": "PREMIERFIT",
+   "web": "https://premierfit.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ULTIMO SPRINT",
+   "web": "https://www.ultimosprint.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PILATES AVENUE",
+   "web": "https://pilatesavenue.es/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ONNA SALUD Y MOVIMIENTO",
+   "web": "https://onnasaludymovimiento.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "DENOVO PILATES",
+   "web": "https://denovopilates.com/",
+   "estado": "ok",
+   "peticiones": 474,
+   "ids": {},
+   "dominios": [
+    "bam.nr-data.net",
+    "brandedweb-assets.mindbodyonline.com",
+    "brandedweb.mindbodyonline.com",
+    "cart.mindbodyonline.com",
+    "go.mindbodyonline.com",
+    "sd.mindbodyonline.com",
+    "widgets.mindbodyonline.com"
+   ]
+  },
+  {
+   "cadena": "SIAMO PILATES",
+   "web": "https://www.siamopilates.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "VICTORIA STUDIO",
+   "web": "https://www.victoriastudio.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 84,
+   "ids": {
+    "bsport": [
+     "5541"
+    ]
+   },
+   "dominios": [
+    "api.production.bsport.io",
+    "assets.production.bsport.io",
+    "backoffice.bsport.io",
+    "cdn.bsport.io",
+    "unleash.tooling.bsport.io"
+   ]
+  },
+  {
+   "cadena": "MOOD TRAINING STUDIO",
+   "web": "https://moodtrainingstudio.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "REN COACH",
+   "web": "https://www.rencoach.es/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "ES BARRE",
+   "web": "https://www.esbarre.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "KOLEO BARRE",
+   "web": "https://www.koleobarre.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "DAN´S",
+   "web": "https://www.dans.es/",
+   "estado": "ok",
+   "peticiones": 5,
+   "ids": {
+    "momence": [
+     "33091"
+    ]
+   },
+   "dominios": [
+    "momence.com"
+   ]
+  },
+  {
+   "cadena": "GENNOX 360",
+   "web": "https://www.gennox360.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "WILD FITBOXING",
+   "web": "https://wildfitboxing.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "FS8",
+   "web": "https://fs8.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "PIKO STUDIOS",
+   "web": "https://www.piko-studios.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "KORE LAB",
+   "web": "https://www.korelablagree.com/",
+   "estado": "error TimeoutError",
+   "peticiones": 72,
+   "ids": {
+    "mindbody": [
+     "131305"
+    ]
+   },
+   "dominios": [
+    "bam.nr-data.net",
+    "brandedweb.mindbodyonline.com",
+    "go.mindbodyonline.com",
+    "region1.google-analytics.com",
+    "sd.mindbodyonline.com",
+    "www.googletagmanager.com"
+   ]
+  },
+  {
+   "cadena": "HYGGE PILATES",
+   "web": "https://hyggepilates.com/",
+   "estado": "desafio anti-bot",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "GRATIA",
+   "web": "https://gratiastudio.com/",
+   "estado": "ok",
+   "peticiones": 181,
+   "ids": {},
+   "dominios": [
+    "bam.nr-data.net",
+    "brandedweb-assets.mindbodyonline.com",
+    "brandedweb.mindbodyonline.com",
+    "cart.mindbodyonline.com",
+    "go.mindbodyonline.com",
+    "sd.mindbodyonline.com",
+    "widgets.mindbodyonline.com"
+   ]
+  },
+  {
+   "cadena": "AMA STUDIO",
+   "web": "https://amastudio.es/",
+   "estado": "error TimeoutError",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "MYND PILATES",
+   "web": "https://myndpilates.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "CM MOVEMENT",
+   "web": "https://www.cmmovement.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "BALANZA PILATES",
+   "web": "https://balanzapilates.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "N7 PILATES",
+   "web": "https://n7pilatesbox.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "LAGHUM CLUB",
+   "web": "https://laghumclub.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  },
+  {
+   "cadena": "LUDUS",
+   "web": "http://ludustrainingcenter.com/",
+   "estado": "ok",
+   "peticiones": 0,
+   "ids": {},
+   "dominios": []
+  }
+ ]
+}

@@ -1,0 +1,147 @@
+{
+ "_nota": "Estudios de cadenas nacionales (fuera del radio de BeatCore). Solo captura final. Generado por fuentes_build.py.",
+ "momence": [
+  {
+   "estudio": "ARDE BARRE",
+   "host_id": 120742,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "B3B WOMAN",
+   "host_id": 291316,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "B3B WOMAN",
+   "host_id": 291317,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "B3B WOMAN",
+   "host_id": 291319,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
+   "host_id": 204362,
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "TRIB3",
+   "host_id": 50060,
+   "centro_beatcore": ""
+  }
+ ],
+ "bsport": [
+  {
+   "estudio": "ARDE BARRE",
+   "company_id": 3558,
+   "centro_beatcore": ""
+  }
+ ],
+ "mindbody": [
+  {
+   "estudio": "DENOVO PILATES",
+   "ref": "{\"mb_site_id\":5729300,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FLOW TRAINING flowtrainingenramadilla",
+   "ref": "{\"mb_site_id\":5746895,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FLOW TRAINING flowtraininggines",
+   "ref": "{\"mb_site_id\":5746896,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FLOW TRAINING flowtraininglosremedios",
+   "ref": "{\"mb_site_id\":5746924,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "FLOW TRAINING flowtrainingcaceres",
+   "ref": "{\"mb_site_id\":5746986,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "GRATIA",
+   "ref": "{\"mb_site_id\":5738228,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "LEVELOUT levelout",
+   "ref": "{\"mb_site_id\":5731034,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "LEVELOUT 5737173",
+   "ref": "{\"mb_site_id\":5737173,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "SOLID STUDIO solidstudiocaleido",
+   "ref": "{\"mb_site_id\":5746768,\"mb_location_id\":1,\"inventory_source\":\"MB\"}",
+   "centro_beatcore": ""
+  }
+ ],
+ "glofox": [],
+ "marianatek": [],
+ "aimharder": [
+  {
+   "estudio": "Batard Casa de Campo / Sala Crossboxing",
+   "subdominio": "batardcasadecampo",
+   "box": "10773",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Batard Conde Casal / Sala Crossboxing",
+   "subdominio": "batardcondecasal",
+   "box": "10908",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "BATARD MONTECARMELO / Sala Crossboxing",
+   "subdominio": "batardmontecarmelo",
+   "box": "11090",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "BATARD PLAZA CASTILLA / Sala Crossboxing",
+   "subdominio": "batardplazacastilla",
+   "box": "10775",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Batard Crossboxing Studio Russafa",
+   "subdominio": "batardrussafa",
+   "box": "9934",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Batard Crossboxing Studio Chamberi / Sala Crossboxing",
+   "subdominio": "batardstudiochamberi",
+   "box": "10081",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Batard Crossboxing Studio Delicias / Sala Crossboxing",
+   "subdominio": "batardstudiodelicias",
+   "box": "10667",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "Batard Crossboxing Studio Azca / Crossboxing Studio",
+   "subdominio": "batardurbangym",
+   "box": "9872",
+   "centro_beatcore": ""
+  },
+  {
+   "estudio": "fitactiva",
+   "subdominio": "fitactiva",
+   "box": "11048",
+   "centro_beatcore": ""
+  }
+ ]
+}

@@ -286,11 +286,65 @@ def marianatek(cfg, a, b):
     return rows
 
 
+# ---------------- AimHarder (agenda pública: plazas y reservas por clase, sin login) ----------------
+def aimharder(cfg, a, b):
+    rows = []
+    d1 = a.astimezone(MADRID).date()
+    d2 = b.astimezone(MADRID).date()
+    for s in cfg:
+        sub, box = s["subdominio"], s["box"]
+        sess = requests.Session()
+        sess.headers.update({**UA, "X-Requested-With": "XMLHttpRequest"})
+        try:
+            sess.get(f"https://{sub}.aimharder.com/schedule", timeout=30)
+        except Exception as e:
+            print(f"[aimharder] {s['estudio']}: error {e}", file=sys.stderr)
+            continue
+        dia = d1
+        while dia <= d2:
+            try:
+                r = sess.get(f"https://{sub}.aimharder.com/api/bookings?day={dia:%Y%m%d}&familyId=&box={box}", timeout=30)
+                j = r.json()
+            except Exception as e:
+                print(f"[aimharder] {s['estudio']} {dia}: error {e}", file=sys.stderr)
+                dia += timedelta(days=1)
+                continue
+            for x in (j.get("bookings") or []) if isinstance(j, dict) else []:
+                try:
+                    hh, mm = (x.get("time") or "").split("-")[0].strip().split(":")
+                    st = datetime(dia.year, dia.month, dia.day, int(hh), int(mm), tzinfo=MADRID).astimezone(timezone.utc)
+                except Exception:
+                    continue
+                if not between(st, a, b):
+                    continue
+                cap, occ = x.get("limit"), x.get("ocupation")
+                ok = isinstance(cap, int) and isinstance(occ, int)
+                rows.append({
+                    "plataforma": "aimharder", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
+                    "sede": x.get("boxName") or s["estudio"], "clase_id": x.get("id"), "clase": x.get("className", ""),
+                    "inicio_local": to_local(st), "duracion_min": x.get("classLength"),
+                    "capacidad": cap, "ocupadas": occ, "libres": (cap - occ) if ok else "", "libres_web": "",
+                    "llena": (occ >= cap) if ok else "", "cancelada": "",
+                    "lista_espera": x.get("waitlist") if x.get("waitlist") not in (None, -1) else "",
+                })
+            dia += timedelta(days=1)
+            time.sleep(0.5)
+        time.sleep(0.5)
+    return rows
+
+
 def capture(cfg, a, b):
     import timp
     return (momence(cfg.get("momence", []), a, b) + mindbody(cfg.get("mindbody", []), a, b)
             + bsport(cfg.get("bsport", []), a, b) + glofox(cfg.get("glofox", []), a, b)
-            + timp.capture(cfg.get("timp", []), a, b) + marianatek(cfg.get("marianatek", []), a, b))
+            + timp.capture(cfg.get("timp", []), a, b) + marianatek(cfg.get("marianatek", []), a, b)
+            + aimharder(cfg.get("aimharder", []), a, b))
+
+
+def cargar_cadenas():
+    """Estudios de cadenas nacionales (fuera del radio de BeatCore): solo captura final, sin curva ni planificación."""
+    ruta = os.path.join(os.path.dirname(__file__), "studios_cadenas.json")
+    return json.load(open(ruta, encoding="utf-8")) if os.path.exists(ruta) else {}
 
 
 def write(rows, path, stamp):
@@ -324,6 +378,12 @@ def main():
     rows = capture(cfg, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(hours=CURVA_HORAS))
     lim = (ref + timedelta(minutes=AFTER_MIN)).astimezone(MADRID).strftime("%Y-%m-%d %H:%M")
     final = [dict(r) for r in rows if r["inicio_local"] <= lim]
+    # cadenas nacionales: solo la ocupación final (clases a punto de empezar)
+    nac = cargar_cadenas()
+    if nac:
+        n_rows = capture(nac, ref - timedelta(minutes=BEFORE_MIN), ref + timedelta(minutes=AFTER_MIN))
+        final += [dict(r) for r in n_rows]
+        print(f"{stamp}: {len(n_rows)} clases de cadenas nacionales")
     write(final, os.path.join("data", f"{day}.csv"), stamp)
     write([dict(r) for r in rows], os.path.join("data", "curva", f"{day}.csv"), stamp)
     print(f"{stamp}: {len(final)} clases (ocupación final), {len(rows)} en las próximas {CURVA_HORAS} h")

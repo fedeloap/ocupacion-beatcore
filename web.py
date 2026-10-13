@@ -328,7 +328,13 @@ def main():
             propios |= {e["estudio"] for e in lst if e.get("propio")}
 
     # Los festivos NO se excluyen en la web (hay clases ese día); se marcan para poder filtrarlos.
-    c = analisis.preparar(analisis.cargar(), {}).reset_index(drop=True)
+    raw = analisis.cargar()
+    # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
+    sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
+    nac = raw[sin_centro].copy()
+    nac["centro_beatcore"] = "Nacional"
+    c_nac = analisis.preparar(nac, {}).reset_index(drop=True) if len(nac) else None
+    c = analisis.preparar(raw[~sin_centro], {}).reset_index(drop=True)
     c["es_festivo"] = [
         int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
         for f, z in zip((festivos.get(d) for d in c["fecha"]), c["centro_beatcore"])
@@ -404,7 +410,12 @@ def main():
     }
 
     meta["proximas"] = prox["n"]
-    cadenas = cadenas_datos(c, filas, cat_out)
+    if c_nac is not None and len(c_nac):
+        filas_nac = [(-1, e, e, False, "", "Nacional") for e in c_nac["estudio"]]
+        c_cad, filas_cad = pd.concat([c, c_nac], ignore_index=True), filas + filas_nac
+    else:
+        c_cad, filas_cad = c, filas
+    cadenas = cadenas_datos(c_cad, filas_cad, cat_out)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
                                           ("proximas.json", prox), ("cadenas.json", cadenas))}
     for f in ("index.html", "robots.txt"):

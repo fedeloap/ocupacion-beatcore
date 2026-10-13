@@ -152,6 +152,12 @@ Incluye los 4 BeatCore (con ocupación, sin precios). Competencia (sin BeatCore)
   nº de centros estimado e importes sueltos de la página de precios en `web/cadenas_inventario.json`.
 - `web.py` une ese inventario con el catálogo (zonas BeatCore) y con la ocupación medida y escribe `public/data/cadenas.json`.
 - Se ejecuta a mano: `python cadenas.py web/cadenas_inventario.json` y luego `python web.py`. Lo que no se sabe queda en blanco.
+- Descubrimiento de agendas: `fuentes.py` (HTML estático) y `sniff.py` (navegador, peticiones de red) sacan los identificadores
+  de Momence, bsport, Mindbody, Mariana Tek, Glofox y AimHarder; `fuentes_build.py` los verifica contra la agenda pública y
+  escribe `studios_cadenas.json`. `capture.py` captura esos estudios solo en la ocupación final (sin curva ni planificación);
+  sin `centro_beatcore`, `web.py` los agrupa como zona "Nacional" y solo se usan en la pestaña Cadenas.
+- Decisión de Fede (13/10/2026): no excluir ninguna plataforma por definición; se intenta con todas las que tengan agenda
+  pública. Se mantiene: sin login, sin credenciales, sin saltarse Cloudflare ni desafíos anti-bot (15 webs lo muestran y se dejan).
 - Hallazgo 13/10/2026: la agenda de AimHarder (`https://<box>.aimharder.com/api/bookings?day=AAAAMMDD&familyId=&box=<id>`)
   devuelve JSON público, sin login ni Cloudflare, con `limit` (plazas) y `ocupation` (reservas) por clase. CLAUDE.md
   la tenía excluida: no se ha activado en `capture.py` hasta que Fede lo confirme.
