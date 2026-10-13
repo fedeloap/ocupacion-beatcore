@@ -145,6 +145,17 @@ Incluye los 4 BeatCore (con ocupación, sin precios). Competencia (sin BeatCore)
   Pendiente: automatizarlos desde beatcore.co/comprar-beatcore.
 - Borrar `timp.py`, los secretos TIMP y su paso en el workflow.
 
+## Cadenas a nivel nacional (pestaña "Cadenas")
+
+- `web/cadenas_lista.txt`: la lista de Fede (159 cadenas). `web/cadenas_webs.csv`: web oficial verificada de cada una
+  (en blanco = sin localizar). `cadenas.py`: rastrea esas webs (solo páginas públicas) y guarda software de reservas,
+  nº de centros estimado e importes sueltos de la página de precios en `web/cadenas_inventario.json`.
+- `web.py` une ese inventario con el catálogo (zonas BeatCore) y con la ocupación medida y escribe `public/data/cadenas.json`.
+- Se ejecuta a mano: `python cadenas.py web/cadenas_inventario.json` y luego `python web.py`. Lo que no se sabe queda en blanco.
+- Hallazgo 13/10/2026: la agenda de AimHarder (`https://<box>.aimharder.com/api/bookings?day=AAAAMMDD&familyId=&box=<id>`)
+  devuelve JSON público, sin login ni Cloudflare, con `limit` (plazas) y `ocupation` (reservas) por clase. CLAUDE.md
+  la tenía excluida: no se ha activado en `capture.py` hasta que Fede lo confirme.
+
 ## Reglas que no se negocian
 
 - Solo datos públicos sin login. No usar credenciales de Fede (ClassPass, TIMP, etc.); si hace falta login, lo hace él.

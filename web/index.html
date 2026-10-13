@@ -69,6 +69,7 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 [data-t="t-rit"] td { padding: 6px 8px; }
 [data-t="t-rit"] { overflow-x: auto; }
 button.vc { padding: 2px 10px; min-height: 28px; cursor: pointer; font-size: 13px; }
+ul.detalle { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .duo b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
 .duo small, .kpi small { color: var(--muted); font-size: 12px; display: block; }
@@ -143,6 +144,7 @@ a { color: var(--accent); }
 <section class="panel" id="p-proximas" role="tabpanel" hidden></section>
 <section class="panel" id="p-precios" role="tabpanel" hidden></section>
 <section class="panel" id="p-estudios" role="tabpanel" hidden></section>
+<section class="panel" id="p-cadenas" role="tabpanel" hidden></section>
 <section class="panel" id="p-mapa" role="tabpanel" hidden></section>
 </main>
 
@@ -162,9 +164,9 @@ const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagr
 const ZN = { "Valencia": "Valencia (Ruzafa)" };
 const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
-const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["mapa", "Mapa"]];
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["mapa", "Mapa"]];
 
-let D, CAT, META, N, OCC, EST, HC, PX = null;           // datos
+let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
 const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
 let tabActual = "resumen", chart = null, claseSel = null;
@@ -175,6 +177,7 @@ async function cargar() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
   try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
+  try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
   N = D.n;
   EST = D.estudios;
   OCC = new Array(N);
@@ -545,6 +548,97 @@ function metricas2(rows) {
   return { n: rows.length, ocup: mean(o) };
 }
 
+const CAPTURABLES = ["momence", "mindbody", "glofox", "mariana", "bsport"];
+const FUERA_REGLA = ["eversports", "aimharder", "wodbuster", "harbiz", "trainingym", "timp"];
+function softwareDe(c) {
+  const t = [...new Set([...(c.software || []), ...(c.software_cat || [])])];
+  return t;
+}
+function ocupPublica(c) {
+  const sw = softwareDe(c).join(" ").toLowerCase();
+  if (CAPTURABLES.some(x => sw.includes(x))) return { k: 2, t: "Sí" };
+  if (FUERA_REGLA.some(x => sw.includes(x))) return { k: 1, t: "No (regla)" };
+  return { k: 0, t: sw ? "No" : "–" };
+}
+function cadenas() {
+  const el = $("#p-cadenas");
+  if (!CAD) { el.innerHTML = '<p class="vacio-msg">Todavía no hay datos de cadenas.</p>'; return; }
+  const q = (el.dataset.q || "").toLowerCase(), solo = el.dataset.solo || "";
+  const bc = CAD.find(c => /^beatcore$/i.test(c.cadena));
+  const filas = CAD.map((c, i) => {
+    const op = ocupPublica(c);
+    return { _i: i, cadena: c.cadena, web: c.web, sw: softwareDe(c).join(", "), op: op.t, opk: op.k, centros: c.centros_web, est: c.cat_estudios,
+      medidos: c.ocup.estudios, clases: c.ocup.clases, ocup: c.ocup.ocup, llenas: c.ocup.llenas, plazas: c.ocup.plazas,
+      suelta: c.precio.clase_suelta, cuatro: c.precio.cuatro_mes, ocho: c.precio.ocho_mes, ilim: c.precio.ilimitada,
+      pweb: c.precios_web.length ? Math.min(...c.precios_web) : null, estado: c.estado };
+  }).filter(r => (!q || r.cadena.toLowerCase().includes(q)) &&
+    (solo !== "ocup" || r.clases > 0) && (solo !== "precio" || r.ocho != null || r.suelta != null || r.pweb != null) &&
+    (solo !== "cap" || r.opk === 2) && (solo !== "sinweb" || r.estado !== "ok"));
+  const k = f => CAD.filter(f).length;
+  const kpi = (v, t) => `<div class="kpi"><b>${v}</b><span>${t}</span></div>`;
+  const cols = [
+    { k: "cadena", l: "Cadena", h: r => `<b>${esc(r.cadena)}</b>` },
+    { k: "web", l: "Web", h: r => r.web ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a>` : "–" },
+    { k: "centros", l: "Centros (web)", n: 1, f: v => v == null ? "–" : v },
+    { k: "sw", l: "Software de reservas", f: v => v || "–" },
+    { k: "op", l: "Ocupación pública", h: r => r.opk === 2 ? "<b>Sí</b>" : esc(r.op) },
+    { k: "est", l: "Estudios en zonas BeatCore", n: 1 },
+    { k: "clases", l: "Clases medidas", n: 1 },
+    { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llenas", l: "% llenas", n: 1, f: pct },
+    { k: "plazas", l: "Plazas/clase", n: 1, f: v => num(v) },
+    { k: "suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro", l: "4/mes", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur }, { k: "ilim", l: "Ilimitada", n: 1, f: eur }];
+  if (!sortState["t-cad"]) sortState["t-cad"] = { k: "clases", dir: -1 };
+  const sel = el.dataset.sel != null ? +el.dataset.sel : null;
+  el.innerHTML = `<section id="cad-det"></section>
+    <section><h2>Cadenas a nivel nacional</h2>
+    <p class="meta">${CAD.length} cadenas de tu lista. Centros, software y precios salen de sus webs públicas; la ocupación, de las clases que ya capturamos. En blanco, lo que aún no sabemos.</p>
+    <div class="kpis">${kpi(CAD.length, "Cadenas en la lista")}${kpi(k(c => c.estado === "ok"), "Con web analizada")}
+      ${kpi(k(c => softwareDe(c).length), "Con software identificado")}${kpi(k(c => ocupPublica(c).k === 2), "Con ocupación pública")}
+      ${kpi(k(c => c.ocup.clases > 0), "Con ocupación medida")}</div>
+    <div class="row"><input type="search" id="cd-q" placeholder="Buscar cadena" value="${esc(el.dataset.q || "")}" aria-label="Buscar">
+    <label>Mostrar <select id="cd-solo"><option value="">Todas</option><option value="ocup"${solo === "ocup" ? " selected" : ""}>Con ocupación medida</option>
+      <option value="cap"${solo === "cap" ? " selected" : ""}>Con ocupación pública</option>
+      <option value="precio"${solo === "precio" ? " selected" : ""}>Con algún precio</option>
+      <option value="sinweb"${solo === "sinweb" ? " selected" : ""}>Sin web analizada</option></select></label>
+    <span class="meta">${filas.length} cadenas</span></div>
+    ${tabla("t-cad", cols, filas, { click: true, limit: 200, sel: r => r._i === sel })}
+    <p class="nota">Precios de 4/mes, 8/mes e ilimitada: mediana de los estudios de la cadena a 1 km de algún BeatCore (catálogo). "Centros (web)" es una estimación a partir de su web.</p></section>`;
+  $("#cd-q").addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; cadenas(); const n = $("#cd-q"); n.focus(); n.setSelectionRange(p, p); });
+  $("#cd-solo").addEventListener("change", e => { el.dataset.solo = e.target.value; cadenas(); });
+  enlazarTabla(el, "t-cad", cadenas, i => { el.dataset.sel = i; cadenas(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" }); });
+  if (sel != null) detalleCadena(CAD[sel], bc);
+}
+function detalleCadena(c, bc) {
+  const sw = softwareDe(c), op = ocupPublica(c);
+  const dif = (a, b) => a == null || b == null ? "" : ` <small>(${a >= b ? "+" : ""}${Math.round((a - b) * 100)} pp vs BeatCore)</small>`;
+  const precios = [["clase_suelta", "Clase suelta"], ["cuatro_mes", "4 al mes"], ["ocho_mes", "8 al mes"], ["doce_mes", "12 al mes"], ["ilimitada", "Ilimitada"]]
+    .filter(([k]) => c.precio[k] != null).map(([k, l]) => {
+      const b = bc && bc.precio[k];
+      const d = b != null && bc !== c ? ` <small>(BeatCore ${eur(b)}, ${c.precio[k] / b - 1 >= 0 ? "+" : ""}${Math.round((c.precio[k] / b - 1) * 100)} %)</small>` : "";
+      return `<li>${l}: <b>${eur(c.precio[k])}</b>${d}</li>`;
+    }).join("");
+  const cent = c.centros.map(x => ({ estudio: x.estudio, zona: zn(x.zona), plat: x.plat, clases: x.clases, ocup: x.ocup, llenas: x.llenas }));
+  const colsC = [{ k: "estudio", l: "Centro" }, { k: "zona", l: "Zona BeatCore" }, { k: "plat", l: "Plataforma" }, { k: "clases", l: "Clases", n: 1 },
+    { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llenas", l: "% llenas", n: 1, f: pct }];
+  const colsT = [{ k: "clase", l: "Clase" }, { k: "n", l: "Veces", n: 1 }, { k: "ocup", l: "Ocupación media", n: 1, f: pct }];
+  const ejemplos = (c.centros_ejemplos || []).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.replace(/^https?:\/\/(www\.)?/, ""))}</a>`).join(" · ");
+  $("#cad-det").innerHTML = `<div class="card"><h2>${esc(c.cadena)}</h2>
+    <p class="meta">${c.web ? `<a href="${esc(c.web)}" target="_blank" rel="noopener noreferrer">${esc(c.web)}</a>` : "Web sin localizar"}${c.titulo ? " · " + esc(c.titulo) : ""}</p>
+    <ul class="detalle">
+      <li>Centros según su web: <b>${c.centros_web ?? "sin dato"}</b>${ejemplos ? " · " + ejemplos : ""}</li>
+      <li>Estudios a 1 km de algún BeatCore: <b>${c.cat_estudios}</b>${c.cat_zonas.length ? " (" + c.cat_zonas.map(zn).join(", ") + ")" : ""}</li>
+      <li>Software de reservas: <b>${sw.length ? esc(sw.join(", ")) : "sin identificar"}</b> · ocupación pública: <b>${esc(op.t)}</b>${c.capturable ? " · " + esc(c.capturable) : ""}</li>
+      <li>Ocupación medida: ${c.ocup.clases ? `<b>${pct(c.ocup.ocup)}</b>${dif(c.ocup.ocup, bc && bc.ocup.ocup)} en ${c.ocup.clases} clases de ${c.ocup.estudios} centros · ${pct(c.ocup.llenas)} llenas` : "todavía sin clases medidas"}</li>
+    </ul>
+    ${precios ? `<h3>Precios (mediana en catálogo)</h3><ul class="detalle">${precios}</ul>` : ""}
+    ${c.precios_web.length ? `<h3>Importes encontrados en su web</h3><p class="meta">${c.precios_web.map(v => eur(v)).join(" · ")} ${c.precios_url ? `· <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}<br>Son importes sueltos de la página, sin etiquetar: sirven de pista, no como tarifa.</p>` : ""}
+    ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
+    ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
+    <p class="nota"><button type="button" id="cd-cerrar">Cerrar</button></p></div>`;
+  $("#cd-cerrar").addEventListener("click", () => { delete $("#p-cadenas").dataset.sel; cadenas(); });
+  ["t-cad-c", "t-cad-t"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
+}
+
 function claseCols() {
   return [
     { k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
@@ -731,7 +825,7 @@ function mapa() {
 }
 
 /* ---------- arranque ---------- */
-const RENDER = { resumen, ocupacion, curvas, clases, proximas, precios, estudios, mapa };
+const RENDER = { resumen, ocupacion, curvas, clases, proximas, precios, estudios, cadenas, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {
   tabActual = t;

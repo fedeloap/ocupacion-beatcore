@@ -194,6 +194,88 @@ def proximas(snap, mapa, propios, festivos):
     }
 
 
+def _norm(s):
+    s = unicodedata.normalize("NFD", str(s)).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"\(.*?\)", " ", s)
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", s)).strip()
+
+
+def _coincide(n, *textos):
+    """La cadena n (normalizada) aparece como palabra en alguno de los textos. Las muy cortas, solo si es igual."""
+    for t in textos:
+        if not t:
+            continue
+        if t == n:
+            return True
+        if len(n) > 3 and re.search(r"\b" + re.escape(n) + r"\b", t):
+            return True
+    return False
+
+
+def cadenas_datos(c, filas, cat_out):
+    """Una fila por cadena de web/cadenas_lista.txt: inventario web + catálogo (zonas BeatCore) + ocupación medida."""
+    if not os.path.exists("web/cadenas_lista.txt"):
+        return {"filas": []}
+    lista = [l.strip() for l in open("web/cadenas_lista.txt", encoding="utf-8") if l.strip()]
+    inv = {}
+    if os.path.exists("web/cadenas_inventario.json"):
+        for f in json.load(open("web/cadenas_inventario.json", encoding="utf-8")).get("filas", []):
+            inv[f["cadena"]] = f
+    marca = [_norm(f[2]) for f in filas]
+    nombre = [_norm(f[1]) for f in filas]
+    cat_m = [_norm(x) for x in cat_out["marca"]]
+    cat_e = [_norm(x) for x in cat_out["estudio"]]
+    cdf = c[["estudio", "clase", "ocupacion", "llena_b", "aforo", "plataforma", "centro_beatcore"]].copy()
+    cdf["marca"], cdf["nombre"] = marca, nombre
+
+    def med(s):
+        s = pd.to_numeric(s, errors="coerce").dropna()
+        return round(float(s.median()), 2) if len(s) else None
+
+    out = []
+    for cad in lista:
+        n = _norm(cad)
+        if not n:
+            continue
+        i = inv.get(cad, {})
+        # catálogo: estudios de la cadena a 1 km de algún BeatCore
+        idx = [k for k in range(len(cat_out)) if _coincide(n, cat_m[k], cat_e[k])]
+        sub = cat_out.iloc[idx]
+        precio = {k: med(sub[k]) for k in ("clase_suelta", "cuatro_mes", "ocho_mes", "doce_mes", "ilimitada")}
+        sw_cat = sorted({p for p in sub["plataforma"].dropna() if p and p != "No identificada"})
+        # ocupación medida
+        m = cdf[[_coincide(n, a, b) for a, b in zip(cdf["marca"], cdf["nombre"])]]
+        mo = m[m["ocupacion"].notna()]
+        centros = []
+        for (est, zona, plat), g in m.groupby(["estudio", "centro_beatcore", "plataforma"]):
+            go = g[g["ocupacion"].notna()]
+            centros.append({"estudio": est, "zona": zona, "plat": plat, "clases": int(len(g)),
+                            "ocup": round(float(go["ocupacion"].mean()), 3) if len(go) else None,
+                            "llenas": round(float(g["llena_b"].mean()), 3) if g["llena_b"].notna().any() else None})
+        tops = []
+        for cl_, g in m.groupby("clase"):
+            go = g[g["ocupacion"].notna()]
+            tops.append({"clase": cl_, "n": int(len(g)),
+                         "ocup": round(float(go["ocupacion"].mean()), 3) if len(go) else None})
+        tops.sort(key=lambda x: -x["n"])
+        out.append({
+            "cadena": cad, "web": i.get("web", ""), "titulo": i.get("titulo", ""), "estado": i.get("estado", "sin web"),
+            "software": i.get("software", []), "software_cat": sw_cat, "capturable": i.get("capturable", ""),
+            "centros_web": i.get("centros_n"), "centros_ejemplos": i.get("centros_ejemplos", []),
+            "precios_url": i.get("precios_url", ""), "precios_web": i.get("precios", []),
+            "cat_estudios": int(len(sub)), "cat_zonas": sorted(set(sub["zona"])),
+            "cat_con_ocup": int((sub["ocupacion_medida"] == "Sí").sum()) if len(sub) else 0,
+            "precio": precio,
+            "ocup": {"estudios": len(centros), "clases": int(len(m)),
+                     "ocup": round(float(mo["ocupacion"].mean()), 3) if len(mo) else None,
+                     "llenas": round(float(m["llena_b"].mean()), 3) if m["llena_b"].notna().any() else None,
+                     "plazas": med(m["aforo"])},
+            "centros": sorted(centros, key=lambda x: -x["clases"])[:40],
+            "clases_top": tops[:15],
+        })
+    return {"filas": out}
+
+
 def curvas(c, snap):
     """Reservas y 'llena' en cada checkpoint, y horas antes de llenarse, por clase (índice de c)."""
     base = c[KEY + ["clase", "inicio_local", "aforo"]].copy()
@@ -322,8 +404,9 @@ def main():
     }
 
     meta["proximas"] = prox["n"]
+    cadenas = cadenas_datos(c, filas, cat_out)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
-                                          ("proximas.json", prox))}
+                                          ("proximas.json", prox), ("cadenas.json", cadenas))}
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))
