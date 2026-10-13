@@ -143,12 +143,15 @@ def _agrega(d, ahora):
         return round(float(g["reservas"].sum() / p), 3) if p > 0 else None
 
     por_fecha = d.groupby("fecha").agg(clases=("kid", "size"), plazas=("plazas", "sum"))
+    med_fecha = ya.groupby("fecha").agg(reservas=("reservas", "sum"), plazas_med=("plazas", "sum"))
     dias = []
     for w in range(7):
         pf = por_fecha[por_fecha.index.dayofweek == w]
         yy = ya[ya["fecha"].dt.dayofweek == w]
+        mf = med_fecha[med_fecha.index.dayofweek == w]
         dias.append({"d": w, "fechas": int(len(pf)), "clases": round(float(pf["clases"].mean()), 1) if len(pf) else None,
                      "plazas": round(float(pf["plazas"].mean()), 1) if len(pf) else None,
+                     "reservas": round(float(mf["reservas"].mean()), 1) if len(mf) else None,
                      "ocup": ocup(yy) if len(yy) else None, "medidas": int(len(yy))})
 
     d = d.copy()
@@ -161,8 +164,10 @@ def _agrega(d, ahora):
         for k, g in d.groupby(col):
             yy = ya[ya[col] == k]
             lista_.append({"p": k, "dias": int(g["fecha"].nunique()), "clases": int(len(g)), "plazas": int(g["plazas"].sum()),
+                           "reservas": int(yy["reservas"].sum()) if len(yy) else None,
                            "ocup": ocup(yy) if len(yy) else None})
     return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "ocup": ocup(ya) if len(ya) else None,
+            "reservas": int(ya["reservas"].sum()) if len(ya) else None, "plazas_med": int(ya["plazas"].sum()) if len(ya) else None,
             "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique())}
 
 
@@ -188,11 +193,14 @@ def oferta_datos(snap, mapa, propios, lista_cadenas):
     u["desde"] = u["desde"].fillna(primera)
     u = u[u["fecha"] >= u["desde"]]
     unidades, cadenas = [], []
+    nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
     for (est, zona), g in u.groupby(["estudio", "zona"]):
         a = _agrega(g, ahora)
         if a:
+            mn, nn = g["marca_n"].iloc[0], g["nombre_n"].iloc[0]
+            pert = [c_ for c_, n_ in nlista if _coincide(n_, mn, nn)]
             unidades.append({"estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
-                             "plat": g["plataforma"].iloc[0], "parcial": bool(g["parcial"].all()), **a})
+                             "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
         n = _norm(cad)
         if not n:

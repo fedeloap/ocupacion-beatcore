@@ -140,6 +140,7 @@ a { color: var(--accent); }
 
 <section class="panel" id="p-resumen" role="tabpanel"></section>
 <section class="panel" id="p-ocupacion" role="tabpanel" hidden></section>
+<section class="panel" id="p-oferta" role="tabpanel" hidden></section>
 <section class="panel" id="p-curvas" role="tabpanel" hidden></section>
 <section class="panel" id="p-clases" role="tabpanel" hidden></section>
 <section class="panel" id="p-proximas" role="tabpanel" hidden></section>
@@ -165,7 +166,7 @@ const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagr
 const ZN = { "Valencia": "Valencia (Ruzafa)", "Nacional": "Fuera de zonas BeatCore" };
 const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
-const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["mapa", "Mapa"]];
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["oferta", "Oferta"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["mapa", "Mapa"]];
 
 let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null, OF = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
@@ -437,25 +438,11 @@ function ocupacion() {
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
     { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
-  if (OF && OF.unidades.length) {
-    const us = OF.unidades.filter(u => u.zona !== "Nacional" && (u.propio || ((!F.centro || u.zona === F.centro) &&
-      (!F.marca || (EST.find(e => e.n === u.estudio) || {}).m === F.marca) && (F.estudio === "" || u.estudio === EST[+F.estudio].n))))
-      .filter(u => !F.centro || u.zona === F.centro);
-    const filas = us.map(u => { const r = resumenOferta(u); return { estudio: u.estudio, zona: zn(u.zona), propio: u.propio, cl_sem: r.clases, pl_sem: r.plazas, ocup: u.ocup,
-      ...Object.fromEntries(u.dias.map(d => ["d" + d.d, d.clases])) }; });
-    const colsO = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "zona", l: "Centro" },
-      { k: "cl_sem", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) }, { k: "pl_sem", l: "Plazas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-      { k: "ocup", l: "Ocupación", n: 1, f: pct }, ...DIAS_L.map((d, i) => ({ k: "d" + i, l: d, n: 1, f: v => v == null ? "–" : num(v) }))];
-    if (!sortState["t-of"]) sortState["t-of"] = { k: "cl_sem", dir: -1 };
-    h += `<section><h2>Oferta de clases por estudio</h2>
-      <p class="meta">Clases por semana y por día de la semana (media por día), plazas ofertadas y ocupación (reservas sobre plazas).</p>
-      ${tabla("t-of", colsO, filas, { limit: 120 })}</section>`;
-  }
   h += `<section><h2>Ranking de estudios</h2>${tabla("t-rank", cols, rows)}
     <p class="nota">Con pocas clases por estudio, la media no es fiable: mira la columna Clases.</p></section>`;
   $("#p-ocupacion").innerHTML = h;
   enlazarTabla($("#p-ocupacion"), "t-rank", ocupacion);
-  enlazarTabla($("#p-ocupacion"), "t-of", ocupacion);
+
 }
 
 function curvas() {
@@ -649,6 +636,8 @@ function detalleCadena(c, bc) {
   if (uC) ofItems.push({ nombre: c.cadena, u: uC });
   if (bcU && bcU !== uC) ofItems.push({ nombre: "BeatCore", u: bcU });
   const ofBloque = ofItems.length ? bloqueOferta($("#p-cadenas"), ofItems, "cad") : null;
+  const unidCad = OF ? OF.unidades.filter(u => (u.cadenas || []).includes(c.cadena)) : [];
+  const centrosOf = unidCad.length ? tablaCentros($("#p-cadenas"), "cc", unidCad, c.cadena) : null;
   const ejemplos = (c.centros_ejemplos || []).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u.replace(/^https?:\/\/(www\.)?/, ""))}</a>`).join(" · ");
   $("#cad-det").innerHTML = `<div class="card"><h2>${esc(c.cadena)}</h2>
     <p class="meta">${c.web ? `<a href="${esc(c.web)}" target="_blank" rel="noopener noreferrer">${esc(c.web)}</a>` : "Web sin localizar"}${c.titulo ? " · " + esc(c.titulo) : ""}</p>
@@ -662,11 +651,13 @@ function detalleCadena(c, bc) {
     ${(c.precios_items || []).length ? `<h3>Importes que aparecen en su web${c.precios_url ? ` · <a href="${esc(c.precios_url)}" target="_blank" rel="noopener noreferrer">ver página</a>` : ""}</h3>
       ${tabla("t-cad-p", colsP, c.precios_items, { limit: 30 })}` : ""}
     ${ofBloque ? `<h3>Oferta de clases y ocupación${bcU && uC !== bcU ? " frente a BeatCore" : ""}</h3>${ofBloque.html}` : ""}
+    ${centrosOf ? `<h3>Cada centro de ${esc(c.cadena)}: clases, plazas y ocupación</h3>${centrosOf.html}` : ""}
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
     <p class="nota"><button type="button" id="cd-cerrar">Cerrar</button></p></div>`;
   $("#cd-cerrar").addEventListener("click", () => { delete $("#p-cadenas").dataset.sel; cadenas(); });
   if (ofBloque) ofBloque.bind();
+  if (centrosOf) centrosOf.bind();
   ["t-cad-c", "t-cad-t", "t-cad-p"].forEach(t => enlazarTabla($("#cad-det"), t, () => detalleCadena(c, bc)));
 }
 
@@ -707,6 +698,70 @@ function bloqueOferta(el, items, key) {
   const cuerpo = modo === "dia" ? ofertaPorDia(items) : ofertaPeriodo(items, modo);
   const parcial = items.some(it => it.u.parcial) ? '<p class="nota">Datos parciales: aún no hay una semana completa capturada para alguno de ellos.</p>' : "";
   return { html: sel + cuerpo + parcial, bind: () => $("#of-" + key).addEventListener("change", e => { el.dataset["of" + key] = e.target.value; render(); }) };
+}
+
+/* ---------- tabla de centros: clases, plazas ofertadas, ocupadas y % cubierto ---------- */
+function tablaCentros(el, key, unidades, tituloPrimera) {
+  const per = el.dataset["per" + key] || "dia", met = el.dataset["met" + key] || "clases";
+  const semanas = [...new Set(unidades.flatMap(u => u.semanas.map(x => x.p)))].sort().reverse();
+  const meses = [...new Set(unidades.flatMap(u => u.meses.map(x => x.p)))].sort().reverse();
+  const opt = (v, l) => `<option value="${v}"${per === v ? " selected" : ""}>${l}</option>`;
+  const optM = (v, l) => `<option value="${v}"${met === v ? " selected" : ""}>${l}</option>`;
+  let filas, cols;
+  if (per === "dia") {
+    filas = unidades.map(u => {
+      const ds = u.dias.filter(d => d.clases != null), comp = ds.length === 7;
+      const sum = k => ds.reduce((a, d) => a + (d[k] || 0), 0);
+      const r = { nombre: u.estudio, zona: zn(u.zona), propio: u.propio, parcial: u.parcial,
+        cl: comp ? sum("clases") : (u.n_dias ? u.n_clases / u.n_dias * 7 : null), pl: comp ? sum("plazas") : null,
+        oc: u.dias.some(d => d.reservas != null) ? sum("reservas") : null, pc: u.ocup };
+      u.dias.forEach(d => { r["d" + d.d] = met === "ocup" ? d.ocup : d[met]; });
+      return r;
+    });
+    const f = met === "ocup" ? pct : (v => v == null ? "–" : num(v, met === "clases" ? 1 : 0));
+    cols = [{ k: "cl", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "pc", l: "% cubierto", n: 1, f: pct },
+      ...DIAS_L.map((d, i) => ({ k: "d" + i, l: d, n: 1, f }))];
+  } else {
+    const [t, p] = [per[0], per.slice(2)], clave = t === "S" ? "semanas" : "meses";
+    filas = unidades.map(u => {
+      const x = u[clave].find(y => y.p === p);
+      return { nombre: u.estudio, zona: zn(u.zona), propio: u.propio, parcial: u.parcial, cl: x ? x.clases : null, pl: x ? x.plazas : null,
+        oc: x ? x.reservas : null, pc: x ? x.ocup : null, dias: x ? x.dias : null };
+    });
+    cols = [{ k: "cl", l: "Clases", n: 1 }, { k: "pl", l: "Plazas ofertadas", n: 1 }, { k: "oc", l: "Plazas ocupadas", n: 1 },
+      { k: "pc", l: "% cubierto", n: 1, f: pct }, { k: "dias", l: "Días con datos", n: 1 }];
+  }
+  const id = "t-ce-" + key;
+  if (!sortState[id]) sortState[id] = { k: "cl", dir: -1 };
+  const todas = [{ nombre: tituloPrimera, zona: "", propio: 0 }];
+  const html = `<div class="row"><label>Ver <select id="pe-${key}">${opt("dia", "Por día de la semana (media)")}
+      ${semanas.map(p => opt("S:" + p, "Semana " + p)).join("")}${meses.map(p => opt("M:" + p, "Mes " + p)).join("")}</select></label>
+      ${per === "dia" ? `<label>En cada día <select id="me-${key}">${optM("clases", "Clases")}${optM("plazas", "Plazas ofertadas")}${optM("reservas", "Plazas ocupadas")}${optM("ocup", "% cubierto")}</select></label>` : ""}
+      <span class="meta">${filas.length} centros</span></div>
+    ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
+      { k: "zona", l: "Zona" }, ...cols], filas, { limit: 400 })}
+    <p class="nota">Plazas ocupadas y % cubierto: solo clases ya dadas con reservas conocidas. "(parcial)": aún no hay una semana completa capturada.</p>`;
+  return { html, bind: () => {
+    $("#pe-" + key).addEventListener("change", e => { el.dataset["per" + key] = e.target.value; render(); });
+    const m = $("#me-" + key); if (m) m.addEventListener("change", e => { el.dataset["met" + key] = e.target.value; render(); });
+    enlazarTabla(el, id, render);
+  } };
+}
+function ofertaTab() {
+  const el = $("#p-oferta");
+  if (!OF || !OF.unidades.length) { el.innerHTML = '<p class="vacio-msg">Todavía no hay datos de oferta.</p>'; return; }
+  const nombreMarca = u => (EST.find(e => e.n === u.estudio) || {}).m;
+  const us = OF.unidades.filter(u => u.zona !== "Nacional" && (u.propio || (
+    (!F.centro || u.zona === F.centro) && (!F.marca || nombreMarca(u) === F.marca) && (F.estudio === "" || u.estudio === EST[+F.estudio].n))))
+    .filter(u => !F.centro || u.zona === F.centro);
+  const b = tablaCentros(el, "of", us, "");
+  el.innerHTML = `<section><h2>Oferta de clases y ocupación de la competencia</h2>
+    <p class="meta">Cada centro de la competencia de BeatCore (y los propios, como referencia): clases, plazas ofertadas, plazas ocupadas y % cubierto, por día de la semana, semana o mes.</p>
+    ${b.html}</section>`;
+  b.bind();
 }
 
 function claseCols() {
@@ -895,7 +950,7 @@ function mapa() {
 }
 
 /* ---------- arranque ---------- */
-const RENDER = { resumen, ocupacion, curvas, clases, proximas, precios, estudios, cadenas, mapa };
+const RENDER = { resumen, ocupacion, oferta: ofertaTab, curvas, clases, proximas, precios, estudios, cadenas, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {
   tabActual = t;
