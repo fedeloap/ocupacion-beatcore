@@ -168,7 +168,7 @@ def _agrega(d, ahora):
                            "ocup": ocup(yy) if len(yy) else None})
     return {"dias": dias, "semanas": semanas[-14:], "meses": meses[-6:], "ocup": ocup(ya) if len(ya) else None,
             "reservas": int(ya["reservas"].sum()) if len(ya) else None, "plazas_med": int(ya["plazas"].sum()) if len(ya) else None,
-            "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique())}
+            "n_clases": int(len(d)), "n_dias": int(d["fecha"].nunique()), "sin_aforo": int(d["plazas"].isna().sum())}
 
 
 def oferta_datos(snap, mapa, propios, lista_cadenas):
@@ -192,6 +192,10 @@ def oferta_datos(snap, mapa, propios, lista_cadenas):
     u["parcial"] = u["desde"].isna()
     u["desde"] = u["desde"].fillna(primera)
     u = u[u["fecha"] >= u["desde"]]
+    # el último día solo está completo si la última planificación (7 días) lo cubre entero: se descartan los días del borde
+    if len(plan):
+        hasta = plan["captured_at"].max().normalize() + pd.Timedelta(days=6)
+        u = u[u["fecha"] <= hasta]
     unidades, cadenas = [], []
     nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
     for (est, zona), g in u.groupby(["estudio", "zona"]):

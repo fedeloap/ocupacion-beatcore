@@ -714,7 +714,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       const sum = k => ds.reduce((a, d) => a + (d[k] || 0), 0);
       const r = { nombre: u.estudio, zona: zn(u.zona), propio: u.propio, parcial: u.parcial,
         cl: comp ? sum("clases") : (u.n_dias ? u.n_clases / u.n_dias * 7 : null), pl: comp ? sum("plazas") : null,
-        oc: u.dias.some(d => d.reservas != null) ? sum("reservas") : null, pc: u.ocup };
+        oc: u.dias.some(d => d.reservas != null) ? sum("reservas") : null, pc: u.ocup, sa: u.sin_aforo, nc: u.n_clases };
       u.dias.forEach(d => { r["d" + d.d] = met === "ocup" ? d.ocup : d[met]; });
       return r;
     });
@@ -723,6 +723,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "pc", l: "% cubierto", n: 1, f: pct },
+      { k: "sa", l: "Clases sin aforo publicado", n: 1, h: r => r.sa == null ? "–" : `${r.sa} <small>de ${r.nc}</small>` },
       ...DIAS_L.map((d, i) => ({ k: "d" + i, l: d, n: 1, f }))];
   } else {
     const [t, p] = [per[0], per.slice(2)], clave = t === "S" ? "semanas" : "meses";
@@ -743,7 +744,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       <span class="meta">${filas.length} centros</span></div>
     ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
       { k: "zona", l: "Zona" }, ...cols], filas, { limit: 400 })}
-    <p class="nota">Plazas ocupadas y % cubierto: solo clases ya dadas con reservas conocidas. "(parcial)": aún no hay una semana completa capturada.</p>`;
+    <p class="nota">"Por día de la semana" es una semana tipo: la suma de la media de cada día (solo cuentan días completos, no los del borde de la planificación; los festivos sin clases no cuentan). Plazas ocupadas y % cubierto: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado (algunos Mindbody) cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>`;
   return { html, bind: () => {
     $("#pe-" + key).addEventListener("change", e => { el.dataset["per" + key] = e.target.value; render(); });
     const m = $("#me-" + key); if (m) m.addEventListener("change", e => { el.dataset["met" + key] = e.target.value; render(); });
