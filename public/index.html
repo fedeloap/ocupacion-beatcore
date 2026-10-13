@@ -71,6 +71,13 @@ nav.tabs button[aria-selected=true] { color: var(--accent); border-bottom-color:
 button.vc { padding: 2px 10px; min-height: 28px; cursor: pointer; font-size: 13px; }
 ul.detalle { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
 th.sub { background: var(--bg); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.hm { max-width: 520px; overflow: visible; max-height: none; }
+table.heat.peq { width: auto; table-layout: fixed; }
+table.heat.peq th { width: 46px; font-size: 11px; padding: 3px 4px; }
+table.heat.peq th:first-child { width: 40px; text-align: left; }
+table.heat.peq td { width: 46px; height: 36px; padding: 2px 3px; font-size: 12px; line-height: 1.15; font-weight: 600; text-align: center; }
+table.heat.peq td small { font-weight: 400; font-size: 10px; opacity: .85; }
+table.heat.peq td.vacio { background: transparent; }
 tr.subfila > td { background: var(--bg); padding: 10px 12px; white-space: normal; }
 .subpanel { display: grid; gap: 10px; min-width: 0; }
 button.exp { min-width: 44px; }
@@ -810,7 +817,10 @@ function detalleCentro(box, u, dset, h0, h1) {
   const hmin = Math.min(...cel.map(c => c.h)), hmax = Math.max(...cel.map(c => c.h));
   const mapa = new Map(cel.map(c => [c.d * 100 + c.h, c]));
   let t = `<div class="card"><h3>${esc(u.estudio)} · clases y ocupación por hora</h3>
-    <div class="scroll"><table class="heat"><thead><tr><th></th>${DIAS_L.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
+    <ul class="detalle"><li><b>Número grande</b>: cuántas clases tiene el centro a esa hora en una semana tipo (1,0 = una clase cada semana; 0,5 = una cada dos semanas; 2,0 = dos clases a la vez).</li>
+    <li><b>Porcentaje pequeño</b>: % de plazas cubiertas con reservas en esas clases. Solo cuenta clases ya dadas; si no hay, no sale.</li>
+    <li>Cuanto más verde, más llena.</li></ul>
+    <div class="scroll hm"><table class="heat peq"><thead><tr><th></th>${DIAS_L.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
   for (let h = hmin; h <= hmax; h++) {
     t += `<tr><th>${String(h).padStart(2, "0")}h</th>`;
     for (let d = 0; d < 7; d++) {
@@ -821,7 +831,7 @@ function detalleCentro(box, u, dset, h0, h1) {
     }
     t += "</tr>";
   }
-  t += `</tbody></table></div><p class="nota">En cada hora: clases en una semana tipo y, debajo, % cubierto. Color más intenso, más llena.</p>`;
+  t += `</tbody></table></div>`;
   const top = (u.top || []).map(x => ({ clase: x.clase, c: x.c, sem: u.n_dias ? x.c / u.n_dias * 7 : null, p: x.p, o: x.o }));
   if (top.length) t += `<h3>Qué clases tiene</h3>${tabla("t-top-" + u.estudio.replace(/\W/g, ""), [{ k: "clase", l: "Clase" },
     { k: "sem", l: "Veces / semana", n: 1, f: v => v == null ? "–" : num(v) }, { k: "o", l: "% cubierto", n: 1, f: pct }], top, { limit: 15 })}`;
