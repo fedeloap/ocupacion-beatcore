@@ -33,7 +33,15 @@ def leer(patron):
     fs = [f for f in sorted(glob.glob(patron)) if os.path.getsize(f) > 0]
     if not fs:
         return pd.DataFrame()
-    return pd.concat([pd.read_csv(f) for f in fs], ignore_index=True)
+    d = pd.concat([pd.read_csv(f) for f in fs], ignore_index=True)
+    # estudios renombrados: el histórico conserva el nombre antiguo (web/alias_estudios.json)
+    if os.path.exists("web/alias_estudios.json"):
+        import json
+        alias = {k: v for k, v in json.load(open("web/alias_estudios.json", encoding="utf-8")).items() if not k.startswith("_")}
+        for col in ("estudio", "sede"):
+            if col in d.columns:
+                d[col] = d[col].replace(alias)
+    return d
 
 
 def franja(h):
