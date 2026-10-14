@@ -197,20 +197,61 @@ const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2
 let tabActual = "resumen", chart = null, claseSel = null;
 const sortState = {};
 
-/* ---------- carga ---------- */
-async function cargar() {
-  const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
-  [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
-  try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
-  try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
-  try { OF = await get("data/oferta.json"); } catch (e) { OF = null; }
-  N = D.n;
-  EST = D.estudios;
+/* ---------- clases: un fichero por mes; sin fechas se usan los últimos 90 días, con fechas los meses de ese periodo ---------- */
+const VENTANA_DIAS = 90;
+let DIDX = null, F90 = "";
+const CLM = {};
+function mesesClases() {
+  const ms = ((DIDX && DIDX.meses) || []).map(m => m.mes);
+  const a = F.f0 || F90, b = F.f1;
+  const ma = (a || "0000-00").slice(0, 7), mb = (b || "9999-12").slice(0, 7);
+  return ms.filter(m => m >= ma && m <= mb);
+}
+function faltanClases() { return mesesClases().filter(m => !(m in CLM)); }
+async function asegurarClases() {
+  await Promise.all(faltanClases().map(m => fetch(`data/clases_${m}.json`).then(r => r.ok ? r.json() : null)
+    .then(j => { CLM[m] = j; }).catch(() => { CLM[m] = null; })));
+  const base = { checkpoints: DIDX.checkpoints, dic: DIDX.dic, estudios: DIDX.estudios, meses: DIDX.meses, n: 0 };
+  const llaves = ["e", "c", "p", "k", "f", "d", "w", "h", "du", "a", "r", "l", "af", "fe", "hf", "hf0"];
+  llaves.forEach(k => base[k] = []);
+  base.cr = DIDX.checkpoints.map(() => []); base.cl = DIDX.checkpoints.map(() => []);
+  Object.keys(CLM).sort().forEach(m => {
+    const x = CLM[m]; if (!x) return;
+    llaves.forEach(k => { const a = base[k], b = x[k]; for (let i = 0; i < b.length; i++) a.push(b[i]); });
+    DIDX.checkpoints.forEach((_, j) => { const a = base.cr[j], b = x.cr[j], a2 = base.cl[j], b2 = x.cl[j];
+      for (let i = 0; i < b.length; i++) { a.push(b[i]); a2.push(b2[i]); } });
+    base.n += x.n;
+  });
+  D = base; N = D.n; EST = D.estudios;
   OCC = new Array(N);
   for (let i = 0; i < N; i++) OCC[i] = D.r[i] != null && D.a[i] > 0 ? Math.min(1, D.r[i] / D.a[i]) : null;
   const ult = D.checkpoints.length - 1;
   HC = new Array(N);   // la clase tiene alguna foto previa a su inicio (curva)
   for (let i = 0; i < N; i++) HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
+  GA = []; GB = [];
+}
+function conClases(panel, fn) {
+  return () => {
+    if (DIDX && faltanClases().length) {
+      $("#p-" + panel).innerHTML = '<p class="vacio-msg">Cargando las clases del periodo…</p>';
+      asegurarClases().then(() => { aplicar(); if (tabActual === panel) render(); });
+      return;
+    }
+    fn();
+  };
+}
+
+/* ---------- carga ---------- */
+async function cargar() {
+  const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+  [D, CAT, META] = await Promise.all([get("data/clases.json"), get("data/estudios.json"), get("data/meta.json")]);
+  DIDX = D;
+  if (META.hasta) { const d0 = new Date(META.hasta + "T00:00:00Z"); d0.setUTCDate(d0.getUTCDate() - VENTANA_DIAS); F90 = d0.toISOString().slice(0, 10); }
+  try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
+  try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
+  try { OF = await get("data/oferta.json"); } catch (e) { OF = null; }
+  EST = D.estudios;
+  await asegurarClases();
   CATROWS = CAT.rows.map(r => Object.fromEntries(CAT.cols.map((c, j) => [c, r[j]])));
   CATROWS.forEach(r => { r.disc_n = DISC_CAT[r.disciplina] || "Otros"; r.con_precio = r.precios_publicados === "Sí" || r.precios_publicados === "Parcial"; r.con_occ = !!r.captura; });
 }
@@ -245,12 +286,12 @@ function zonaSeg() {
 }
 function marcasSelect() {
   const c = $("#f-centro").value;
-  const marcas = [...new Set(EST.filter(e => !e.p && (!c || e.z === c)).map(e => e.m))].sort((a, b) => a.localeCompare(b, "es"));
+  const marcas = [...new Set(EST.filter(e => !e.p && (c ? e.z === c : e.z !== "Nacional")).map(e => e.m))].sort((a, b) => a.localeCompare(b, "es"));
   opciones($("#f-marca"), marcas.map(m => [m, m]), "Todas");
 }
 function estudiosSelect() {
   const c = $("#f-centro").value, m = $("#f-marca").value;
-  const lista = EST.map((e, i) => [i, e]).filter(([, e]) => !e.p && (!c || e.z === c) && (!m || e.m === m))
+  const lista = EST.map((e, i) => [i, e]).filter(([, e]) => !e.p && (c ? e.z === c : e.z !== "Nacional") && (!m || e.m === m))
     .sort((a, b) => a[1].n.localeCompare(b[1].n, "es"));
   opciones($("#f-estudio"), lista.map(([i, e]) => [i, e.n + (c ? "" : " · " + zn(e.z))]), "Todos");
 }
@@ -260,14 +301,16 @@ function leerFiltros() {
   F.dias = new Set([...document.querySelectorAll("#f-dias input:checked")].map(x => +x.dataset.d));
 }
 function pasaBase(i, ignorarDisc) {
-  if (F.centro && D.dic.centro[D.c[i]] !== F.centro) return false;
+  if (F.centro) { if (D.dic.centro[D.c[i]] !== F.centro) return false; }
+  else if (D.dic.centro[D.c[i]] === "Nacional") return false;       // las cadenas nacionales solo salen al elegir ese centro
   if (!ignorarDisc && F.disc && D.dic.disc[D.d[i]] !== F.disc) return false;
   if (!F.dias.has(D.w[i])) return false;
   if (!F.fest && D.fe[i]) return false;
   const h = D.h[i] / 60;
   if (h < F.h0 || h >= F.h1) return false;
   const f = D.dic.fecha[D.f[i]];
-  if (F.f0 && f < F.f0) return false;
+  const f0 = F.f0 || F90;
+  if (f0 && f < f0) return false;
   if (F.f1 && f > F.f1) return false;
   return true;
 }
@@ -342,7 +385,7 @@ const lin = ix => ix === GA ? '<span class="tag">BeatCore</span>' : '<span class
 /* ---------- pestañas ---------- */
 function grupal(r) { return r.filter(x => x.tipo_servicio === "Grupal"); }
 function medDe(rows, k) { return median(rows.map(r => r[k]).filter(v => v != null)); }
-function zonasVisibles() { return F.centro ? [F.centro] : D.dic.centro; }
+function zonasVisibles() { return F.centro ? [F.centro] : D.dic.centro.filter(z => z !== "Nacional"); }
 function porId(ix) {
   const m = new Map();
   for (const i of ix) { const id = EST[D.e[i]].id; if (!m.has(id)) m.set(id, []); m.get(id).push(i); }
@@ -1422,7 +1465,8 @@ function mapa() {
 }
 
 /* ---------- arranque ---------- */
-const RENDER = { resumen, ocupacion, facturacion, oferta: conHorario("oferta", ofertaTab), curvas, clases, proximas, precios, estudios,
+const RENDER = { resumen: conClases("resumen", resumen), ocupacion: conClases("ocupacion", ocupacion), facturacion, oferta: conHorario("oferta", ofertaTab),
+  curvas: conClases("curvas", curvas), clases: conClases("clases", clases), proximas, precios, estudios,
   cadenas: conHorario("cadenas", cadenas), alertas, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {

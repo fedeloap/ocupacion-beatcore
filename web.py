@@ -769,16 +769,22 @@ def main():
     nac["centro_beatcore"] = "Nacional"
     c_nac = analisis.preparar(nac, {}).reset_index(drop=True) if len(nac) else None
     c = analisis.preparar(raw[~sin_centro], {}).reset_index(drop=True)
-    c["es_festivo"] = [
-        int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
-        for f, z in zip((festivos.get(d) for d in c["fecha"]), c["centro_beatcore"])
-    ]
-    if len(c):
-        c = c[c["inicio_local"] >= c["inicio_local"].max().normalize() - pd.Timedelta(days=DIAS_MAX)]
+
+    def marca_festivo(df):
+        df["es_festivo"] = [int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
+                            for f, z in zip((festivos.get(d) for d in df["fecha"]), df["centro_beatcore"])]
+        return df
+    c = marca_festivo(c)
+    if c_nac is not None and len(c_nac):
+        c_nac = marca_festivo(c_nac)
+    c_zona = c                       # solo zonas BeatCore: es la base de la pestaña Cadenas
+    # toda la historia, y también las cadenas nacionales (centro "Nacional": solo salen al elegir ese centro)
+    c = pd.concat([c_zona, c_nac], ignore_index=True) if c_nac is not None and len(c_nac) else c_zona
     c = c.sort_values(["inicio_local", "estudio", "clase_id"]).reset_index(drop=True)
 
     cat, mapa = cargar_catalogo()
     filas, est_tab, e_idx = fichas(c, mapa, propios)
+    filas_zona = fichas(c_zona, mapa, propios)[0]
 
     disc = [disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
     snap = cargar_snapshots()
@@ -794,10 +800,7 @@ def main():
     llena = c["llena_b"].map({True: 1, False: 0})
     fuente = c["aforo_fuente"].map({"publicado": 0, "estimado": 1})
 
-    clases = {
-        "n": len(c), "checkpoints": CHECKPOINTS,
-        "dic": {"centro": d_centro, "plat": d_plat, "clase": d_clase, "fecha": d_fecha, "disc": d_disc},
-        "estudios": est_tab,
+    arr = {
         "e": e_idx, "c": i_centro, "p": i_plat, "k": i_clase, "f": i_fecha, "d": i_disc,
         "w": lista(c["inicio_local"].dt.weekday),
         "h": lista(minutos),
@@ -807,8 +810,24 @@ def main():
         "l": lista(llena),
         "af": lista(fuente),
         "fe": lista(c["es_festivo"]),
-        "cr": cr, "cl": cl,
         "hf": lista(hf, 1), "hf0": lista(hf0),
+    }
+    # un fichero por mes (clases_AAAA-MM.json); clases.json solo lleva los diccionarios y el índice de meses
+    mes_c = c["fecha"].astype(str).str.slice(0, 7).values
+    ficheros_c, meses_idx = {}, []
+    for mes in sorted(set(mes_c)):
+        ix = [i for i in range(len(c)) if mes_c[i] == mes]
+        f = {k: [v[i] for i in ix] for k, v in arr.items()}
+        f["cr"] = [[x[i] for i in ix] for x in cr]
+        f["cl"] = [[x[i] for i in ix] for x in cl]
+        f["mes"], f["n"] = mes, len(ix)
+        ficheros_c[f"clases_{mes}.json"] = f
+        fch = c["fecha"].iloc[ix]
+        meses_idx.append({"mes": mes, "n": len(ix), "desde": str(fch.min()), "hasta": str(fch.max())})
+    clases = {
+        "n": len(c), "checkpoints": CHECKPOINTS,
+        "dic": {"centro": d_centro, "plat": d_plat, "clase": d_clase, "fecha": d_fecha, "disc": d_disc},
+        "estudios": est_tab, "meses": meses_idx,
     }
 
     cat_out = cat.copy()
@@ -846,9 +865,9 @@ def main():
     meta["proximas"] = prox["n"]
     if c_nac is not None and len(c_nac):
         filas_nac = [(-1, e, e, False, "", "Nacional") for e in c_nac["estudio"]]
-        c_cad, filas_cad = pd.concat([c, c_nac], ignore_index=True), filas + filas_nac
+        c_cad, filas_cad = pd.concat([c_zona, c_nac], ignore_index=True), filas_zona + filas_nac
     else:
-        c_cad, filas_cad = c, filas
+        c_cad, filas_cad = c_zona, filas_zona
     cadenas = cadenas_datos(c_cad, filas_cad, cat_out)
     nombres_cadenas = [l.strip() for l in open("web/cadenas_lista.txt", encoding="utf-8") if l.strip()] \
         if os.path.exists("web/cadenas_lista.txt") else []
@@ -857,11 +876,13 @@ def main():
     pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
     oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
     ficheros_h = oferta.pop("_ficheros")
-    for viejo in glob.glob(os.path.join(OUT, "data", "oferta_h_*.json")) + glob.glob(os.path.join(OUT, "data", "oferta_clases.json")):
+    for viejo in (glob.glob(os.path.join(OUT, "data", "oferta_h_*.json")) + glob.glob(os.path.join(OUT, "data", "oferta_clases.json"))
+                  + glob.glob(os.path.join(OUT, "data", "clases_2*.json"))):
         os.remove(viejo)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
                                           ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta))}
     tam.update({n: escribir(n, o) for n, o in ficheros_h.items()})
+    tam.update({n: escribir(n, o) for n, o in ficheros_c.items()})
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))
