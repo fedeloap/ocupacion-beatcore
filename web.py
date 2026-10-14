@@ -11,6 +11,7 @@ Reutiliza analisis.cargar() y analisis.preparar(). Las curvas usan todas las cap
 (data/*.csv, data/curva, data/plan) de las clases que ya han empezado.
 """
 
+import glob
 import json
 import os
 import re
@@ -186,11 +187,13 @@ def clases_unicas(snap):
     return s.reset_index(drop=True)
 
 
-def _agrega(d, ahora):
+def _agrega(d, ahora, d_all=None):
     """Clases, plazas y ocupación (reservas/plazas) por día de la semana, semana y mes."""
     if d.empty:
         return None
-    ya = d[(d["inicio_local"] <= ahora) & d["reservas"].notna() & (d["plazas"] > 0)]
+    # clases/plazas se cuentan en días completos (d); % reservado y reservas, en todas las clases ya dadas (d_all)
+    src = d_all if d_all is not None and len(d_all) else d
+    ya = src[(src["inicio_local"] <= ahora) & src["reservas"].notna() & (src["plazas"] > 0)]
 
     def ocup(g):
         p = g["plazas"].sum()
@@ -212,7 +215,7 @@ def _agrega(d, ahora):
     ds_c = [x["clases"] for x in dias if x["clases"] is not None]
     n_fechas = int(d["fecha"].nunique())
     clases_sem = sum(ds_c) if n_fechas >= 7 else len(d) / n_fechas * 7
-    yr = d[(d["inicio_local"] <= ahora) & d["reservas"].notna()]
+    yr = src[(src["inicio_local"] <= ahora) & src["reservas"].notna()]
     res_clase = round(float(yr["reservas"].mean()), 2) if len(yr) else None
 
     d = d.copy()
@@ -310,49 +313,50 @@ def _ubicacion(estudio, zona):
     return (u.get("ciudad", ""), u.get("provincia", ""))
 
 
-def celdas_fecha(g, ahora, idx, dias_max=120):
+def datos_fecha(g, g_all, ahora, idx, meses, ukey):
     """Datos de un centro en columnas para calcular cualquier rango de fechas en el navegador.
-    Diarios (dd, dc, dp, dr, dm, dx): clases, plazas, reservas y plazas medidas por fecha, de TODO el histórico.
-    Por hora (fd, fh, fc, ...): solo los últimos 'dias_max' días (mapa de calor). 'idx': fecha -> posición (oferta.json: fechas)."""
-    vacio = {k: [] for k in ("dd", "dc", "dp", "dr", "dm", "dx", "fd", "fh", "fc", "fp", "fr", "fm", "fx")}
-    if g.empty:
+    Diarios (dd, dc, dp, dr, dm, dx), de TODO el histórico, en oferta.json: clases y plazas de los días completos (g);
+    reservas y plazas medidas de todas las clases ya dadas (g_all). Por hora y por clase, agrupados por mes, en
+    meses[mes][ukey] (oferta_h_AAAA-MM.json). 'idx': fecha -> posición en oferta.json."""
+    vacio = {k: [] for k in ("dd", "dc", "dp", "dr", "dm", "dx")}
+    d = (g_all if g_all is not None and len(g_all) else g).copy()
+    if d.empty:
         return vacio
-    d = g.copy()
+    dentro = d["kid"].isin(set(g["kid"])).astype(int)
     dada = d["inicio_local"] <= ahora
     ok = dada & d["reservas"].notna() & (d["plazas"] > 0)
-    d["_p"], d["_r"] = d["plazas"].fillna(0), d["reservas"].where(ok, 0)
-    d["_m"] = d["plazas"].where(ok, 0)
+    d["_c"] = dentro
+    d["_p"] = d["plazas"].fillna(0) * dentro
+    d["_r"], d["_m"] = d["reservas"].where(ok, 0), d["plazas"].where(ok, 0)
     d["_x"] = d["reservas"].where(dada & d["reservas"].notna(), 0)
-    agg = dict(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"))
-    dia = d.groupby("fecha").agg(**agg).reset_index()
+    agg = dict(c=("_c", "sum"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"))
+
+    def util(t):
+        return t[(t["c"] > 0) | (t["r"] > 0) | (t["x"] > 0)]
+
+    dia = util(d.groupby("fecha").agg(**agg).reset_index())
     out = {"dd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in dia["fecha"]],
            "dc": [int(v) for v in dia["c"]], "dp": [int(round(v)) for v in dia["p"]], "dr": [int(round(v)) for v in dia["r"]],
            "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]]}
-    h = d[d["fecha"] >= d["fecha"].max() - pd.Timedelta(days=dias_max)].copy()
-    h["hora"] = h["inicio_local"].dt.hour
-    gg = h.groupby(["fecha", "hora"]).agg(**agg).reset_index()
-    out.update({"fd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]], "fh": [int(v) for v in gg["hora"]],
-                "fc": [int(v) for v in gg["c"]], "fp": [int(round(v)) for v in gg["p"]], "fr": [int(round(v)) for v in gg["r"]],
-                "fm": [int(round(v)) for v in gg["m"]], "fx": [int(round(v)) for v in gg["x"]]})
+    # por hora y por clase, en el fichero de cada mes
+    d["hora"] = d["inicio_local"].dt.hour
+    d["mes"] = d["fecha"].dt.strftime("%Y-%m")
+    for mes, dm_ in d.groupby("mes"):
+        ent = meses.setdefault(mes, {"fechas": {}, "nombres": {}, "u": {}})
+        fi, ni = ent["fechas"], ent["nombres"]
+        h = util(dm_.groupby(["fecha", "hora"]).agg(**agg).reset_index())
+        k = util(dm_.groupby(["fecha", "clase"]).agg(**agg).reset_index())
+        ent["u"][ukey] = {
+            "hd": [fi.setdefault(f.strftime("%Y-%m-%d"), len(fi)) for f in h["fecha"]], "hh": [int(v) for v in h["hora"]],
+            "hc": [int(v) for v in h["c"]], "hp": [int(round(v)) for v in h["p"]], "hr": [int(round(v)) for v in h["r"]],
+            "hm": [int(round(v)) for v in h["m"]], "hx": [int(round(v)) for v in h["x"]],
+            "kd": [fi.setdefault(f.strftime("%Y-%m-%d"), len(fi)) for f in k["fecha"]],
+            "kn": [ni.setdefault(str(n), len(ni)) for n in k["clase"]], "kc": [int(v) for v in k["c"]],
+            "kp": [int(round(v)) for v in k["p"]], "kr": [int(round(v)) for v in k["r"]], "km": [int(round(v)) for v in k["m"]]}
     return out
 
 
-def clases_fecha(g, ahora, idx, nom_idx):
-    """Por fecha y nombre de clase: sesiones, plazas, reservas y plazas medidas (para 'Qué clases tiene' con rango de fechas)."""
-    if g.empty:
-        return {"kd": [], "kn": [], "kc": [], "kp": [], "kr": [], "km": []}
-    d = g.copy()
-    dada = d["inicio_local"] <= ahora
-    ok = dada & d["reservas"].notna() & (d["plazas"] > 0)
-    d["_p"], d["_r"], d["_m"] = d["plazas"].fillna(0), d["reservas"].where(ok, 0), d["plazas"].where(ok, 0)
-    gg = d.groupby(["fecha", "clase"]).agg(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum")).reset_index()
-    return {"kd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]],
-            "kn": [nom_idx.setdefault(str(n), len(nom_idx)) for n in gg["clase"]],
-            "kc": [int(v) for v in gg["c"]], "kp": [int(round(v)) for v in gg["p"]],
-            "kr": [int(round(v)) for v in gg["r"]], "km": [int(round(v)) for v in gg["m"]]}
-
-
-def facturacion_meses(g, a, ahora, ps):
+def facturacion_meses(g, a, ahora, ps, g_all=None):
     """Reservas y facturación por mes natural de un centro.
 
     'obs': lo ya capturado (clases dadas con reservas conocidas; el mes empieza a contar el día que se empezó a capturar).
@@ -362,7 +366,8 @@ def facturacion_meses(g, a, ahora, ps):
     if rc is None:
         return []
     hoy = ahora.normalize()
-    dadas = g[(g["inicio_local"] <= ahora) & g["reservas"].notna()]
+    src = g_all if g_all is not None and len(g_all) else g
+    dadas = src[(src["inicio_local"] <= ahora) & src["reservas"].notna()]
     obs_f = dadas.groupby("fecha")["reservas"].sum()
     n_f = g.groupby("fecha").size()
     cl_dow = {x["d"]: (x["clases"] or 0) for x in a["dias"]}
@@ -414,6 +419,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     u["propio"] = [int(f[3]) for f in filas]
     u["nombre"] = [f[1] for f in filas]
     u["marca"] = [f[2] for f in filas]
+    u_all = u.copy()          # todas las clases (también de días no completos): para % reservado y reservas
     # días válidos por estudio
     u["desde"] = u["estudio"].map(desde_plan)
     primera = u.groupby("estudio")["inicio_local"].transform("min").dt.normalize() + pd.Timedelta(days=1)
@@ -449,20 +455,26 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     # estudios cuya agenda mezcla ciudades: un centro por ciudad (web/ubicaciones.json -> _sedes)
     fechas_idx, nombres_idx, clases_out = {}, {}, {}
     sedes_ub = _ubic_sedes()
-    u["pv"] = ""
-    if sedes_ub:
-        for est_s, mp in sedes_ub.items():
-            m_ = u["estudio"] == est_s
-            if m_.any():
-                base = _ubicacion(est_s, "Nacional")
-                u.loc[m_, "pv"] = [
-                    "|".join((mp.get(str(sd)) or {}).get("ciudad", base[0]) and
-                             [(mp.get(str(sd)) or {}).get("ciudad", base[0]), (mp.get(str(sd)) or {}).get("provincia", base[1])]
-                             or [base[0], base[1]])
-                    for sd in u.loc[m_, "sede"]]
+    def _asigna_pv(df):
+        df["pv"] = ""
+        if sedes_ub:
+            for est_s, mp in sedes_ub.items():
+                m_ = df["estudio"] == est_s
+                if m_.any():
+                    base = _ubicacion(est_s, "Nacional")
+                    df.loc[m_, "pv"] = [
+                        "|".join((mp.get(str(sd)) or {}).get("ciudad", base[0]) and
+                                 [(mp.get(str(sd)) or {}).get("ciudad", base[0]), (mp.get(str(sd)) or {}).get("provincia", base[1])]
+                                 or [base[0], base[1]])
+                        for sd in df.loc[m_, "sede"]]
+    _asigna_pv(u)
+    _asigna_pv(u_all)
+    ga = {k: v for k, v in u_all.groupby(["estudio", "zona", "pv"])}
+    meses_h = {}
     n_pv = u.groupby("estudio")["pv"].nunique()
     for (est, zona, pv), g in u.groupby(["estudio", "zona", "pv"]):
-        a = _agrega(g, ahora)
+        g_all = ga.get((est, zona, pv), g)
+        a = _agrega(g, ahora, g_all)
         if a:
             mn, nn = g["marca_n"].iloc[0], g["nombre_n"].iloc[0]
             pert = [c_ for c_, n_ in nlista if _coincide(n_, mn, nn)]
@@ -488,17 +500,19 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             if pv and n_pv.get(est, 1) > 1:
                 nombre_u += f" ({ub[0] or 'sin ubicar'})"
             ukey = f"{est}|{zona}|{pv}"
-            clases_out[ukey] = clases_fecha(g, ahora, fechas_idx, nombres_idx)
-            unidades.append({**celdas_fecha(g, ahora, fechas_idx), "ukey": ukey, "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
-                             "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
-                             "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
+            a_u = {k: v for k, v in a.items() if k not in ("celdas", "top")}
+            unidades.append({**datos_fecha(g, g_all, ahora, fechas_idx, meses_h, ukey), "ukey": ukey, "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
+                             "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"], g_all), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
+                             "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a_u})
     for cad in lista_cadenas:
         n = _norm(cad)
         if not n:
             continue
         m = u[[_coincide(n, x, y) for x, y in zip(u["marca_n"], u["nombre_n"])]]
-        a = _agrega(m, ahora)
+        m_all = u_all[[_coincide(n, x, y) for x, y in zip(u_all["marca_n"], u_all["nombre_n"])]]
+        a = _agrega(m, ahora, m_all)
         if a:
+            a = {k: v for k, v in a.items() if k not in ("celdas", "top")}
             fu = [u["fact"] for u in unidades if cad in u["cadenas"]]
             con = [f for f in fu if f["fact_mes"] is not None]
             fact = {"centros": len(fu), "con_fact": len(con),
@@ -508,9 +522,13 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             cadenas.append({"cadena": cad, "estudios": int(m["estudio"].nunique()), "zonas": sorted(set(m["zona"])),
                             "parcial": bool(m["parcial"].all()), "fact": fact, **a})
     fechas = [f for f, _ in sorted(fechas_idx.items(), key=lambda kv: kv[1])]
-    nombres = [n for n, _ in sorted(nombres_idx.items(), key=lambda kv: kv[1])]
-    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "fechas": fechas, "unidades": unidades, "cadenas": cadenas,
-            "_clases": {"fechas": fechas, "nombres": nombres, "u": clases_out}}
+    ficheros = {}
+    for mes, ent in meses_h.items():
+        ficheros[f"oferta_h_{mes}.json"] = {
+            "mes": mes, "fechas": [f for f, _ in sorted(ent["fechas"].items(), key=lambda kv: kv[1])],
+            "nombres": [n for n, _ in sorted(ent["nombres"].items(), key=lambda kv: kv[1])], "u": ent["u"]}
+    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "fechas": fechas, "meses_h": sorted(meses_h), "unidades": unidades,
+            "cadenas": cadenas, "_ficheros": ficheros}
 
 
 def clave_clase(d):
@@ -838,10 +856,12 @@ def main():
                   for f in cadenas["filas"]}
     pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
     oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
-    oferta_clases = oferta.pop("_clases")
+    ficheros_h = oferta.pop("_ficheros")
+    for viejo in glob.glob(os.path.join(OUT, "data", "oferta_h_*.json")) + glob.glob(os.path.join(OUT, "data", "oferta_clases.json")):
+        os.remove(viejo)
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
-                                          ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta),
-                                          ("oferta_clases.json", oferta_clases))}
+                                          ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta))}
+    tam.update({n: escribir(n, o) for n, o in ficheros_h.items()})
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))

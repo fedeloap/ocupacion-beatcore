@@ -844,9 +844,32 @@ function fES2(f) { return f ? f.split("-").reverse().join("/") : ""; }
 function periodoTxt() {
   return hayRango() ? `Periodo: del ${fES2(F.f0) || "inicio"} al ${fES2(F.f1) || "último día"}` : "Periodo: todo el histórico medido (cambia las fechas de los filtros de arriba para acotarlo)";
 }
+/* detalle por hora y por clase: un fichero por mes (data/oferta_h_AAAA-MM.json), solo se descargan los meses del periodo */
+const HOR = {};
+function mesesNecesarios() {
+  const ms = (OF && OF.meses_h) || [];
+  if (!hayRango()) return ms;
+  const a = (F.f0 || "0000-00").slice(0, 7), b = (F.f1 || "9999-12").slice(0, 7);
+  return ms.filter(m => m >= a && m <= b);
+}
+function faltanMeses() { return mesesNecesarios().filter(m => !(m in HOR)); }
+function cargarMeses() {
+  return Promise.all(faltanMeses().map(m => fetch(`data/oferta_h_${m}.json`).then(r => r.ok ? r.json() : null)
+    .then(j => { HOR[m] = j || { fechas: [], nombres: [], u: {} }; }).catch(() => { HOR[m] = { fechas: [], nombres: [], u: {} }; })));
+}
+function conHorario(panel, fn) {
+  return () => {
+    if (OF && faltanMeses().length) {
+      $("#p-" + panel).innerHTML = '<p class="vacio-msg">Cargando el detalle por hora…</p>';
+      cargarMeses().then(() => { if (tabActual === panel) render(); });
+      return;
+    }
+    fn();
+  };
+}
 function vistaRango(u) {
-  // el mismo centro, pero calculado solo con los días del rango de fechas
-  if (!hayRango() || !u.dd || !OF.fechas) return u;
+  // el mismo centro calculado con el periodo de los filtros de arriba (sin fechas = todo el histórico medido)
+  if (!u.dd || !OF.fechas) return u;
   const a = F.f0 || "", b = F.f1 || "";
   const fechasDow = Array.from({ length: 7 }, () => new Set());
   const dia = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, m: 0 }));
@@ -856,18 +879,22 @@ function vistaRango(u) {
     const f = OF.fechas[u.dd[i]];
     if ((a && f < a) || (b && f > b)) continue;
     const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
-    fechasDow[dow].add(f); todas.add(f);
+    if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
     const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
     R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i];
   }
   const celdas = new Map();
-  for (let i = 0; i < (u.fd || []).length; i++) {
-    const f = OF.fechas[u.fd[i]];
-    if ((a && f < a) || (b && f > b)) continue;
-    const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
-    const k = dow * 100 + u.fh[i];
-    const c = celdas.get(k) || { d: dow, h: u.fh[i], c: 0, p: 0, r: 0, pm: 0 };
-    c.c += u.fc[i]; c.p += u.fp[i]; c.r += u.fr[i]; c.pm += u.fm[i]; celdas.set(k, c);
+  for (const mes of mesesNecesarios()) {
+    const h = HOR[mes], e = h && h.u[u.ukey];
+    if (!e) continue;
+    for (let i = 0; i < e.hd.length; i++) {
+      const f = h.fechas[e.hd[i]];
+      if ((a && f < a) || (b && f > b)) continue;
+      const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
+      const k = dow * 100 + e.hh[i];
+      const c = celdas.get(k) || { d: dow, h: e.hh[i], c: 0, p: 0, r: 0, pm: 0 };
+      c.c += e.hc[i]; c.p += e.hp[i]; c.r += e.hr[i]; c.pm += e.hm[i]; celdas.set(k, c);
+    }
   }
   const dias = dia.map((d, i) => {
     const nf = fechasDow[i].size;
@@ -878,28 +905,24 @@ function vistaRango(u) {
   return { ...u, dias, celdas: [...celdas.values()], ocup: M > 0 ? R / M : null, reservas: R, plazas_med: M, n_clases: C, n_dias: todas.size,
     _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X };
 }
-/* "Qué clases tiene" por fechas: oferta_clases.json se carga solo al abrir el detalle de un centro */
-let OFC = null, OFC_PROM = null;
-function cargarOFC(cuando) {
-  if (OFC) return true;
-  if (!OFC_PROM) OFC_PROM = fetch("data/oferta_clases.json").then(r => r.ok ? r.json() : null).then(j => { OFC = j; if (cuando) cuando(); }).catch(() => {});
-  return false;
-}
 function topClasesRango(u) {
-  const e = OFC && OFC.u[u.ukey];
-  if (!e) return null;
+  // "Qué clases tiene": clases del periodo, sacadas de los ficheros mensuales ya cargados
   const a = F.f0 || "", b = F.f1 || "";
   const m = new Map(), dias = new Set();
-  for (let i = 0; i < e.kd.length; i++) {
-    const f = OFC.fechas[e.kd[i]];
-    if ((a && f < a) || (b && f > b)) continue;
-    dias.add(f);
-    const n = OFC.nombres[e.kn[i]];
-    const x = m.get(n) || { clase: n, c: 0, p: 0, r: 0, mm: 0 };
-    x.c += e.kc[i]; x.p += e.kp[i]; x.r += e.kr[i]; x.mm += e.km[i]; m.set(n, x);
+  for (const mes of mesesNecesarios()) {
+    const h = HOR[mes], e = h && h.u[u.ukey];
+    if (!e) continue;
+    for (let i = 0; i < e.kd.length; i++) {
+      const f = h.fechas[e.kd[i]];
+      if ((a && f < a) || (b && f > b)) continue;
+      if (e.kc[i] > 0) dias.add(f);
+      const n = h.nombres[e.kn[i]];
+      const x = m.get(n) || { clase: n, c: 0, p: 0, r: 0, mm: 0 };
+      x.c += e.kc[i]; x.p += e.kp[i]; x.r += e.kr[i]; x.mm += e.km[i]; m.set(n, x);
+    }
   }
   const nd = Math.max(1, dias.size);
-  return [...m.values()].map(x => ({ clase: x.clase, c: x.c, p: x.p, o: x.mm > 0 ? x.r / x.mm : null, _nd: nd }))
+  return [...m.values()].filter(x => x.c > 0).map(x => ({ clase: x.clase, c: x.c, p: x.p, o: x.mm > 0 ? x.r / x.mm : null, _nd: nd }))
     .sort((x, y) => y.c - x.c).slice(0, 15);
 }
 
@@ -1178,10 +1201,8 @@ function detalleCentro(box, u, dset, h0, h1) {
     t += "</tr>";
   }
   t += `</tbody></table></div>`;
-  const cargado = cargarOFC(() => detalleCentro(box, u, dset, h0, h1));
-  const topR = cargado ? topClasesRango(u) : null;
-  const topFuente = topR || (u.top || []);
-  const nd = topR && topR.length ? topR[0]._nd : u.n_dias;
+  const topFuente = topClasesRango(u);
+  const nd = topFuente.length ? topFuente[0]._nd : u.n_dias;
   const top = topFuente.map(x => { const pl = nd ? x.p / nd * 7 : null;
     return { clase: x.clase, c: x.c, sem: nd ? x.c / nd * 7 : null, pl, oc: pl != null && x.o != null ? pl * x.o : null, p: x.p, o: x.o }; });
   if (top.length) t += `<h3>Qué clases tiene</h3>${tabla("t-top-" + u.estudio.replace(/\W/g, ""), [{ k: "clase", l: "Clase" },
@@ -1401,7 +1422,8 @@ function mapa() {
 }
 
 /* ---------- arranque ---------- */
-const RENDER = { resumen, ocupacion, facturacion, oferta: ofertaTab, curvas, clases, proximas, precios, estudios, cadenas, alertas, mapa };
+const RENDER = { resumen, ocupacion, facturacion, oferta: conHorario("oferta", ofertaTab), curvas, clases, proximas, precios, estudios,
+  cadenas: conHorario("cadenas", cadenas), alertas, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {
   tabActual = t;
