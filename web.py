@@ -271,6 +271,25 @@ def facturacion(a, tarifas, origen):
             "fact_mes": round(ps * res_mes) if ps and res_mes is not None else None}
 
 
+_ZONA_UBIC = {"Chamberí": ("Madrid", "Madrid"), "Salamanca": ("Madrid", "Madrid"), "Diagonal": ("Barcelona", "Barcelona"),
+              "Valencia": ("Valencia", "Valencia")}
+_UBIC = None
+
+
+def _ubicacion(estudio, zona):
+    """(ciudad, provincia) de un centro: por su zona BeatCore o por web/ubicaciones.json (python ubicaciones.py)."""
+    global _UBIC
+    if zona in _ZONA_UBIC:
+        return _ZONA_UBIC[zona]
+    if _UBIC is None:
+        try:
+            _UBIC = json.load(open("web/ubicaciones.json", encoding="utf-8"))
+        except Exception:
+            _UBIC = {}
+    u = _UBIC.get(estudio) or {}
+    return (u.get("ciudad", ""), u.get("provincia", ""))
+
+
 def facturacion_meses(g, a, ahora, ps):
     """Reservas y facturación por mes natural de un centro.
 
@@ -387,7 +406,8 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                         origen = "mediana de la cadena " + c_
                         break
             fact = facturacion(a, tar, origen)
-            unidades.append({"fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
+            ub = _ubicacion(est, zona)
+            unidades.append({"prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
