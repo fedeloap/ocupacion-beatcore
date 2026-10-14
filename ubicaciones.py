@@ -78,7 +78,7 @@ LUGARES = {
     "benimaclet": ("Valencia", "Valencia"), "patacona": ("Alboraya", "Valencia"), "eliana": ("L'Eliana", "Valencia"),
     "fernando vi": ("Madrid", "Madrid"), "paseo de la habana": ("Madrid", "Madrid"), "ortega y gasset": ("Madrid", "Madrid"),
     "alcala": ("Madrid", "Madrid"), "gines": ("Gines", "Sevilla"), "losremedios": ("Sevilla", "Sevilla"), "caceres": ("Cáceres", "Cáceres"),
-    "rosalia": ("Vigo", "Pontevedra"), "plaza america": ("Vigo", "Pontevedra"), "valdiviana": ("Madrid", "Madrid"),
+    "rosalia": ("Vigo", "Pontevedra"), "plaza america": ("Vigo", "Pontevedra"),
 }
 
 
@@ -137,6 +137,12 @@ def main():
                 ciudad, prov, fuente = v[0], v[1], "nombre"
         cuenta[fuente or "sin ubicar"] += 1
         out[est] = {"ciudad": ciudad, "provincia": prov, "cp": cp, "fuente": fuente}
+    try:
+        for k, v in json.load(open("web/ubicaciones_manual.json", encoding="utf-8")).items():
+            if not k.startswith("_"):
+                out[k] = {"ciudad": v.get("ciudad", ""), "provincia": v.get("provincia", ""), "cp": "", "fuente": v.get("fuente", "manual")}
+    except FileNotFoundError:
+        pass
     json.dump(out, open("web/ubicaciones.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(cuenta, "de", len(out))
     zonas_ = {e["estudio"] for _, e in entradas if e.get("centro_beatcore")}
