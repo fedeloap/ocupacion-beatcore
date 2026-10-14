@@ -189,6 +189,13 @@ def main():
         if v:
             out.setdefault("trainingym", []).append({"estudio": e["estudio"], "centro_code": e["centro_code"], "centro_beatcore": ""})
             resumen.append((e["estudio"], "trainingym", e["centro_code"], v.get("clases_3d")))
+    for e in man.get("aimharder", []):
+        if any(x["subdominio"] == e["subdominio"] for x in out["aimharder"]):
+            continue
+        v = F.ver_aimharder(e["subdominio"])
+        if v:
+            out["aimharder"].append({"estudio": e["estudio"], "subdominio": e["subdominio"], "box": str(v["box"]), "centro_beatcore": ""})
+            resumen.append((e["estudio"], "aimharder", e["subdominio"], v.get("clases_dia")))
     json.dump(out, open("studios_cadenas.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for r in resumen:
         print(r)
