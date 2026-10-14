@@ -147,6 +147,19 @@ def es_extra(df):
     return de_estudio & df["clase"].astype(str).str.contains(cfg.get("patron", "$^"), case=False, regex=True)
 
 
+def quitar_hasta(df):
+    """Oculta las capturas de un estudio anteriores a una fecha (web/excluidos.json: estudios_hasta)."""
+    try:
+        reglas = json.load(open("web/excluidos.json", encoding="utf-8")).get("estudios_hasta", {})
+    except Exception:
+        return df
+    if "captured_at" not in df.columns:
+        return df
+    for est, fecha in reglas.items():
+        df = df[~((df["estudio"] == est) & (pd.to_datetime(df["captured_at"]) < pd.Timestamp(fecha)))]
+    return df
+
+
 def cargar_snapshots():
     partes = [analisis.leer(p) for p in ("data/*.csv", "data/curva/*.csv", "data/plan/*.csv")]
     s = pd.concat([p for p in partes if len(p)], ignore_index=True)
@@ -157,6 +170,7 @@ def cargar_snapshots():
     s = s.drop_duplicates(KEY + ["captured_at"])
     s["inicio_local"] = pd.to_datetime(s["inicio_local"])
     s = s[~fuera_de_espana(s)]
+    s = quitar_hasta(s)
     m = es_extra(s)
     EXTRAS.clear()
     EXTRAS.append(s[m])
@@ -763,6 +777,7 @@ def main():
     raw = raw[~raw["estudio"].isin(excluidos())]
     raw = raw[~es_extra(raw)]
     raw = raw[~fuera_de_espana(raw)]
+    raw = quitar_hasta(raw)
     # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
     sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
     nac = raw[sin_centro].copy()
@@ -785,6 +800,16 @@ def main():
     cat, mapa = cargar_catalogo()
     filas, est_tab, e_idx = fichas(c, mapa, propios)
     filas_zona = fichas(c_zona, mapa, propios)[0]
+    # centros de cadenas nacionales: su "marca" es la cadena (para filtrar por cadena y no por centro)
+    if os.path.exists("web/cadenas_lista.txt"):
+        nl = [(x.strip(), _norm(x)) for x in open("web/cadenas_lista.txt", encoding="utf-8") if _norm(x)]
+        for e in est_tab:
+            if e["id"] == -1:
+                for nom, n_ in nl:
+                    nn_ = _norm(e["n"])
+                    if _coincide(n_, _norm(e["m"]), nn_) or nn_.startswith(n_ + " "):
+                        e["m"] = nom
+                        break
 
     disc = [disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
     snap = cargar_snapshots()

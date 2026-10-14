@@ -265,13 +265,18 @@ async function cargar() {
 }
 
 /* ---------- filtros ---------- */
+const ORDEN_CENTROS = ["Chamberí", "Salamanca", "Diagonal", "Valencia", "Nacional"];     // primero los BeatCore, al final lo de fuera
+function centrosOrdenados() {
+  const o = c => { const i = ORDEN_CENTROS.indexOf(c); return i < 0 ? 50 : i; };
+  return [...D.dic.centro].sort((a, b) => o(a) - o(b) || a.localeCompare(b, "es"));
+}
 function opciones(sel, items, todo) {
   const v = sel.value;
   sel.innerHTML = `<option value="">${esc(todo)}</option>` + items.map(([val, lab]) => `<option value="${esc(val)}">${esc(lab)}</option>`).join("");
   if ([...sel.options].some(o => o.value === v)) sel.value = v; else sel.value = "";
 }
 function montarFiltros() {
-  opciones($("#f-centro"), D.dic.centro.map(c => [c, zn(c)]), "Todos");
+  opciones($("#f-centro"), centrosOrdenados().map(c => [c, zn(c)]), "Todos");
   marcasSelect();
   opciones($("#f-disc"), DISCS.map(d => [d, d]), "Todas");
   const horas = Array.from({ length: 25 }, (_, h) => [h, String(h).padStart(2, "0") + ":00"]);
@@ -286,7 +291,7 @@ function montarFiltros() {
 function zonaSeg() {
   const seg = $("#zona-seg");
   seg.querySelectorAll("button").forEach(b => b.remove());
-  [["", "Todos"], ...D.dic.centro.map(c => [c, zn(c)])].forEach(([v, l]) => {
+  [["", "Todos"], ...centrosOrdenados().map(c => [c, zn(c)])].forEach(([v, l]) => {
     const b = document.createElement("button"); b.type = "button"; b.dataset.z = v; b.textContent = l;
     b.addEventListener("click", () => { $("#f-centro").value = v; marcasSelect(); estudiosSelect(); refrescar(); });
     seg.append(b);
@@ -393,7 +398,7 @@ const lin = ix => ix === GA ? '<span class="tag">BeatCore</span>' : '<span class
 /* ---------- pestañas ---------- */
 function grupal(r) { return r.filter(x => x.tipo_servicio === "Grupal"); }
 function medDe(rows, k) { return median(rows.map(r => r[k]).filter(v => v != null)); }
-function zonasVisibles() { return F.centro ? [F.centro] : D.dic.centro.filter(z => z !== "Nacional"); }
+function zonasVisibles() { return F.centro ? [F.centro] : centrosOrdenados().filter(z => z !== "Nacional"); }
 function porId(ix) {
   const m = new Map();
   for (const i of ix) { const id = EST[D.e[i]].id; if (!m.has(id)) m.set(id, []); m.get(id).push(i); }
@@ -437,7 +442,7 @@ function resumen() {
 
   // BeatCore vs competencia por centro
   const filas = [];
-  for (const z of D.dic.centro) {
+  for (const z of centrosOrdenados()) {
     if (F.centro && z !== F.centro) continue;
     for (const [gg, nom] of [[GA, "BeatCore"], [GB, "Competencia"]]) {
       const ix = gg.filter(i => D.dic.centro[D.c[i]] === z), m = metricas(ix);
