@@ -109,6 +109,46 @@ def glofox_dir(branch_id):
         return "", ""
 
 
+# Estudios cuya agenda mezcla centros de distintas ciudades: la ubicación se decide por sede.
+# (regex del nombre del estudio, [(regex de la sede, ciudad, provincia)])
+REGLAS_SEDE = [
+    (r"^ARDE BARRE", [(r"moraleja", "Alcobendas", "Madrid")]),
+    (r"^PILAT3S$", [
+        (r"braga|douro|foz|estoril|oeiras|infante santo|avenidas novas|sottomayor|quinta da fonte", "Portugal", "Fuera de España"),
+        (r"sheffield", "Sheffield", "Fuera de España"),
+        (r"sagrada familia", "Barcelona", "Barcelona")]),
+    (r"^B3B WOMAN$", [(r"chamartin|gmc", "Madrid", "Madrid")]),
+]
+
+
+def bsport_dir(eid):
+    try:
+        j = requests.get(f"https://api.production.bsport.io/api/v1/establishment/{eid}/", headers=UA, timeout=20).json()
+        loc = j.get("location") or {}
+        cp = str(loc.get("zipcode") or "")
+        m = re.match(r"^(\d{2})\d{3}$", cp)
+        prov = PROVINCIAS.get(m.group(1), "") if m and (loc.get("country") or "").lower()[:3] in ("spa", "esp") else ""
+        return (loc.get("city") or "", prov, j.get("title") or "")
+    except Exception:
+        return "", "", ""
+
+
+def sedes_capturadas():
+    """Pares (estudio, sede) de las capturas más recientes."""
+    import glob
+    import pandas as pd
+    fs = sorted(glob.glob("data/plan/*.csv"))[-4:] + sorted(glob.glob("data/*.csv"))[-2:]
+    pares = set()
+    for f in fs:
+        try:
+            d = pd.read_csv(f, usecols=["plataforma", "estudio", "sede"], low_memory=False)
+        except Exception:
+            continue
+        for pl, e, sd in d.drop_duplicates().itertuples(index=False):
+            pares.add((str(pl), str(e), str(sd)))
+    return pares
+
+
 def main():
     entradas = []
     for fn in ("studios.json", "studios_cadenas.json"):
@@ -143,10 +183,30 @@ def main():
                 out[k] = {"ciudad": v.get("ciudad", ""), "provincia": v.get("provincia", ""), "cp": "", "fuente": v.get("fuente", "manual")}
     except FileNotFoundError:
         pass
+    # ubicación por sede, solo para estudios cuya agenda mezcla ciudades
+    sedes = {}
+    cache_bs = {}
+    for pl, est, sd in sedes_capturadas():
+        r = None
+        if pl == "bsport" and sd.isdigit():
+            if sd not in cache_bs:
+                cache_bs[sd] = bsport_dir(sd)
+            c, pv, _t = cache_bs[sd]
+            if pv:
+                r = {"ciudad": c, "provincia": pv, "fuente": "bsport"}
+        for pat_e, reglas in REGLAS_SEDE:
+            if re.search(pat_e, est):
+                for pat_s, c, pv in reglas:
+                    if re.search(pat_s, norm(sd)):
+                        r = {"ciudad": c, "provincia": pv, "fuente": "nombre de la sede"}
+                        break
+        if r:
+            sedes.setdefault(est, {})[sd] = r
+    out["_sedes"] = sedes
     json.dump(out, open("web/ubicaciones.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(cuenta, "de", len(out))
+    print(cuenta, "de", len(out) - 1, "| estudios con ubicación por sede:", len(sedes))
     zonas_ = {e["estudio"] for _, e in entradas if e.get("centro_beatcore")}
-    sin = [k for k, v in out.items() if not v["provincia"] and k not in zonas_]
+    sin = [k for k, v in out.items() if k != "_sedes" and not v["provincia"] and k not in zonas_]
     print("SIN UBICAR:", len(sin))
     for k in sin:
         print("  ", k)

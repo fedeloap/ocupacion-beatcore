@@ -594,10 +594,10 @@
   "fuente": ""
  },
  "REVIVE WELLNESS HUB": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede (14/10/2026)"
  },
  "TRIB3": {
   "ciudad": "Madrid",
@@ -612,70 +612,70 @@
   "fuente": "mapa: Barry's Madrid, Velázquez 47"
  },
  "DENOVO PILATES": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede (14/10/2026)"
  },
  "FLOW TRAINING flowtrainingenramadilla": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Sevilla",
+  "provincia": "Sevilla",
   "cp": "",
-  "fuente": ""
+  "fuente": "flowtraining.es/centros (San Bernardo, Calle Enramadilla 1)"
  },
  "FLOW TRAINING flowtraininggines": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Gines",
+  "provincia": "Sevilla",
   "cp": "",
-  "fuente": ""
+  "fuente": "flowtraining.es/centros"
  },
  "FLOW TRAINING flowtraininglosremedios": {
   "ciudad": "Sevilla",
   "provincia": "Sevilla",
   "cp": "",
-  "fuente": "nombre"
+  "fuente": "flowtraining.es/centros"
  },
  "FLOW TRAINING flowtrainingcaceres": {
   "ciudad": "Cáceres",
   "provincia": "Cáceres",
   "cp": "",
-  "fuente": "nombre"
+  "fuente": "flowtraining.es/centros"
  },
  "FS8 5720741": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "FS8 5720888": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "FS8 5721886": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "FS8 5733522": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "FS8 5739328": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "FS8 5740780": {
   "ciudad": "",
-  "provincia": "",
+  "provincia": "Fuera de España",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "GRATIA": {
   "ciudad": "",
@@ -1374,10 +1374,10 @@
   "fuente": "nombre"
  },
  "LA ROCA CLUB": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Benalmádena y Torremolinos",
+  "provincia": "Málaga",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede (14/10/2026)"
  },
  "LUDUS Ludus Box": {
   "ciudad": "Barcelona",
@@ -1408,5 +1408,245 @@
   "provincia": "Madrid",
   "cp": "",
   "fuente": "nombre"
+ },
+ "_sedes": {
+  "Soma Club Ruzafa": {
+   "21688": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   },
+   "21646": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "B3B WOMAN": {
+   "B3B GMC": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "nombre de la sede"
+   },
+   "B3B CHAMARTIN": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "nombre de la sede"
+   }
+  },
+  "PILAT3S": {
+   "PILAT3S Oeiras": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Palácio SottoMayor": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Estoril Riviera": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Braga": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Infante Santo": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S DOURO FOZ": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Quinta da Fonte": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Avenidas Novas": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S Sheffield": {
+    "ciudad": "Sheffield",
+    "provincia": "Fuera de España",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S SAGRADA FAMILIA": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "nombre de la sede"
+   }
+  },
+  "Vibe Pilates & Fitness": {
+   "15078": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "15076": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "15077": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Form Studio Pilates Club": {
+   "17287": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "Batelier Studio": {
+   "12490": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "12489": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "The Sanctuary": {
+   "16718": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   },
+   "16717": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "Victoria Studio": {
+   "18488": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "18537": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "18508": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Core Studio": {
+   "15706": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   },
+   "15688": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "Aero Studio Seijaku": {
+   "20985": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "SHE Barre Gràcia": {
+   "19209": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "AGMO": {
+   "21229": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "ARDE BARRE": {
+   "12375": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "Arde Barre La Moraleja": {
+    "ciudad": "Alcobendas",
+    "provincia": "Madrid",
+    "fuente": "nombre de la sede"
+   },
+   "20396": {
+    "ciudad": "Santander",
+    "provincia": "Cantabria",
+    "fuente": "bsport"
+   }
+  },
+  "Rohi by Kore Studio": {
+   "21719": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   },
+   "12503": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "Enjoy Gravity": {
+   "13239": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Musa House": {
+   "17057": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "KMT Studio": {
+   "11491": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Dark Studio": {
+   "16882": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "VERDE Studio": {
+   "19789": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  }
  }
 }

@@ -276,6 +276,11 @@ _ZONA_UBIC = {"Chamberí": ("Madrid", "Madrid"), "Salamanca": ("Madrid", "Madrid
 _UBIC = None
 
 
+def _ubic_sedes():
+    _ubicacion("", "Nacional")
+    return (_UBIC or {}).get("_sedes", {})
+
+
 def _ubicacion(estudio, zona):
     """(ciudad, provincia) de un centro: por su zona BeatCore o por web/ubicaciones.json (python ubicaciones.py)."""
     global _UBIC
@@ -384,7 +389,21 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             extras_u[(est_e, zona_e)] = lista_s
     unidades, cadenas = [], []
     nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
-    for (est, zona), g in u.groupby(["estudio", "zona"]):
+    # estudios cuya agenda mezcla ciudades: un centro por ciudad (web/ubicaciones.json -> _sedes)
+    sedes_ub = _ubic_sedes()
+    u["pv"] = ""
+    if sedes_ub:
+        for est_s, mp in sedes_ub.items():
+            m_ = u["estudio"] == est_s
+            if m_.any():
+                base = _ubicacion(est_s, "Nacional")
+                u.loc[m_, "pv"] = [
+                    "|".join((mp.get(str(sd)) or {}).get("ciudad", base[0]) and
+                             [(mp.get(str(sd)) or {}).get("ciudad", base[0]), (mp.get(str(sd)) or {}).get("provincia", base[1])]
+                             or [base[0], base[1]])
+                    for sd in u.loc[m_, "sede"]]
+    n_pv = u.groupby("estudio")["pv"].nunique()
+    for (est, zona, pv), g in u.groupby(["estudio", "zona", "pv"]):
         a = _agrega(g, ahora)
         if a:
             mn, nn = g["marca_n"].iloc[0], g["nombre_n"].iloc[0]
@@ -406,9 +425,12 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                         origen = "mediana de la cadena " + c_
                         break
             fact = facturacion(a, tar, origen)
-            ub = _ubicacion(est, zona)
+            ub = tuple(pv.split("|")) if pv else _ubicacion(est, zona)
+            nombre_u = g["nombre"].iloc[0]
+            if pv and n_pv.get(est, 1) > 1:
+                nombre_u += f" ({ub[0] or 'sin ubicar'})"
             unidades.append({"prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
-                             "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": g["nombre"].iloc[0], "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
+                             "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
         n = _norm(cad)
