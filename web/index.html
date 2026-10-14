@@ -178,6 +178,7 @@ const pct = v => v == null || isNaN(v) ? "–" : Math.round(v * 100) + "%";
 const num = (v, d = 1) => v == null || isNaN(v) ? "–" : v.toFixed(d).replace(".", ",");
 const eur = v => v == null ? "–" : v.toFixed(v % 1 ? 2 : 0).replace(".", ",") + " €";
 const eur0 = v => v == null || isNaN(v) ? "–" : new Intl.NumberFormat("es-ES", { useGrouping: "always", maximumFractionDigits: 0 }).format(v) + " €";
+const numC = v => v == null || isNaN(v) ? "–" : (Math.abs(v - Math.round(v)) < 0.05 ? String(Math.round(v)) : num(v));
 const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
 const median = a => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -840,7 +841,7 @@ function ofertaPorDia(items) {
     : items.map(it => fila(items.length === 1 ? "Total" : it.nombre, it.u, k, f)).join(""));
   const ocup = `<tr><th colspan="8" class="sub">Ocupación (reservas / plazas)</th></tr>` + items.map(it => fila(items.length === 1 ? "Media" : it.nombre, it.u, "ocup", pct)).join("");
   return `<div class="scroll"><table><thead><tr><th></th>${cab}</tr></thead><tbody>
-    ${bloque("Clases por día (media)", "clases", v => num(v))}${bloque("Plazas ofertadas por día (media)", "plazas", v => Math.round(v))}
+    ${bloque("Clases por día (media)", "clases", v => numC(v))}${bloque("Plazas ofertadas por día (media)", "plazas", v => Math.round(v))}
     ${ocup}</tbody></table></div>`;
 }
 function ofertaPeriodo(items, clave) {
@@ -865,7 +866,7 @@ function bloqueOferta(el, items, key) {
   return { html: sel + cuerpo + parcial, bind: () => $("#of-" + key).addEventListener("change", e => { el.dataset["of" + key] = e.target.value; render(); }) };
 }
 
-/* ---------- tabla de centros: clases, plazas ofertadas, ocupadas y % cubierto ---------- */
+/* ---------- tabla de centros: clases, plazas ofertadas, ocupadas y % reservado ---------- */
 function tablaCentros(el, key, unidades, tituloPrimera) {
   const per = el.dataset["per" + key] || "dia", met = el.dataset["met" + key] || "clases";
   const dset = new Set((el.dataset["dd" + key] || "0123456").split("").map(Number));
@@ -888,14 +889,13 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       pd.forEach((x, d) => { row["d" + d] = !dset.has(d) ? null : met === "clases" ? x.c : met === "plazas" ? x.p : met === "ocup" ? (x.pm > 0 ? x.r / x.pm : null) : (x.pm > 0 ? x.p * x.r / x.pm : null); });
       return row;
     });
-    const f = met === "ocup" ? pct : (v => v == null ? "–" : num(v, met === "clases" ? 1 : 0));
+    const f = met === "ocup" ? pct : (v => v == null ? "–" : met === "clases" ? numC(v) : num(v, 0));
     cols = [{ k: "cl", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-      { k: "pc", l: "% cubierto", n: 1, h: r => r.pc == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.pc * 60)}px"></span>${pct(r.pc)}` },
+      { k: "pc", l: "% reservado", n: 1, h: r => r.pc == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.pc * 60)}px"></span>${pct(r.pc)}` },
       { k: "fo", l: `Facturado hasta hoy (${etiquetaFact()})`, n: 1, f: eur0 },
       { k: "fe", l: `Estimado mes completo (${etiquetaFact()})`, n: 1, f: eur0 },
-      { k: "sa", l: "Clases sin aforo publicado", n: 1, h: r => r.sa == null ? "–" : `${r.sa} <small>de ${r.nc}</small>` },
       ...DIAS_L.map((d, i) => ({ k: "d" + i, l: d, n: 1, f }))];
   } else {
     const [t, pp] = [per[0], per.slice(2)], clave = t === "S" ? "semanas" : "meses";
@@ -905,12 +905,12 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
         oc: x ? x.reservas : null, pc: x ? x.ocup : null, dias: x ? x.dias : null };
     });
     cols = [{ k: "cl", l: "Clases", n: 1 }, { k: "pl", l: "Plazas ofertadas", n: 1 }, { k: "oc", l: "Plazas ocupadas", n: 1 },
-      { k: "pc", l: "% cubierto", n: 1, f: pct }, { k: "dias", l: "Días con datos", n: 1 }];
+      { k: "pc", l: "% reservado", n: 1, f: pct }, { k: "dias", l: "Días con datos", n: 1 }];
   }
   // resumen para que la media no engañe: mejor y peor centro
   const conPc = filas.filter(r => r.pc != null && r.nombre);
   const peor = conPc.length ? conPc.reduce((a, b) => b.pc < a.pc ? b : a) : null, mejor = conPc.length ? conPc.reduce((a, b) => b.pc > a.pc ? b : a) : null;
-  const resumen = conPc.length > 1 ? `<p class="meta">% cubierto: peor centro <b>${esc(peor.nombre)}</b> (${pct(peor.pc)}) · mejor <b>${esc(mejor.nombre)}</b> (${pct(mejor.pc)}) · ${conPc.length} centros con dato</p>` : "";
+  const resumen = conPc.length > 1 ? `<p class="meta">% reservado: peor centro <b>${esc(peor.nombre)}</b> (${pct(peor.pc)}) · mejor <b>${esc(mejor.nombre)}</b> (${pct(mejor.pc)}) · ${conPc.length} centros con dato</p>` : "";
   const id = "t-ce-" + key;
   if (!sortState[id]) sortState[id] = { k: "cl", dir: -1 };
   const horas = Array.from({ length: 25 }, (_, h) => h);
@@ -918,7 +918,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
   const sel = el.dataset["sel" + key] != null ? +el.dataset["sel" + key] : null;
   const html = `<div class="row"><label>Ver <select id="pe-${key}">${opt("dia", "Por día de la semana (media)")}
       ${semanas.map(p => opt("S:" + p, "Semana " + p)).join("")}${meses.map(p => opt("M:" + p, "Mes " + p)).join("")}</select></label>
-      ${per === "dia" ? `<label>En cada día <select id="me-${key}">${optM("clases", "Clases")}${optM("plazas", "Plazas ofertadas")}${optM("reservas", "Plazas ocupadas")}${optM("ocup", "% cubierto")}</select></label>` : ""}
+      ${per === "dia" ? `<label>En cada día <select id="me-${key}">${optM("clases", "Clases")}${optM("plazas", "Plazas ofertadas")}${optM("reservas", "Plazas ocupadas")}${optM("ocup", "% reservado")}</select></label>` : ""}
       <span class="meta">${filas.length} centros</span></div>
     ${per === "dia" ? `<div class="row"><span class="meta">Filtrar:</span>${dchips}
       <label>Desde <select id="h0-${key}">${horas.slice(0, 24).map(h => `<option value="${h}"${h === h0 ? " selected" : ""}>${String(h).padStart(2, "0")}:00</option>`).join("")}</select></label>
@@ -927,7 +927,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
     ${resumen}
     ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
       { k: "zona", l: "Zona" }, ...cols], filas, { limit: 400, click: per === "dia", sel: r => r._i === sel })}
-    <p class="nota">Pulsa un centro para ver sus clases por hora. "Por día de la semana" es una semana tipo: la suma de la media de cada día (solo días completos; los festivos sin clases no cuentan). Plazas ocupadas y % cubierto: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>
+    <p class="nota">Pulsa un centro para ver sus clases por hora. "Por día de la semana" es una semana tipo: la suma de la media de cada día (solo días completos; los festivos sin clases no cuentan). Plazas ocupadas y % reservado: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>
     <p class="nota">Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
     <div id="dc-${key}"></div>`;
   return { html, bind: () => {
@@ -958,7 +958,7 @@ function detalleCentro(box, u, dset, h0, h1) {
   const mapa = new Map(cel.map(c => [c.d * 100 + c.h, c]));
   let t = `<div class="card"><div class="cab-det"><h3 style="margin:0">${esc(u.estudio)} · clases y ocupación por hora</h3><button type="button" class="cerrar">✕ Cerrar</button></div>
     <ul class="detalle"><li><b>Número grande</b>: cuántas clases tiene el centro a esa hora en una semana tipo (1,0 = una clase cada semana; 0,5 = una cada dos semanas; 2,0 = dos clases a la vez).</li>
-    <li><b>Porcentaje pequeño</b>: % de plazas cubiertas con reservas en esas clases. Solo cuenta clases ya dadas; si no hay, no sale.</li>
+    <li><b>Porcentaje pequeño</b>: % de plazas reservadas en esas clases. Solo cuenta clases ya dadas; si no hay, no sale.</li>
     <li>Cuanto más verde, más llena.</li></ul>
     <div class="scroll hm"><table class="heat peq"><thead><tr><th></th>${DIAS_L.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
   for (let h = hmin; h <= hmax; h++) {
@@ -967,7 +967,7 @@ function detalleCentro(box, u, dset, h0, h1) {
       const c = mapa.get(d * 100 + h);
       if (!c) { t += `<td class="vacio"></td>`; continue; }
       const o = c.pm > 0 ? c.r / c.pm : null, n = c.c / nf(d);
-      t += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${num(n)} clases por semana tipo · ${o == null ? "sin reservas conocidas" : pct(o) + " cubierto"} · ${c.p} plazas">${num(n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
+      t += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(n)} clases por semana tipo · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"} · ${c.p} plazas">${numC(n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
     }
     t += "</tr>";
   }
@@ -975,18 +975,18 @@ function detalleCentro(box, u, dset, h0, h1) {
   const top = (u.top || []).map(x => { const pl = u.n_dias ? x.p / u.n_dias * 7 : null;
     return { clase: x.clase, c: x.c, sem: u.n_dias ? x.c / u.n_dias * 7 : null, pl, oc: pl != null && x.o != null ? pl * x.o : null, p: x.p, o: x.o }; });
   if (top.length) t += `<h3>Qué clases tiene</h3>${tabla("t-top-" + u.estudio.replace(/\W/g, ""), [{ k: "clase", l: "Clase" },
-    { k: "sem", l: "Veces / semana (clases)", n: 1, f: v => v == null ? "–" : num(v) },
+    { k: "sem", l: "Veces / semana (clases)", n: 1, f: v => numC(v) },
     { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
     { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "o", l: "% cubierto", n: 1, f: pct }], top, { limit: 15 })}
-    <p class="nota">Veces: cuántas clases de ese tipo hay en una semana. Plazas ofertadas: las plazas de esas clases. Plazas ocupadas: las reservadas, según el % cubierto de las clases ya dadas.</p>`;
+    { k: "o", l: "% reservado", n: 1, f: pct }], top, { limit: 15 })}
+    <p class="nota">Veces: cuántas clases de ese tipo hay en una semana. Plazas ofertadas: las plazas de esas clases. Plazas ocupadas: las reservadas, según el % reservado de las clases ya dadas.</p>`;
   if ((u.extras || []).length) {
     const ex = u.extras.map(x => ({ s: x.s, sem: x.sem, pl: x.pl, pp: x.pp, o: x.o, m: x.m }));
     t += `<h3>Otros servicios (no cuentan en clases, plazas, medias ni facturación)</h3>${tabla("t-ex-" + u.estudio.replace(/\W/g, ""), [
       { k: "s", l: "Servicio" }, { k: "sem", l: "Sesiones / semana", n: 1, f: v => v == null ? "–" : num(v) },
       { k: "pp", l: "Plazas por sesión", n: 1, f: v => v == null ? "–" : num(v) },
       { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-      { k: "o", l: "% cubierto", n: 1, f: pct }, { k: "m", l: "Sesiones medidas", n: 1 }], ex, { limit: 10 })}`;
+      { k: "o", l: "% reservado", n: 1, f: pct }, { k: "m", l: "Sesiones medidas", n: 1 }], ex, { limit: 10 })}`;
   }
   box.innerHTML = t + "</div>";
 }
@@ -999,7 +999,7 @@ function ofertaTab() {
     .filter(u => !F.centro || u.zona === F.centro);
   const b = tablaCentros(el, "of", us, "");
   el.innerHTML = `<section><h2>Oferta de clases y ocupación de la competencia</h2>
-    <p class="meta">Cada centro de la competencia de BeatCore (y los propios, como referencia): clases, plazas ofertadas, plazas ocupadas y % cubierto, por día de la semana, semana o mes.</p>
+    <p class="meta">Cada centro de la competencia de BeatCore (y los propios, como referencia): clases, plazas ofertadas, plazas ocupadas y % reservado, por día de la semana, semana o mes.</p>
     ${b.html}</section>`;
   b.bind();
 }
