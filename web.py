@@ -119,6 +119,20 @@ def excluidos():
 EXTRAS = []       # sesiones de servicios que no son clases (recovery, sauna, open gym): se miden aparte
 
 
+def fuera_de_espana(df):
+    """Centros (o sedes) fuera de España: no interesan y no entran en ningún dato de la web (web/ubicaciones.json)."""
+    _ubicacion("", "Nacional")
+    ub = _UBIC or {}
+    m = df["estudio"].isin({e for e, v in ub.items() if e != "_sedes" and v.get("provincia") == "Fuera de España"})
+    if "sede" in df.columns:
+        sd = df["sede"].astype(str)
+        for e, mp in ub.get("_sedes", {}).items():
+            fuera = {k for k, v in mp.items() if v.get("provincia") == "Fuera de España"}
+            if fuera:
+                m = m | ((df["estudio"] == e) & sd.isin(fuera))
+    return m
+
+
 def es_extra(df):
     """Sesiones que no cuentan como clase en medias, totales ni facturación (web/servicios_extra.json)."""
     try:
@@ -141,6 +155,7 @@ def cargar_snapshots():
     s["clase_id"] = s["clase_id"].astype(str)
     s = s.drop_duplicates(KEY + ["captured_at"])
     s["inicio_local"] = pd.to_datetime(s["inicio_local"])
+    s = s[~fuera_de_espana(s)]
     m = es_extra(s)
     EXTRAS.clear()
     EXTRAS.append(s[m])
@@ -681,6 +696,7 @@ def main():
     raw = analisis.cargar()
     raw = raw[~raw["estudio"].isin(excluidos())]
     raw = raw[~es_extra(raw)]
+    raw = raw[~fuera_de_espana(raw)]
     # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
     sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
     nac = raw[sin_centro].copy()

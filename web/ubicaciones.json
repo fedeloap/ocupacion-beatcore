@@ -575,11 +575,23 @@
   "cp": "",
   "fuente": ""
  },
- "B3B WOMAN": {
-  "ciudad": "",
-  "provincia": "",
+ "B3B WOMAN Eixample": {
+  "ciudad": "Barcelona",
+  "provincia": "Barcelona",
   "cp": "",
-  "fuente": ""
+  "fuente": "nombre"
+ },
+ "B3B WOMAN Chamartín": {
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "cp": "",
+  "fuente": "nombre"
+ },
+ "B3B WOMAN GMC": {
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "cp": "",
+  "fuente": "nombre"
  },
  "EDAN": {
   "ciudad": "Barcelona",
@@ -587,11 +599,17 @@
   "cp": "",
   "fuente": "Fede"
  },
- "PILAT3S": {
-  "ciudad": "",
-  "provincia": "",
+ "PILAT3S Poblenou": {
+  "ciudad": "Barcelona",
+  "provincia": "Barcelona",
   "cp": "",
-  "fuente": ""
+  "fuente": "nombre"
+ },
+ "PILAT3S Sant Cugat": {
+  "ciudad": "Sant Cugat del Vallès",
+  "provincia": "Barcelona",
+  "cp": "",
+  "fuente": "nombre"
  },
  "REVIVE WELLNESS HUB": {
   "ciudad": "Madrid",
@@ -599,11 +617,41 @@
   "cp": "",
   "fuente": "Fede (14/10/2026)"
  },
- "TRIB3": {
+ "TRIB3 Palma": {
+  "ciudad": "Palma",
+  "provincia": "Illes Balears",
+  "cp": "",
+  "fuente": "nombre"
+ },
+ "TRIB3 Esplugues": {
+  "ciudad": "Esplugues de Llobregat",
+  "provincia": "Barcelona",
+  "cp": "",
+  "fuente": "nombre"
+ },
+ "TRIB3 Amigó": {
+  "ciudad": "Barcelona",
+  "provincia": "Barcelona",
+  "cp": "",
+  "fuente": "nombre"
+ },
+ "PILAT3S Chamberí": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "",
-  "fuente": "mapa: TRIB3 Chamberí"
+  "fuente": "nombre"
+ },
+ "PILAT3S Cuzco": {
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "cp": "",
+  "fuente": "nombre"
+ },
+ "PILAT3S Sagrada Familia": {
+  "ciudad": "Barcelona",
+  "provincia": "Barcelona",
+  "cp": "",
+  "fuente": "nombre"
  },
  "BARRY´S BOOTCAMP": {
   "ciudad": "Madrid",
@@ -641,47 +689,11 @@
   "cp": "",
   "fuente": "flowtraining.es/centros"
  },
- "FS8 5720741": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
- "FS8 5720888": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
- "FS8 5721886": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
- "FS8 5733522": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
- "FS8 5739328": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
- "FS8 5740780": {
-  "ciudad": "",
-  "provincia": "Fuera de España",
-  "cp": "",
-  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
- },
  "GRATIA": {
-  "ciudad": "",
-  "provincia": "",
+  "ciudad": "Barcelona",
+  "provincia": "Barcelona",
   "cp": "",
-  "fuente": ""
+  "fuente": "Fede (14/10/2026): Gratia tiene 2 centros en Barcelona"
  },
  "REFORM U rfufitnessclub": {
   "ciudad": "Barcelona",
@@ -1409,20 +1421,60 @@
   "cp": "",
   "fuente": "nombre"
  },
+ "TRIB3": {
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "cp": "",
+  "fuente": "mapa: TRIB3 Chamberí"
+ },
+ "FS8 5720741": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
+ "FS8 5720888": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
+ "FS8 5721886": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
+ "FS8 5733522": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
+ "FS8 5739328": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
+ "FS8 5740780": {
+  "ciudad": "",
+  "provincia": "Fuera de España",
+  "cp": "",
+  "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
+ },
  "_sedes": {
-  "Soma Club Ruzafa": {
-   "21688": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   },
-   "21646": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   }
-  },
   "B3B WOMAN": {
+   "B3B Power · Strength · Barre": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "nombre de la sede"
+   },
+   "B3B Reformer / Barreformer": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "nombre de la sede"
+   },
    "B3B GMC": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
@@ -1434,23 +1486,35 @@
     "fuente": "nombre de la sede"
    }
   },
-  "PILAT3S": {
-   "PILAT3S Oeiras": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
+  "Rohi by Kore Studio": {
+   "12503": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
    },
+   "21719": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "PILAT3S": {
    "PILAT3S Palácio SottoMayor": {
     "ciudad": "Portugal",
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    },
-   "PILAT3S Estoril Riviera": {
+   "PILAT3S SAGRADA FAMILIA": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "nombre de la sede"
+   },
+   "PILAT3S DOURO FOZ": {
     "ciudad": "Portugal",
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    },
-   "PILAT3S Braga": {
+   "PILAT3S Quinta da Fonte": {
     "ciudad": "Portugal",
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
@@ -1460,12 +1524,12 @@
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    },
-   "PILAT3S DOURO FOZ": {
+   "PILAT3S Braga": {
     "ciudad": "Portugal",
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    },
-   "PILAT3S Quinta da Fonte": {
+   "PILAT3S Estoril Riviera": {
     "ciudad": "Portugal",
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
@@ -1480,33 +1544,40 @@
     "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    },
-   "PILAT3S SAGRADA FAMILIA": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
+   "PILAT3S Oeiras": {
+    "ciudad": "Portugal",
+    "provincia": "Fuera de España",
     "fuente": "nombre de la sede"
    }
   },
-  "Vibe Pilates & Fitness": {
-   "15078": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "15076": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "15077": {
+  "Dark Studio": {
+   "16882": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
     "fuente": "bsport"
    }
   },
-  "Form Studio Pilates Club": {
-   "17287": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
+  "Victoria Studio": {
+   "18508": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "18537": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "18488": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Aero Studio Seijaku": {
+   "20985": {
+    "ciudad": "València",
+    "provincia": "Valencia",
     "fuente": "bsport"
    }
   },
@@ -1517,35 +1588,6 @@
     "fuente": "bsport"
    },
    "12489": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   }
-  },
-  "The Sanctuary": {
-   "16718": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   },
-   "16717": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   }
-  },
-  "Victoria Studio": {
-   "18488": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "18537": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "18508": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
     "fuente": "bsport"
@@ -1563,17 +1605,27 @@
     "fuente": "bsport"
    }
   },
-  "Aero Studio Seijaku": {
-   "20985": {
-    "ciudad": "València",
-    "provincia": "Valencia",
+  "Vibe Pilates & Fitness": {
+   "15077": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "15076": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "15078": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
     "fuente": "bsport"
    }
   },
-  "SHE Barre Gràcia": {
-   "19209": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
+  "Enjoy Gravity": {
+   "13239": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
     "fuente": "bsport"
    }
   },
@@ -1581,6 +1633,25 @@
    "21229": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
+    "fuente": "bsport"
+   }
+  },
+  "Soma Club Ruzafa": {
+   "21646": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   },
+   "21688": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "VERDE Studio": {
+   "19789": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
     "fuente": "bsport"
    }
   },
@@ -1601,27 +1672,20 @@
     "fuente": "bsport"
    }
   },
-  "Rohi by Kore Studio": {
-   "21719": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
-    "fuente": "bsport"
-   },
-   "12503": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
-    "fuente": "bsport"
-   }
-  },
-  "Enjoy Gravity": {
-   "13239": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   }
-  },
   "Musa House": {
    "17057": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "The Sanctuary": {
+   "16718": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   },
+   "16717": {
     "ciudad": "València",
     "provincia": "Valencia",
     "fuente": "bsport"
@@ -1634,15 +1698,15 @@
     "fuente": "bsport"
    }
   },
-  "Dark Studio": {
-   "16882": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
+  "SHE Barre Gràcia": {
+   "19209": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
     "fuente": "bsport"
    }
   },
-  "VERDE Studio": {
-   "19789": {
+  "Form Studio Pilates Club": {
+   "17287": {
     "ciudad": "Barcelona",
     "provincia": "Barcelona",
     "fuente": "bsport"

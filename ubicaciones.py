@@ -69,6 +69,9 @@ LUGARES = {
     "sarria": ("Barcelona", "Barcelona"), "born": ("Barcelona", "Barcelona"), "universitat": ("Barcelona", "Barcelona"),
     "aribau": ("Barcelona", "Barcelona"), "nou barris": ("Barcelona", "Barcelona"), "pedralbes": ("Barcelona", "Barcelona"),
     "bonanova": ("Barcelona", "Barcelona"), "diagonal": ("Barcelona", "Barcelona"), "provenza": ("Barcelona", "Barcelona"),
+    "sant cugat": ("Sant Cugat del Vallès", "Barcelona"), "esplugues": ("Esplugues de Llobregat", "Barcelona"),
+    "amigo": ("Barcelona", "Barcelona"), "cuzco": ("Madrid", "Madrid"), "chamartin": ("Madrid", "Madrid"), "gmc": ("Madrid", "Madrid"),
+    "comte borrell": ("Barcelona", "Barcelona"),
     "bcn": ("Barcelona", "Barcelona"), "clot": ("Barcelona", "Barcelona"), "santgervasi": ("Barcelona", "Barcelona"),
     "mallorca": ("Barcelona", "Barcelona"),   # calle Mallorca (Fabrik): en Barcelona
     "masnou": ("El Masnou", "Barcelona"), "mataro": ("Mataró", "Barcelona"), "mollet": ("Mollet del Vallès", "Barcelona"),
@@ -117,7 +120,9 @@ REGLAS_SEDE = [
         (r"braga|douro|foz|estoril|oeiras|infante santo|avenidas novas|sottomayor|quinta da fonte", "Portugal", "Fuera de España"),
         (r"sheffield", "Sheffield", "Fuera de España"),
         (r"sagrada familia", "Barcelona", "Barcelona")]),
-    (r"^B3B WOMAN$", [(r"chamartin|gmc", "Madrid", "Madrid")]),
+    (r"^B3B WOMAN$", [(r"chamartin|gmc", "Madrid", "Madrid"),
+                      # B3B tiene 4 en Madrid (Chamartín, GMC, Ayala y Retiro) y 1 en Barcelona: el resto de sedes es Barcelona
+                      (r".", "Barcelona", "Barcelona")]),
 ]
 
 
