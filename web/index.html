@@ -112,7 +112,8 @@ button.cerrar { cursor: pointer; font-weight: 600; white-space: nowrap; }
 .kpi.a b { color: var(--accent); } .kpi.b b { color: var(--comp); }
 .scroll { overflow: auto; max-height: 84vh; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 13.5px; }
-th, td { padding: 5px 7px; text-align: left; border-bottom: 1px solid var(--line); white-space: normal; overflow-wrap: anywhere; vertical-align: middle; }
+th, td { padding: 5px 6px; text-align: left; border-bottom: 1px solid var(--line); white-space: normal; overflow-wrap: normal; word-break: normal; hyphens: none; vertical-align: middle; }
+td a { display: inline-block; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
 td.n { white-space: nowrap; overflow-wrap: normal; }
 th.n { max-width: 120px; }
 thead th { font-size: 11px; line-height: 1.2; vertical-align: bottom; text-transform: uppercase; letter-spacing: .02em; color: var(--muted); font-weight: 600; background: var(--surface); position: sticky; top: 0; z-index: 1; }
@@ -630,7 +631,7 @@ function softwareDe(c) {
 function ocupPublica(c) {
   const sw = softwareDe(c).join(" ").toLowerCase();
   if (CAPTURABLES.some(x => sw.includes(x))) return { k: 2, t: "Sí" };
-  if (FUERA_REGLA.some(x => sw.includes(x))) return { k: 1, t: "No (regla)" };
+  if (FUERA_REGLA.some(x => sw.includes(x))) return { k: 1, t: "No" };
   return { k: 0, t: sw ? "No" : "–" };
 }
 function cadenas() {
@@ -666,23 +667,21 @@ function cadenas() {
   const cols = [
     { k: "_x", l: "", h: r => r.n_cen ? `<button type="button" class="vc exp" data-x="${r._i}">${exp.has(r._i) ? "▾" : "▸"} ${r.n_cen}</button>` : "" },
     { k: "cadena", l: "Cadena", h: r => `<b>${esc(r.cadena)}</b>` },
-    { k: "web", l: "Web", h: r => r.web ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a>` : "–" },
-    { k: "centros", l: "Centros (web)", n: 1, f: v => v == null ? "–" : v },
-    { k: "sw", l: "Software de reservas", f: v => v || "–" },
+    { k: "web", l: "Web", h: r => r.web ? `<a href="${esc(r.web)}" title="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a>` : "–" },
+    { k: "centros", l: "Centros web", n: 1, f: v => v == null ? "–" : v },
+    { k: "sw", l: "Software", f: v => v || "–" },
     { k: "op", l: "Ocupación pública", h: r => r.opk === 2 ? "<b>Sí</b>" : esc(r.op) },
-    { k: "cl_sem", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "pl_sem", l: "Plazas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "cl_cen", l: "Clases / semana por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "pl_cen", l: "Plazas / semana por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
-    { k: "clases", l: "Clases medidas", n: 1 },
-    { k: "f_obs", l: hayRango() ? "Facturado en el periodo" : `Facturado hasta hoy (${etiquetaFact()})`, n: 1, f: eur0 },
-    ...(hayRango() ? [] : [{ k: "f_est", l: `Estimado mes completo (${etiquetaFact()})`, n: 1, f: eur0 }]),
+    { k: "cl_sem", l: "Clases semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "pl_sem", l: "Plazas semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "cl_cen", l: "Clases por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "pl_cen", l: "Plazas por centro", n: 1, f: v => v == null ? "–" : Math.round(v) },
+    { k: "f_obs", l: hayRango() ? "Facturado periodo" : `Facturado hoy (${etiquetaFact()})`, n: 1, f: eur0 },
+    ...(hayRango() ? [] : [{ k: "f_est", l: `Estimado mes (${etiquetaFact()})`, n: 1, f: eur0 }]),
     { k: "ocup", l: "Ocupación media", n: 1, f: pct },
     { k: "min_pc", l: "Peor centro", n: 1, f: pct }, { k: "max_pc", l: "Mejor centro", n: 1, f: pct },
     { k: "llenas", l: "% llenas", n: 1, f: pct },
-    { k: "plazas", l: "Plazas/clase", n: 1, f: v => num(v) },
     { k: "suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro", l: "4/mes", n: 1, f: eur }, { k: "ocho", l: "8/mes", n: 1, f: eur }, { k: "ilim", l: "Ilimitada", n: 1, f: eur }];
-  if (!sortState["t-cad"]) sortState["t-cad"] = { k: "clases", dir: -1 };
+  if (!sortState["t-cad"]) sortState["t-cad"] = { k: "cl_sem", dir: -1 };
   const sel = el.dataset.sel != null ? +el.dataset.sel : null;
   el.innerHTML = `<section id="cad-det"></section>
     <section><h2>Cadenas a nivel nacional</h2>
@@ -1165,7 +1164,7 @@ function factMesActual(u) {
 }
 function etiquetaFact() {
   const p = OF && OF.ahora ? OF.ahora.slice(0, 7) : "";
-  return p ? MES_N[+p.slice(5) - 1] : "mes";
+  return p ? MES_N[+p.slice(5) - 1].slice(0, 3) + "." : "mes";
 }
 function resumenOferta(u) {
   if (!u) return null;
