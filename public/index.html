@@ -85,6 +85,14 @@ table.heat.peq th:first-child { width: 40px; text-align: left; }
 table.heat.peq td { width: 46px; height: 36px; padding: 2px 3px; font-size: 12px; line-height: 1.15; font-weight: 600; text-align: center; }
 table.heat.peq td small { font-weight: 400; font-size: 10px; opacity: .85; }
 table.heat.peq td.vacio { background: transparent; }
+.heatgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; margin-top: 10px; }
+.heatgrid > div { min-width: 0; }
+.heatgrid h4 { margin: 0 0 4px; font-size: 13px; }
+.heatgrid .hm { max-width: none; }
+table.heat.peq.mini th { width: 36px; font-size: 10px; padding: 2px 2px; }
+table.heat.peq.mini th:first-child { width: 34px; }
+table.heat.peq.mini td { width: 36px; height: 26px; padding: 1px 2px; font-size: 11px; }
+table.heat.peq.mini td small { font-size: 9px; }
 tr.subfila > td { background: var(--bg); padding: 10px 12px; white-space: normal; }
 .subpanel { display: grid; gap: 10px; min-width: 0; }
 button.exp { min-width: 44px; }
@@ -763,6 +771,7 @@ function detalleCadena(c, bc) {
         <li><b>Ocupación</b>: reservas entre plazas, solo de clases ya dadas. "–" es que aún no hay ningún día de esa semana con clases dadas y reservas conocidas.</li>
         <li>Los centros sin aforo publicado cuentan en clases, no en plazas.</li>
       </ul></div>` : ""}
+    ${mapasCadena(unidCad, c.cadena)}
     ${centrosOf ? `<h3>Cada centro de ${esc(c.cadena)}: clases, plazas y ocupación</h3>${centrosOf.html}` : ""}
     ${cent.length ? `<h3>Centros con clases medidas</h3>${tabla("t-cad-c", colsC, cent, { limit: 40 })}` : ""}
     ${c.clases_top.length ? `<h3>Qué clases tiene (las más repetidas)</h3>${tabla("t-cad-t", colsT, c.clases_top, { limit: 15 })}` : ""}
@@ -1084,6 +1093,60 @@ function alertas() {
 }
 
 function lugar(u) { return u.ciu ? (u.prov && u.prov !== u.ciu ? `${u.ciu} (${u.prov})` : u.ciu) : (u.prov || "Sin ubicar"); }
+
+
+/* ---------- mapas de calor de cadenas: cuándo se llena cada centro y la cadena entera ---------- */
+function calorDe(us) {
+  // suma de los centros: clases por semana tipo y % reservado, por día de la semana y hora
+  const m = new Map();
+  let r = 0, pm = 0;
+  us.forEach(u => {
+    const nf = d => (u.dias[d] && u.dias[d].fechas) || 1;
+    (u.celdas || []).forEach(c => {
+      const k = c.d * 100 + c.h;
+      const x = m.get(k) || { d: c.d, h: c.h, n: 0, r: 0, pm: 0 };
+      x.n += c.c / nf(c.d); x.r += c.r; x.pm += c.pm; m.set(k, x);
+      r += c.r; pm += c.pm;
+    });
+  });
+  return { celdas: m, ocup: pm > 0 ? r / pm : null, clases: [...m.values()].reduce((a, x) => a + x.n, 0) };
+}
+function calorTabla(cal, mini, hRango) {
+  const cel = [...cal.celdas.values()];
+  if (!cel.length) return '<p class="vacio-msg">Sin clases en este periodo.</p>';
+  const hmin = hRango ? hRango[0] : Math.min(...cel.map(c => c.h)), hmax = hRango ? hRango[1] : Math.max(...cel.map(c => c.h));
+  let h = `<div class="scroll hm"><table class="heat peq${mini ? " mini" : ""}"><thead><tr><th></th>${DIAS_L.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
+  for (let hr = hmin; hr <= hmax; hr++) {
+    h += `<tr><th>${String(hr).padStart(2, "0")}h</th>`;
+    for (let d = 0; d < 7; d++) {
+      const c = cal.celdas.get(d * 100 + hr);
+      if (!c) { h += '<td class="vacio"></td>'; continue; }
+      const o = c.pm > 0 ? c.r / c.pm : null;
+      h += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(c.n)} clases por semana tipo · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"}">${numC(c.n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
+    }
+    h += "</tr>";
+  }
+  return h + "</tbody></table></div>";
+}
+function mapasCadena(us, nombre) {
+  if (!us.length) return "";
+  const todo = calorDe(us);
+  const todasC = [...todo.celdas.values()];
+  if (!todasC.length) return "";
+  const hr = [Math.min(...todasC.map(c => c.h)), Math.max(...todasC.map(c => c.h))];
+  const por = us.map(u => ({ u, cal: calorDe([u]) })).sort((a, b) => b.cal.clases - a.cal.clases);
+  return `<h3>Mapa de calor de ${esc(nombre)}: cuándo se llena</h3>
+    <div class="guia"><ul>
+      <li><b>Número grande</b>: clases por semana tipo a esa hora, sumando los ${us.length} centros.</li>
+      <li><b>Porcentaje pequeño</b>: % reservado de esas clases (solo clases ya dadas). Más verde, más lleno.</li>
+      <li>Vacío: a esa hora no hay clases. Sin porcentaje: aún no hay reservas medidas.</li>
+    </ul></div>
+    <p class="meta">${esc(periodoTxt())} · % reservado medio: <b>${pct(todo.ocup)}</b></p>
+    ${calorTabla(todo, false)}
+    ${us.length > 1 ? `<details class="mapas-centros"><summary><b>Mapa de calor de cada centro (${us.length})</b></summary>
+      <div class="heatgrid">${por.map(({ u, cal }) => `<div><h4>${esc(u.estudio)} <small>· ${esc(lugar(u))} · ${pct(cal.ocup)} reservado</small></h4>${calorTabla(cal, true, hr)}</div>`).join("")}</div>
+    </details>` : ""}`;
+}
 
 /* ---------- oferta de clases (por día de la semana, semana y mes) ---------- */
 const DIAS_L = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
