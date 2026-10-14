@@ -311,22 +311,45 @@ def _ubicacion(estudio, zona):
 
 
 def celdas_fecha(g, ahora, idx, dias_max=120):
-    """Clases, plazas y reservas por (fecha, hora) de un centro, en columnas, para poder calcular cualquier rango de
-    fechas en el navegador. 'idx' es el diccionario compartido fecha -> posición (oferta.json: fechas)."""
-    d = g[g["fecha"] >= g["fecha"].max() - pd.Timedelta(days=dias_max)].copy()
-    if d.empty:
-        return {"fd": [], "fh": [], "fc": [], "fp": [], "fr": [], "fm": [], "fx": []}
-    d["hora"] = d["inicio_local"].dt.hour
+    """Datos de un centro en columnas para calcular cualquier rango de fechas en el navegador.
+    Diarios (dd, dc, dp, dr, dm, dx): clases, plazas, reservas y plazas medidas por fecha, de TODO el histórico.
+    Por hora (fd, fh, fc, ...): solo los últimos 'dias_max' días (mapa de calor). 'idx': fecha -> posición (oferta.json: fechas)."""
+    vacio = {k: [] for k in ("dd", "dc", "dp", "dr", "dm", "dx", "fd", "fh", "fc", "fp", "fr", "fm", "fx")}
+    if g.empty:
+        return vacio
+    d = g.copy()
     dada = d["inicio_local"] <= ahora
-    pl = d["plazas"].fillna(0)
     ok = dada & d["reservas"].notna() & (d["plazas"] > 0)
-    d["_p"], d["_r"] = pl, d["reservas"].where(ok, 0)
+    d["_p"], d["_r"] = d["plazas"].fillna(0), d["reservas"].where(ok, 0)
     d["_m"] = d["plazas"].where(ok, 0)
     d["_x"] = d["reservas"].where(dada & d["reservas"].notna(), 0)
-    gg = d.groupby(["fecha", "hora"]).agg(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum")).reset_index()
-    fd = [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]]
-    return {"fd": fd, "fh": [int(h) for h in gg["hora"]], "fc": [int(v) for v in gg["c"]], "fp": [int(round(v)) for v in gg["p"]],
-            "fr": [int(round(v)) for v in gg["r"]], "fm": [int(round(v)) for v in gg["m"]], "fx": [int(round(v)) for v in gg["x"]]}
+    agg = dict(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"))
+    dia = d.groupby("fecha").agg(**agg).reset_index()
+    out = {"dd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in dia["fecha"]],
+           "dc": [int(v) for v in dia["c"]], "dp": [int(round(v)) for v in dia["p"]], "dr": [int(round(v)) for v in dia["r"]],
+           "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]]}
+    h = d[d["fecha"] >= d["fecha"].max() - pd.Timedelta(days=dias_max)].copy()
+    h["hora"] = h["inicio_local"].dt.hour
+    gg = h.groupby(["fecha", "hora"]).agg(**agg).reset_index()
+    out.update({"fd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]], "fh": [int(v) for v in gg["hora"]],
+                "fc": [int(v) for v in gg["c"]], "fp": [int(round(v)) for v in gg["p"]], "fr": [int(round(v)) for v in gg["r"]],
+                "fm": [int(round(v)) for v in gg["m"]], "fx": [int(round(v)) for v in gg["x"]]})
+    return out
+
+
+def clases_fecha(g, ahora, idx, nom_idx):
+    """Por fecha y nombre de clase: sesiones, plazas, reservas y plazas medidas (para 'Qué clases tiene' con rango de fechas)."""
+    if g.empty:
+        return {"kd": [], "kn": [], "kc": [], "kp": [], "kr": [], "km": []}
+    d = g.copy()
+    dada = d["inicio_local"] <= ahora
+    ok = dada & d["reservas"].notna() & (d["plazas"] > 0)
+    d["_p"], d["_r"], d["_m"] = d["plazas"].fillna(0), d["reservas"].where(ok, 0), d["plazas"].where(ok, 0)
+    gg = d.groupby(["fecha", "clase"]).agg(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum")).reset_index()
+    return {"kd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]],
+            "kn": [nom_idx.setdefault(str(n), len(nom_idx)) for n in gg["clase"]],
+            "kc": [int(v) for v in gg["c"]], "kp": [int(round(v)) for v in gg["p"]],
+            "kr": [int(round(v)) for v in gg["r"]], "km": [int(round(v)) for v in gg["m"]]}
 
 
 def facturacion_meses(g, a, ahora, ps):
@@ -424,7 +447,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     unidades, cadenas = [], []
     nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
     # estudios cuya agenda mezcla ciudades: un centro por ciudad (web/ubicaciones.json -> _sedes)
-    fechas_idx = {}
+    fechas_idx, nombres_idx, clases_out = {}, {}, {}
     sedes_ub = _ubic_sedes()
     u["pv"] = ""
     if sedes_ub:
@@ -464,7 +487,9 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             nombre_u = g["nombre"].iloc[0]
             if pv and n_pv.get(est, 1) > 1:
                 nombre_u += f" ({ub[0] or 'sin ubicar'})"
-            unidades.append({**celdas_fecha(g, ahora, fechas_idx), "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
+            ukey = f"{est}|{zona}|{pv}"
+            clases_out[ukey] = clases_fecha(g, ahora, fechas_idx, nombres_idx)
+            unidades.append({**celdas_fecha(g, ahora, fechas_idx), "ukey": ukey, "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
@@ -483,7 +508,9 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             cadenas.append({"cadena": cad, "estudios": int(m["estudio"].nunique()), "zonas": sorted(set(m["zona"])),
                             "parcial": bool(m["parcial"].all()), "fact": fact, **a})
     fechas = [f for f, _ in sorted(fechas_idx.items(), key=lambda kv: kv[1])]
-    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "fechas": fechas, "unidades": unidades, "cadenas": cadenas}
+    nombres = [n for n, _ in sorted(nombres_idx.items(), key=lambda kv: kv[1])]
+    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "fechas": fechas, "unidades": unidades, "cadenas": cadenas,
+            "_clases": {"fechas": fechas, "nombres": nombres, "u": clases_out}}
 
 
 def clave_clase(d):
@@ -811,8 +838,10 @@ def main():
                   for f in cadenas["filas"]}
     pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
     oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
+    oferta_clases = oferta.pop("_clases")
     tam = {n: escribir(n, o) for n, o in (("clases.json", clases), ("estudios.json", estudios), ("meta.json", meta),
-                                          ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta))}
+                                          ("proximas.json", prox), ("cadenas.json", cadenas), ("oferta.json", oferta),
+                                          ("oferta_clases.json", oferta_clases))}
     for f in ("index.html", "robots.txt"):
         if os.path.exists(os.path.join("web", f)):
             shutil.copy(os.path.join("web", f), os.path.join(OUT, f))

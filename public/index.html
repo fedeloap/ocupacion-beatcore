@@ -846,23 +846,28 @@ function periodoTxt() {
 }
 function vistaRango(u) {
   // el mismo centro, pero calculado solo con los días del rango de fechas
-  if (!hayRango() || !u.fd || !OF.fechas) return u;
+  if (!hayRango() || !u.dd || !OF.fechas) return u;
   const a = F.f0 || "", b = F.f1 || "";
   const fechasDow = Array.from({ length: 7 }, () => new Set());
   const dia = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, m: 0 }));
-  const celdas = new Map();
   let R = 0, M = 0, C = 0, X = 0;
   const todas = new Set();
-  for (let i = 0; i < u.fd.length; i++) {
-    const f = OF.fechas[u.fd[i]];
+  for (let i = 0; i < u.dd.length; i++) {
+    const f = OF.fechas[u.dd[i]];
     if ((a && f < a) || (b && f > b)) continue;
     const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
     fechasDow[dow].add(f); todas.add(f);
-    const d = dia[dow]; d.c += u.fc[i]; d.p += u.fp[i]; d.r += u.fr[i]; d.m += u.fm[i];
+    const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
+    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i];
+  }
+  const celdas = new Map();
+  for (let i = 0; i < (u.fd || []).length; i++) {
+    const f = OF.fechas[u.fd[i]];
+    if ((a && f < a) || (b && f > b)) continue;
+    const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
     const k = dow * 100 + u.fh[i];
     const c = celdas.get(k) || { d: dow, h: u.fh[i], c: 0, p: 0, r: 0, pm: 0 };
     c.c += u.fc[i]; c.p += u.fp[i]; c.r += u.fr[i]; c.pm += u.fm[i]; celdas.set(k, c);
-    R += u.fr[i]; M += u.fm[i]; C += u.fc[i]; X += u.fx[i];
   }
   const dias = dia.map((d, i) => {
     const nf = fechasDow[i].size;
@@ -872,6 +877,30 @@ function vistaRango(u) {
   const ps = u.fact ? u.fact.precio_ses : null;
   return { ...u, dias, celdas: [...celdas.values()], ocup: M > 0 ? R / M : null, reservas: R, plazas_med: M, n_clases: C, n_dias: todas.size,
     _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X };
+}
+/* "Qué clases tiene" por fechas: oferta_clases.json se carga solo al abrir el detalle de un centro */
+let OFC = null, OFC_PROM = null;
+function cargarOFC(cuando) {
+  if (OFC) return true;
+  if (!OFC_PROM) OFC_PROM = fetch("data/oferta_clases.json").then(r => r.ok ? r.json() : null).then(j => { OFC = j; if (cuando) cuando(); }).catch(() => {});
+  return false;
+}
+function topClasesRango(u) {
+  const e = OFC && OFC.u[u.ukey];
+  if (!e) return null;
+  const a = F.f0 || "", b = F.f1 || "";
+  const m = new Map(), dias = new Set();
+  for (let i = 0; i < e.kd.length; i++) {
+    const f = OFC.fechas[e.kd[i]];
+    if ((a && f < a) || (b && f > b)) continue;
+    dias.add(f);
+    const n = OFC.nombres[e.kn[i]];
+    const x = m.get(n) || { clase: n, c: 0, p: 0, r: 0, mm: 0 };
+    x.c += e.kc[i]; x.p += e.kp[i]; x.r += e.kr[i]; x.mm += e.km[i]; m.set(n, x);
+  }
+  const nd = Math.max(1, dias.size);
+  return [...m.values()].map(x => ({ clase: x.clase, c: x.c, p: x.p, o: x.mm > 0 ? x.r / x.mm : null, _nd: nd }))
+    .sort((x, y) => y.c - x.c).slice(0, 15);
 }
 
 /* ---------- ubicación (provincia y ciudad) ---------- */
@@ -1149,8 +1178,12 @@ function detalleCentro(box, u, dset, h0, h1) {
     t += "</tr>";
   }
   t += `</tbody></table></div>`;
-  const top = (u.top || []).map(x => { const pl = u.n_dias ? x.p / u.n_dias * 7 : null;
-    return { clase: x.clase, c: x.c, sem: u.n_dias ? x.c / u.n_dias * 7 : null, pl, oc: pl != null && x.o != null ? pl * x.o : null, p: x.p, o: x.o }; });
+  const cargado = cargarOFC(() => detalleCentro(box, u, dset, h0, h1));
+  const topR = cargado ? topClasesRango(u) : null;
+  const topFuente = topR || (u.top || []);
+  const nd = topR && topR.length ? topR[0]._nd : u.n_dias;
+  const top = topFuente.map(x => { const pl = nd ? x.p / nd * 7 : null;
+    return { clase: x.clase, c: x.c, sem: nd ? x.c / nd * 7 : null, pl, oc: pl != null && x.o != null ? pl * x.o : null, p: x.p, o: x.o }; });
   if (top.length) t += `<h3>Qué clases tiene</h3>${tabla("t-top-" + u.estudio.replace(/\W/g, ""), [{ k: "clase", l: "Clase" },
     { k: "sem", l: "Veces / semana (clases)", n: 1, f: v => numC(v) },
     { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
