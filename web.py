@@ -310,6 +310,25 @@ def _ubicacion(estudio, zona):
     return (u.get("ciudad", ""), u.get("provincia", ""))
 
 
+def celdas_fecha(g, ahora, idx, dias_max=120):
+    """Clases, plazas y reservas por (fecha, hora) de un centro, en columnas, para poder calcular cualquier rango de
+    fechas en el navegador. 'idx' es el diccionario compartido fecha -> posición (oferta.json: fechas)."""
+    d = g[g["fecha"] >= g["fecha"].max() - pd.Timedelta(days=dias_max)].copy()
+    if d.empty:
+        return {"fd": [], "fh": [], "fc": [], "fp": [], "fr": [], "fm": [], "fx": []}
+    d["hora"] = d["inicio_local"].dt.hour
+    dada = d["inicio_local"] <= ahora
+    pl = d["plazas"].fillna(0)
+    ok = dada & d["reservas"].notna() & (d["plazas"] > 0)
+    d["_p"], d["_r"] = pl, d["reservas"].where(ok, 0)
+    d["_m"] = d["plazas"].where(ok, 0)
+    d["_x"] = d["reservas"].where(dada & d["reservas"].notna(), 0)
+    gg = d.groupby(["fecha", "hora"]).agg(c=("kid", "size"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum")).reset_index()
+    fd = [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in gg["fecha"]]
+    return {"fd": fd, "fh": [int(h) for h in gg["hora"]], "fc": [int(v) for v in gg["c"]], "fp": [int(round(v)) for v in gg["p"]],
+            "fr": [int(round(v)) for v in gg["r"]], "fm": [int(round(v)) for v in gg["m"]], "fx": [int(round(v)) for v in gg["x"]]}
+
+
 def facturacion_meses(g, a, ahora, ps):
     """Reservas y facturación por mes natural de un centro.
 
@@ -405,6 +424,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
     unidades, cadenas = [], []
     nlista = [(c_, _norm(c_)) for c_ in lista_cadenas if _norm(c_)]
     # estudios cuya agenda mezcla ciudades: un centro por ciudad (web/ubicaciones.json -> _sedes)
+    fechas_idx = {}
     sedes_ub = _ubic_sedes()
     u["pv"] = ""
     if sedes_ub:
@@ -444,7 +464,7 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
             nombre_u = g["nombre"].iloc[0]
             if pv and n_pv.get(est, 1) > 1:
                 nombre_u += f" ({ub[0] or 'sin ubicar'})"
-            unidades.append({"prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
+            unidades.append({**celdas_fecha(g, ahora, fechas_idx), "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"]), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a})
     for cad in lista_cadenas:
@@ -462,7 +482,8 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                     "precio_ses": round(float(np.mean([f["precio_ses"] for f in con])), 2) if con else None}
             cadenas.append({"cadena": cad, "estudios": int(m["estudio"].nunique()), "zonas": sorted(set(m["zona"])),
                             "parcial": bool(m["parcial"].all()), "fact": fact, **a})
-    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "unidades": unidades, "cadenas": cadenas}
+    fechas = [f for f, _ in sorted(fechas_idx.items(), key=lambda kv: kv[1])]
+    return {"ahora": ahora.strftime("%Y-%m-%d %H:%M"), "fechas": fechas, "unidades": unidades, "cadenas": cadenas}
 
 
 def clave_clase(d):
