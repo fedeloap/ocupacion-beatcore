@@ -66,12 +66,19 @@ def cargar():
     # aforo estimado (Mindbody): máximo de plazas libres visto en cualquier captura
     libres = pd.to_numeric(todo["libres"], errors="coerce")
     todo["libres_n"] = libres
-    max_libres = todo.groupby(key)["libres_n"].max().rename("max_libres")
+    # En Mindbody el clase_id cambia entre capturas (planificación, curva y final): la clase se identifica por
+    # estudio, sede, hora y nombre. Así el máximo de plazas libres (aforo estimado) sale de todas sus fotos y no solo de la final.
+    for d in (fin, todo):
+        alt = (d["estudio"].astype(str) + "|" + d["sede"].astype(str) + "|"
+               + d["inicio_local"].dt.strftime("%Y-%m-%d %H:%M") + "|" + d["clase"].astype(str))
+        d["_k"] = alt.where(d["plataforma"] == "mindbody", d["clase_id"])
+    key_est = ["plataforma", "estudio", "sede", "_k"]
+    max_libres = todo.groupby(key_est)["libres_n"].max().rename("max_libres")
 
     fin = fin[fin["captured_at"] <= fin["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN)]
     fin = fin.sort_values("captured_at").groupby(key, as_index=False).tail(1)
-    fin = fin.merge(max_libres, left_on=key, right_index=True, how="left")
-    return fin
+    fin = fin.merge(max_libres, left_on=key_est, right_index=True, how="left")
+    return fin.drop(columns=["_k"])
 
 
 def preparar(c, festivos):
