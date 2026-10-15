@@ -29,11 +29,30 @@ FRANJAS = [(6, 10, "6 a 10 h"), (10, 14, "10 a 14 h"), (14, 17, "14 a 17 h"), (1
 ZONAS = ["Chamberí", "Salamanca", "Diagonal", "Valencia"]
 
 
+def corregir_aimharder(d):
+    """AimHarder: los boxes que no publican las reservas devolvían ocupation=0 en todas las clases y se guardaban como
+    0 reservas. Si un estudio de AimHarder nunca ha tenido reservas > 0 en lo capturado, sus reservas son desconocidas."""
+    if d.empty or "plataforma" not in d.columns:
+        return d
+    am = d["plataforma"] == "aimharder"
+    if not am.any():
+        return d
+    occ = pd.to_numeric(d["ocupadas"], errors="coerce")
+    maxocc = occ.where(am).groupby(d["estudio"]).transform("max")
+    mala = am & (maxocc.fillna(0) <= 0)
+    for col in ("ocupadas", "libres", "llena"):
+        if col in d.columns:
+            d[col] = d[col].astype("object")
+            d.loc[mala, col] = float("nan") if col != "llena" else ""
+    return d
+
+
 def leer(patron):
     fs = [f for f in sorted(glob.glob(patron)) if os.path.getsize(f) > 0]
     if not fs:
         return pd.DataFrame()
     d = pd.concat([pd.read_csv(f) for f in fs], ignore_index=True)
+    d = corregir_aimharder(d)
     # estudios renombrados: el histórico conserva el nombre antiguo (web/alias_estudios.json)
     if os.path.exists("web/alias_estudios.json"):
         import json

@@ -283,16 +283,21 @@ def facturacion(a, tarifas, origen):
     """Facturación mensual estimada de un centro: € por sesión x reservas al mes
     (clases de una semana tipo x 52/12 x reservas medias por clase).
     € por sesión, por orden: cuota de 8/mes menos un 10 %, entre 8; cuota de 4/mes menos un 10 %, entre 4;
-    clase suelta menos un 25 %; ilimitada entre 10. Sin reservas conocidas (bsport) no hay estimación."""
+    la más baja entre ilimitada entre 10 y clase suelta menos un 25 %. Sin reservas conocidas (bsport) no hay estimación."""
     ocho, cuatro, ilim, suelta = [_num(x) for x in tarifas]
     if ocho:
         ps, base, cuota = ocho * (1 - DESCUENTO_CUOTA) / 8, "8/mes", ocho
     elif cuatro:
         ps, base, cuota = cuatro * (1 - DESCUENTO_CUOTA) / 4, "4/mes", cuatro
-    elif suelta:
-        ps, base, cuota = suelta * (1 - DESCUENTO_SUELTA), "suelta", None
-    elif ilim:
-        ps, base, cuota = ilim / SESIONES_ILIMITADA, "ilimitada", None
+    elif ilim or suelta:
+        # ilimitada entre 10 y clase suelta menos 25 %: se toma la más baja (una ilimitada muy alta no representa lo que se paga)
+        pi = ilim / SESIONES_ILIMITADA if ilim else None
+        pr = suelta * (1 - DESCUENTO_SUELTA) if suelta else None
+        if pi is not None and (pr is None or pi <= pr):
+            ps, base = pi, "ilimitada"
+        else:
+            ps, base = pr, "suelta"
+        cuota = None
     else:
         ps, base, cuota = None, "", None
     cl_mes = a["clases_sem"] * SEMANAS_MES

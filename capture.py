@@ -298,7 +298,11 @@ def aimharder(cfg, a, b):
                 print(f"[aimharder] {s['estudio']} {dia}: error {e}", file=sys.stderr)
                 dia += timedelta(days=1)
                 continue
-            for x in (j.get("bookings") or []) if isinstance(j, dict) else []:
+            bks = (j.get("bookings") or []) if isinstance(j, dict) else []
+            # Muchos boxes no publican las reservas a quien no es socio: devuelven ocupation=0 en todas las clases
+            # (y included=0). Solo es dato real si el box publica (included=1 o alguna clase con reservas ese día).
+            publica = any(x.get("included") == 1 or (x.get("ocupation") or 0) > 0 for x in bks)
+            for x in bks:
                 try:
                     hh, mm = (x.get("time") or "").split("-")[0].strip().split(":")
                     st = datetime(dia.year, dia.month, dia.day, int(hh), int(mm), tzinfo=MADRID).astimezone(timezone.utc)
@@ -307,12 +311,14 @@ def aimharder(cfg, a, b):
                 if not between(st, a, b):
                     continue
                 cap, occ = x.get("limit"), x.get("ocupation")
+                if not publica:
+                    occ = None          # reservas desconocidas: no es "0 reservas"
                 ok = isinstance(cap, int) and isinstance(occ, int)
                 rows.append({
                     "plataforma": "aimharder", "estudio": s["estudio"], "centro_beatcore": s.get("centro_beatcore", ""),
                     "sede": x.get("boxName") or s["estudio"], "clase_id": x.get("id"), "clase": x.get("className", ""),
                     "inicio_local": to_local(st), "duracion_min": x.get("classLength"),
-                    "capacidad": cap, "ocupadas": occ, "libres": (cap - occ) if ok else "", "libres_web": "",
+                    "capacidad": cap, "ocupadas": occ if occ is not None else "", "libres": (cap - occ) if ok else "", "libres_web": "",
                     "llena": (occ >= cap) if ok else "", "cancelada": "",
                     "lista_espera": x.get("waitlist") if x.get("waitlist") not in (None, -1) else "",
                 })
