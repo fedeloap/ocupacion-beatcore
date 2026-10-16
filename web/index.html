@@ -928,6 +928,7 @@ function vistaRango(u) {
   if (!u.dd || !OF.fechas) return u;
   const a = F.f0 || "", b = F.f1 || "";
   const fechasDow = Array.from({ length: 7 }, () => new Set());
+  const fechasDowG = Array.from({ length: 7 }, () => new Set());
   const dia = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, m: 0 }));
   let R = 0, M = 0, C = 0, X = 0;
   const todas = new Set();
@@ -936,6 +937,7 @@ function vistaRango(u) {
     if ((a && f < a) || (b && f > b)) continue;
     const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
     if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
+    if (u.dg && u.dg[i] > 0) fechasDowG[dow].add(f);
     const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
     R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i];
   }
@@ -948,13 +950,13 @@ function vistaRango(u) {
       if ((a && f < a) || (b && f > b)) continue;
       const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
       const k = dow * 100 + e.hh[i];
-      const c = celdas.get(k) || { d: dow, h: e.hh[i], c: 0, p: 0, r: 0, pm: 0 };
-      c.c += e.hc[i]; c.p += e.hp[i]; c.r += e.hr[i]; c.pm += e.hm[i]; celdas.set(k, c);
+      const c = celdas.get(k) || { d: dow, h: e.hh[i], c: 0, p: 0, r: 0, pm: 0, g: 0 };
+      c.c += e.hc[i]; c.p += e.hp[i]; c.r += e.hr[i]; c.pm += e.hm[i]; c.g += (e.hg ? e.hg[i] : 0); celdas.set(k, c);
     }
   }
   const dias = dia.map((d, i) => {
     const nf = fechasDow[i].size;
-    return { d: i, fechas: nf, clases: nf ? d.c / nf : null, plazas: nf ? d.p / nf : null, reservas: nf ? d.r / nf : null,
+    return { d: i, fechas: nf, fechasG: fechasDowG[i].size, clases: nf ? d.c / nf : null, plazas: nf ? d.p / nf : null, reservas: nf ? d.r / nf : null,
       ocup: d.m > 0 ? d.r / d.m : null, medidas: 0, _r: d.r, _m: d.m };
   });
   const ps = u.fact ? u.fact.precio_ses : null;
@@ -1107,11 +1109,12 @@ function calorDe(us) {
   const m = new Map();
   let r = 0, pm = 0;
   us.forEach(u => {
-    const nf = d => (u.dias[d] && u.dias[d].fechas) || 1;
+    const nf = d => (u.dias[d] && u.dias[d].fechasG) || 1;
     (u.celdas || []).forEach(c => {
+      if (!(c.g > 0)) return;
       const k = c.d * 100 + c.h;
       const x = m.get(k) || { d: c.d, h: c.h, n: 0, r: 0, pm: 0 };
-      x.n += c.c / nf(c.d); x.r += c.r; x.pm += c.pm; m.set(k, x);
+      x.n += c.g / nf(c.d); x.r += c.r; x.pm += c.pm; m.set(k, x);
       r += c.r; pm += c.pm;
     });
   });
@@ -1128,7 +1131,7 @@ function calorTabla(cal, mini, hRango) {
       const c = cal.celdas.get(d * 100 + hr);
       if (!c) { h += '<td class="vacio"></td>'; continue; }
       const o = c.pm > 0 ? c.r / c.pm : null;
-      h += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(c.n)} clases por semana tipo · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"}">${numC(c.n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
+      h += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(c.n)} clases dadas por día · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"}">${numC(c.n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
     }
     h += "</tr>";
   }
@@ -1143,8 +1146,8 @@ function mapasCadena(us, nombre) {
   const por = us.map(u => ({ u, cal: calorDe([u]) })).sort((a, b) => b.cal.clases - a.cal.clases);
   return `<h3>Mapa de calor de ${esc(nombre)}: cuándo se llena</h3>
     <div class="guia"><ul>
-      <li><b>Número grande</b>: clases por semana tipo a esa hora, sumando los ${us.length} centros.</li>
-      <li><b>Porcentaje pequeño</b>: % reservado de esas clases (solo clases ya dadas). Más verde, más lleno.</li>
+      <li><b>Número grande</b>: clases ya dadas a esa hora, de media por día, sumando los ${us.length} centros.</li>
+      <li><b>Porcentaje pequeño</b>: % reservado de esas mismas clases. Más verde, más lleno. Las clases aún por dar no aparecen.</li>
       <li>Vacío: a esa hora no hay clases. Sin porcentaje: aún no hay reservas medidas.</li>
     </ul></div>
     <p class="meta">${esc(periodoTxt())} · % reservado medio: <b>${pct(todo.ocup)}</b></p>
@@ -1292,23 +1295,23 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
   } };
 }
 function detalleCentro(box, u, dset, h0, h1) {
-  const nf = d => (u.dias[d] && u.dias[d].fechas) || 1;
-  const cel = (u.celdas || []).filter(c => dset.has(c.d) && c.h >= h0 && c.h < h1);
-  if (!cel.length) { box.innerHTML = '<p class="vacio-msg">Sin clases con estos filtros.</p>'; return; }
+  const nfG = d => (u.dias[d] && u.dias[d].fechasG) || 1;
+  const cel = (u.celdas || []).filter(c => dset.has(c.d) && c.h >= h0 && c.h < h1 && c.g > 0);
+  if (!cel.length) { box.innerHTML = '<p class="vacio-msg">Todavía no hay clases ya dadas con estos filtros.</p>'; return; }
   const hmin = Math.min(...cel.map(c => c.h)), hmax = Math.max(...cel.map(c => c.h));
   const mapa = new Map(cel.map(c => [c.d * 100 + c.h, c]));
   let t = `<div class="card"><div class="cab-det"><h3 style="margin:0">${esc(u.estudio)} · clases y ocupación por hora</h3><button type="button" class="cerrar">✕ Cerrar</button></div>
-    <ul class="detalle"><li><b>Número grande</b>: cuántas clases tiene el centro a esa hora en una semana tipo (1,0 = una clase cada semana; 0,5 = una cada dos semanas; 2,0 = dos clases a la vez).</li>
-    <li><b>Porcentaje pequeño</b>: % de plazas reservadas en esas clases. Solo cuenta clases ya dadas; si no hay, no sale.</li>
-    <li>Cuanto más verde, más llena.</li></ul>
+    <ul class="detalle"><li><b>Número grande</b>: clases ya dadas a esa hora, de media por día (si salen dos fechas, la media de esas dos).</li>
+    <li><b>Porcentaje pequeño</b>: % de plazas reservadas en esas mismas clases. Solo cuenta clases ya dadas.</li>
+    <li>Cuanto más verde, más llena. Las clases aún por dar no aparecen aquí.</li></ul>
     <div class="scroll hm"><table class="heat peq"><thead><tr><th></th>${DIAS_L.map(d => `<th>${d}</th>`).join("")}</tr></thead><tbody>`;
   for (let h = hmin; h <= hmax; h++) {
     t += `<tr><th>${String(h).padStart(2, "0")}h</th>`;
     for (let d = 0; d < 7; d++) {
       const c = mapa.get(d * 100 + h);
       if (!c) { t += `<td class="vacio"></td>`; continue; }
-      const o = c.pm > 0 ? c.r / c.pm : null, n = c.c / nf(d);
-      t += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(n)} clases por semana tipo · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"} · ${c.p} plazas">${numC(n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
+      const o = c.pm > 0 ? c.r / c.pm : null, n = c.g / nfG(d);
+      t += `<td class="${o != null && o > .6 ? "dark" : ""}" style="--c:var(--accent-rgb);--o:${o == null ? 0 : o.toFixed(2)}" title="${numC(n)} clases dadas por día (${nfG(d)} fechas) · ${o == null ? "sin reservas conocidas" : pct(o) + " reservado"} · ${c.p} plazas">${numC(n)}${o != null ? `<br><small>${pct(o)}</small>` : ""}</td>`;
     }
     t += "</tr>";
   }
