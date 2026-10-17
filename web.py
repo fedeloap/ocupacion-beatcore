@@ -613,7 +613,7 @@ def proximas(snap, mapa, propios, festivos):
     lleno = s["llena"].astype(str).str.lower().map({"true": True, "false": False})
     lleno = lleno.where(lleno.notna(), (res / cap) >= 0.999).map({True: 1, False: 0})
     filas, est_tab, e_idx = fichas(s, mapa, propios)
-    disc = ["Otros" if f[3] else disciplina(k, f[4]) for k, f in zip(s["clase"], filas)]
+    disc = ["Lagree" if f[3] else disciplina(k, f[4]) for k, f in zip(s["clase"], filas)]
     fecha = s["inicio_local"].dt.strftime("%Y-%m-%d")
     fest = [int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
             for f, z in zip((festivos.get(d) for d in fecha), s["centro_beatcore"])]
@@ -817,8 +817,8 @@ def main():
                         e["m"] = nom
                         break
 
-    # BeatCore no es Pilates reformer ni Lagree: sus clases van siempre en "Otros" (decisión de Fede, 17/10/2026)
-    disc = ["Otros" if f[3] else disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
+    # BeatCore es Lagree (no Pilates reformer): todas sus clases van en "Lagree" (decisión de Fede, 17/10/2026)
+    disc = ["Lagree" if f[3] else disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
     snap = cargar_snapshots()
     cr, cl, hf, hf0 = curvas(c, snap)
     prox = proximas(snap, mapa, propios, festivos)
