@@ -197,6 +197,9 @@ def clases_unicas(snap):
     cap = pd.to_numeric(s["capacidad"], errors="coerce")
     est = (s["plataforma"] == "mindbody") & ~(cap > 0) & (s["max_libres"] > 0) & (s["max_libres"] <= analisis.AFORO_MAX_PLAUSIBLE)
     s["plazas"] = cap.where(cap > 0, s["max_libres"].where(est))
+    # aforo estimado = mínimo visto en la clase: se toma el máximo de todas las sesiones de esa clase, estudio y sede
+    pg = s.groupby(["estudio", "sede", "clase"])["plazas"].transform("max")
+    s["plazas"] = s["plazas"].where(~est, pg.where(pg > s["plazas"].fillna(0), s["plazas"]))
     occ = pd.to_numeric(s["ocupadas"], errors="coerce")
     occ = occ.where(occ.notna(), s["plazas"] - s["libres_n"])
     r = occ.where(s["plataforma"] != "bsport").clip(lower=0)

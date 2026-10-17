@@ -130,6 +130,10 @@ def preparar(c, festivos):
     c.loc[cap > 0, "aforo_fuente"] = "publicado"
     est = (c["plataforma"] == "mindbody") & ~(cap > 0) & (c["max_libres"] > 0) & (c["max_libres"] <= AFORO_MAX_PLAUSIBLE)
     cap = cap.where(cap > 0, c["max_libres"].where(est))
+    # el aforo estimado de cada clase es un mínimo (solo vemos las plazas libres que había en sus fotos): una misma clase
+    # de un mismo estudio y sede comparte sala, así que se toma el máximo visto en todas sus sesiones
+    cap_g = cap.groupby([c["estudio"], c["sede"], c["clase"]]).transform("max")
+    cap = cap.where(~est, cap_g.where(cap_g > cap.fillna(0), cap))
     c.loc[est, "aforo_fuente"] = "estimado"
     occ = occ.where(occ.notna(), cap - lib)
     c["aforo"] = cap
