@@ -36,6 +36,21 @@ details.metodo-est { background: var(--surface); border: 1px solid var(--line); 
 details.metodo-est summary { cursor: pointer; }
 details.metodo-est ul { margin: 8px 0 2px; padding-left: 20px; display: grid; gap: 4px; }
 .est { color: var(--comp); font-weight: 700; cursor: help; }
+#cmp-bar { position: fixed; right: 16px; bottom: 16px; z-index: 20; display: flex; gap: 8px; align-items: center; background: var(--fg); color: var(--bg);
+  padding: 8px 12px; border-radius: 8px; box-shadow: 0 4px 16px rgb(0 0 0 / .35); }
+#cmp-bar[hidden], #toast[hidden] { display: none; }
+#cmp-bar button { min-height: 30px; padding: 3px 10px; cursor: pointer; }
+#toast { position: fixed; left: 50%; bottom: 70px; transform: translateX(-50%); z-index: 30; background: var(--comp); color: #fff; padding: 8px 14px; border-radius: 6px; font-weight: 600; }
+input.cmp { width: 17px; height: 17px; cursor: pointer; accent-color: var(--accent); }
+.cmp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.cmp-chip { display: inline-flex; gap: 6px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 6px 4px 12px; font-size: 13px; }
+.cmp-chip button { min-height: 22px; padding: 0 7px; border-radius: 999px; cursor: pointer; }
+.cmp-res { display: grid; gap: 4px; margin: 6px 0; max-height: 240px; overflow: auto; }
+.cmp-res button { text-align: left; cursor: pointer; padding: 5px 10px; }
+td.mejor { background: rgb(var(--accent-rgb) / .22); font-weight: 700; }
+td.peor { background: rgb(var(--comp-rgb) / .18); }
+table.cmp-t td, table.cmp-t th { text-align: center; }
+table.cmp-t td:first-child, table.cmp-t th:first-child { text-align: left; font-weight: 600; }
 details.filtros { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
 details.filtros summary { cursor: pointer; font-weight: 600; font-family: var(--display); }
 .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin-top: 12px; align-items: end; }
@@ -189,10 +204,13 @@ a { color: var(--accent); }
 <section class="panel" id="p-precios" role="tabpanel" hidden></section>
 <section class="panel" id="p-estudios" role="tabpanel" hidden></section>
 <section class="panel" id="p-cadenas" role="tabpanel" hidden></section>
+<section class="panel" id="p-comparador" role="tabpanel" hidden></section>
 <section class="panel" id="p-alertas" role="tabpanel" hidden></section>
 <section class="panel" id="p-mapa" role="tabpanel" hidden></section>
 </main>
 
+<div id="cmp-bar" hidden><span><b id="cmp-n">0</b> para comparar</span><button type="button" id="cmp-ir">Comparar</button><button type="button" id="cmp-vaciar">Vaciar</button></div>
+<div id="toast" hidden></div>
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
@@ -211,7 +229,7 @@ const DISC_CAT = { "Pilates reformer": "Reformer", "Reformer": "Reformer", "Lagr
 const ZN = { "Valencia": "Valencia (Ruzafa)", "Nacional": "Fuera de zonas BeatCore" };
 const GRUPOS = ["Reformer y Lagree", "Barre y Pilates", "Yoga y Hot yoga", "Funcional y HIIT", "Crossfit y Boxeo", "Multidisciplina y otros", "Entrenamiento personal"];
 const zn = z => ZN[z] || z;
-const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["facturacion", "Facturación"], ["oferta", "Oferta"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["alertas", "Alertas"], ["mapa", "Mapa"]];
+const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["facturacion", "Facturación"], ["oferta", "Oferta"], ["curvas", "Ritmo de reserva"], ["clases", "Clases"], ["proximas", "Próximas clases"], ["precios", "Precios"], ["estudios", "Estudios"], ["cadenas", "Cadenas"], ["comparador", "Comparador"], ["alertas", "Alertas"], ["mapa", "Mapa"]];
 
 let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null, OF = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
@@ -682,6 +700,7 @@ function cadenas() {
   const exp = new Set(JSON.parse(el.dataset.exp || "[]"));
   const cols = [
     { k: "_x", l: "", h: r => r.n_cen ? `<button type="button" class="vc exp" data-x="${r._i}">${exp.has(r._i) ? "▾" : "▸"} ${r.n_cen}</button>` : "" },
+    { k: "_cmp", l: "Comparar", h: r => cmpBox(r.n_cen ? "c:" + r.cadena : "") },
     { k: "cadena", l: "Cadena", h: r => `<b>${esc(r.cadena)}</b>` },
     { k: "web", l: "Web", h: r => r.web ? `<a href="${esc(r.web)}" title="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.web.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""))}</a>` : "–" },
     { k: "centros", l: "Centros web", n: 1, f: v => v == null ? "–" : v },
@@ -833,7 +852,7 @@ function facturacion() {
   const ultimo = meses[meses.length - 1];
   // centros
   const filas = todas.map(u => {
-    const r = { est: u.est, nombre: u.estudio, cadena: cadDe(u), zn: lugar(u), cuota: u.fact.cuota, base: u.fact.base, ps: u.fact.precio_ses,
+    const r = { ck: "u:" + u.ukey, est: u.est, nombre: u.estudio, cadena: cadDe(u), zn: lugar(u), cuota: u.fact.cuota, base: u.fact.base, ps: u.fact.precio_ses,
       origen: u.fact.origen || "sin precio", parcial: u.parcial };
     meses.forEach(p => { const m = M(u, p); r["o_" + p] = m ? m.fact_obs : null; r["e_" + p] = m ? m.fact_est : null; r["r_" + p] = m ? m.res_est : null; });
     r.rm = ultimo ? r["r_" + ultimo] : null;
@@ -873,7 +892,7 @@ function facturacion() {
     { k: "con", l: "Centros con estimación", n: 1, h: r => `${r.con} <small>de ${r.cen}</small>` },
     { k: "ps", l: "€ / sesión (media)", n: 1, f: eur }, ...colPer, ...colsMes,
     { k: "media", l: "Media por centro / mes", n: 1, f: eur0 }];
-  const colsE = [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.parcial ? " <small>(parcial)</small>" : "") },
+  const colsE = [{ k: "_cmp", l: "Comparar", h: r => cmpBox(r.ck) }, { k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.parcial ? " <small>(parcial)</small>" : "") },
     { k: "cadena", l: "Cadena" }, { k: "zn", l: "Ciudad" },
     { k: "cuota", l: "Cuota 8/mes", n: 1, h: r => r.cuota == null ? "–" : eur(r.cuota) + (r.base === "4/mes" ? " <small>(4/mes)</small>" : "") },
     { k: "ps", l: "€ / sesión", n: 1, f: eur }, ...colPer, ...colsMes,
@@ -947,7 +966,7 @@ function vistaRango(u) {
   const fechasDow = Array.from({ length: 7 }, () => new Set());
   const fechasDowG = Array.from({ length: 7 }, () => new Set());
   const dia = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, m: 0 }));
-  let R = 0, M = 0, C = 0, X = 0, G = 0;
+  let R = 0, M = 0, C = 0, X = 0, G = 0, NN = 0;
   const todas = new Set();
   for (let i = 0; i < u.dd.length; i++) {
     const f = OF.fechas[u.dd[i]];
@@ -956,7 +975,7 @@ function vistaRango(u) {
     if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
     if (u.dg && u.dg[i] > 0) fechasDowG[dow].add(f);
     const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
-    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i]; G += (u.dg ? u.dg[i] : 0);
+    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i]; G += (u.dg ? u.dg[i] : 0); NN += (u.dn ? u.dn[i] : 0);
   }
   const celdas = new Map();
   for (const mes of mesesNecesarios()) {
@@ -978,7 +997,7 @@ function vistaRango(u) {
   });
   const ps = u.fact ? u.fact.precio_ses : null;
   return { ...u, dias, celdas: [...celdas.values()], ocup: M > 0 ? R / M : null, reservas: R, plazas_med: M, n_clases: C, n_dias: todas.size,
-    _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X, _clases_dadas: G };
+    _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X, _clases_dadas: G, _n: NN };
 }
 function topClasesRango(u) {
   // "Qué clases tiene": clases del periodo, sacadas de los ficheros mensuales ya cargados
@@ -1174,6 +1193,112 @@ function mapasCadena(us, nombre) {
     </details>` : ""}`;
 }
 
+
+/* ---------- comparador: hasta 6 centros o cadenas, uno al lado del otro ---------- */
+const CMP_MAX = 6;
+let CMP = [];
+function cmpBox(ck) { return ck ? `<input type="checkbox" class="cmp" data-k="${esc(ck)}"${CMP.includes(ck) ? " checked" : ""} title="Añadir al comparador (máximo ${CMP_MAX})" aria-label="Comparar">` : ""; }
+function toast(msg) { const x = $("#toast"); x.textContent = msg; x.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { x.hidden = true; }, 2800); }
+function cmpBarra() { $("#cmp-bar").hidden = CMP.length === 0; $("#cmp-n").textContent = CMP.length; }
+function cmpAnadir(k) {
+  if (CMP.includes(k)) return true;
+  if (CMP.length >= CMP_MAX) { toast(`Máximo ${CMP_MAX} para comparar. Quita alguno primero.`); return false; }
+  CMP.push(k); cmpBarra(); return true;
+}
+function cmpQuitar(k) { CMP = CMP.filter(x => x !== k); cmpBarra(); document.querySelectorAll("input.cmp").forEach(c => { if (c.dataset.k === k) c.checked = false; }); }
+document.addEventListener("click", e => { if (e.target.classList && e.target.classList.contains("cmp")) e.stopPropagation(); }, true);
+document.addEventListener("change", e => {
+  const c = e.target;
+  if (!c.classList || !c.classList.contains("cmp")) return;
+  if (c.checked) { if (!cmpAnadir(c.dataset.k)) c.checked = false; } else cmpQuitar(c.dataset.k);
+  if (tabActual === "comparador") render();
+});
+function cmpItem(k) {
+  if (!OF) return null;
+  if (k.startsWith("u:")) { const u = OF.unidades.find(x => x.ukey === k.slice(2)); return u ? { k, nombre: u.estudio, tipo: "Centro", us: [u], sub: lugar(u) } : null; }
+  const nom = k.slice(2), us = OF.unidades.filter(u => (u.cadenas || []).includes(nom));
+  return us.length ? { k, nombre: nom, tipo: "Cadena", us, sub: us.length + " centros" } : null;
+}
+function cmpMetricas(it) {
+  const vs = it.us.map(vistaRango);
+  let R = 0, M = 0, N = 0, G = 0, cl = 0, pl = 0, fp = 0, fe = 0, estimado = false, hayFp = false, hayFe = false;
+  const ps = [];
+  vs.forEach(v => {
+    R += v.reservas || 0; M += v.plazas_med || 0; N += v._n || 0; G += v._clases_dadas || 0;
+    const ro = resumenOferta(v); if (ro) { cl += ro.clases || 0; pl += ro.plazas || 0; }
+    if (v._fp != null) { fp += v._fp; hayFp = true; }
+    const fm = factMesActual(v); if (fm.est != null) { fe += fm.est; hayFe = true; }
+    if (v.fact && v.fact.precio_ses != null) ps.push(v.fact.precio_ses);
+    if (v.est >= 0.5) estimado = true;
+  });
+  return { dadas: G, reservas: M > 0 ? R : null, media: N ? R / N : null, plazas_clase: N ? M / N : null, ocup: M > 0 ? R / M : null,
+    cl_sem: cl || null, pl_sem: pl || null, precio: ps.length ? mean(ps) : null, fp: hayFp ? fp : null, fe: hayFe ? fe : null, estimado, vs };
+}
+function comparador() {
+  const el = $("#p-comparador");
+  if (!OF) { el.innerHTML = '<p class="vacio-msg">Todavía no hay datos.</p>'; return; }
+  const q = (el.dataset.q || "").trim().toLowerCase();
+  const items = CMP.map(cmpItem).filter(Boolean);
+  CMP = items.map(i => i.k); cmpBarra();
+  // buscador: centros y cadenas
+  let res = "";
+  if (q.length >= 2) {
+    const norm = s => String(s).toLowerCase();
+    const cands = [
+      ...OF.unidades.filter(u => norm(u.estudio + " " + lugar(u)).includes(q)).map(u => ["u:" + u.ukey, u.estudio, "Centro · " + lugar(u)]),
+      ...[...new Set(OF.unidades.flatMap(u => u.cadenas || []))].filter(c => norm(c).includes(q) && !/^beatcore$/i.test(c)).map(c => ["c:" + c, c, "Cadena"])]
+      .filter(([k]) => !CMP.includes(k)).slice(0, 14);
+    res = cands.length ? `<div class="cmp-res">${cands.map(([k, n, s]) => `<button type="button" data-add="${esc(k)}">+ ${esc(n)} <small>${esc(s)}</small></button>`).join("")}</div>` : '<p class="meta">Sin resultados.</p>';
+  }
+  const chips = items.map(i => `<span class="cmp-chip">${esc(i.nombre)} <small>${esc(i.tipo)}</small><button type="button" data-quitar="${esc(i.k)}" aria-label="Quitar">✕</button></span>`).join("");
+  let cuerpo = "";
+  if (items.length < 2) {
+    cuerpo = `<p class="vacio-msg">${items.length ? "Añade al menos un centro o cadena más para compararlos." : "Elige centros o cadenas con el buscador de arriba, o con las casillas de las tablas de Oferta, Cadenas y Facturación."}</p>`;
+  } else {
+    const ms = items.map(cmpMetricas);
+    const FILAS = [
+      ["Clases dadas", "dadas", v => v == null ? "–" : v, 1], ["Reservas", "reservas", v => v == null ? "–" : v.toLocaleString("es-ES"), 1],
+      ["Media de gente por clase", "media", v => num(v), 1], ["Plazas por clase", "plazas_clase", v => num(v), 0], ["Ocupación", "ocup", pct, 1],
+      ["Clases por semana (semana tipo)", "cl_sem", v => v == null ? "–" : Math.round(v), 1], ["Plazas por semana (semana tipo)", "pl_sem", v => v == null ? "–" : Math.round(v), 1],
+      ["Precio por sesión", "precio", eur, 0], ["Facturación del periodo", "fp", eur0, 1], ["Facturación estimada del mes", "fe", eur0, 1]];
+    const celdas = FILAS.map(([lab, k, f, resaltar]) => {
+      const vals = ms.map(m => m[k]);
+      const ok = vals.filter(v => v != null && !isNaN(v));
+      const mx = ok.length > 1 ? Math.max(...ok) : null, mn = ok.length > 1 ? Math.min(...ok) : null;
+      return `<tr><td>${lab}</td>${vals.map(v => `<td class="${resaltar && mx != null && mx !== mn && v === mx ? "mejor" : resaltar && mn != null && mx !== mn && v === mn ? "peor" : ""}">${v == null || isNaN(v) ? "–" : f(v)}</td>`).join("")}</tr>`;
+    }).join("");
+    const cab = items.map((i, n) => `<th>${esc(i.nombre)}${ms[n].estimado ? estU(1) : ""}<br><small>${esc(i.sub)}</small></th>`).join("");
+    // barras
+    const barra = (tit, k, f) => {
+      const mx = Math.max(0, ...ms.map(m => m[k] || 0));
+      return `<div><h3>${tit}</h3>${barras(items.map((i, n) => [i.nombre, ms[n][k] || 0, ms[n][k] == null ? "–" : f(ms[n][k])]), mx, "")}</div>`;
+    };
+    // mapas de calor
+    const cals = ms.map(m => calorDe(m.vs));
+    const todas = cals.flatMap(c => [...c.celdas.values()]);
+    const hr = todas.length ? [Math.min(...todas.map(c => c.h)), Math.max(...todas.map(c => c.h))] : null;
+    const mapas = hr ? cals.map((c, n) => `<div><h4>${esc(items[n].nombre)} <small>· ${pct(c.ocup)} reservado</small></h4>${calorTabla(c, true, hr)}</div>`).join("") : "";
+    cuerpo = `<div class="scroll"><table class="cmp-t"><thead><tr><th>${esc(periodoTxt().replace(/ \(cambia.*$/, ""))}</th>${cab}</tr></thead><tbody>${celdas}</tbody></table></div>
+      <div class="guia"><ul>
+        <li>En <b>verde</b> el valor más alto de cada fila y en <b>naranja</b> el más bajo (solo en las filas donde más es mejor).</li>
+        <li>Clases dadas, reservas, media y ocupación: solo clases <b>ya dadas</b> del periodo. Media por clase, plazas por clase y ocupación se calculan sobre las clases con reservas conocidas.</li>
+        <li>Semana tipo: media de cada día de la semana, incluye lo ya programado. Facturación: ver la pestaña Facturación.</li>
+        <li><b>*</b> = aforo estimado (ver «Qué datos son estimados y cómo», arriba). "–" = no hay dato (por ejemplo, centros de bsport).</li>
+      </ul></div>
+      <div class="heats cmp-bars">${barra("Reservas", "reservas", v => Math.round(v).toLocaleString("es-ES"))}${barra("Media de gente por clase", "media", v => num(v))}${barra("Ocupación", "ocup", pct)}</div>
+      ${mapas ? `<h3>Mapa de calor de cada uno: cuándo se llena</h3><p class="meta">Número: clases ya dadas a esa hora, de media por día. Porcentaje: % reservado de esas clases. Más verde, más lleno.</p><div class="heatgrid">${mapas}</div>` : ""}`;
+  }
+  el.innerHTML = `<section><h2>Comparador</h2>
+    <p class="meta">Hasta ${CMP_MAX} centros o cadenas a la vez. El periodo es el de las fechas de los filtros de arriba.</p>
+    <div class="row"><input type="search" id="cmp-q" placeholder="Buscar un centro o una cadena para añadir" value="${esc(el.dataset.q || "")}" aria-label="Buscar"><button type="button" id="cmp-limpia">Vaciar</button><span class="meta">${items.length} de ${CMP_MAX}</span></div>
+    ${res}<div class="cmp-chips">${chips}</div>${cuerpo}</section>`;
+  const inp = $("#cmp-q");
+  inp.addEventListener("input", e => { el.dataset.q = e.target.value; const p = e.target.selectionStart; comparador(); const n = $("#cmp-q"); n.focus(); n.setSelectionRange(p, p); });
+  el.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => { if (cmpAnadir(b.dataset.add)) { el.dataset.q = ""; comparador(); } }));
+  el.querySelectorAll("[data-quitar]").forEach(b => b.addEventListener("click", () => { cmpQuitar(b.dataset.quitar); comparador(); }));
+  $("#cmp-limpia").addEventListener("click", () => { [...CMP].forEach(cmpQuitar); comparador(); });
+}
+
 /* ---------- oferta de clases (por día de la semana, semana y mes) ---------- */
 const DIAS_L = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 function factMesActual(u) {
@@ -1247,7 +1372,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       const pd = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, pm: 0 }));
       cel.forEach(c => { cl += c.c / nf(c.d); pl += c.p / nf(c.d); r += c.r; pm += c.pm; const x = pd[c.d]; x.c += c.c / nf(c.d); x.p += c.p / nf(c.d); x.r += c.r; x.pm += c.pm; });
       const pc = pm > 0 ? r / pm : null;
-      const row = { _i: i, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp,
+      const row = { _i: i, ck: "u:" + u.ukey, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp,
         cg: u._clases_dadas != null ? u._clases_dadas : null, rg: u._clases_dadas != null && u.plazas_med > 0 ? u.reservas : null, sa: u.sin_aforo, nc: u.n_clases };
       pd.forEach((x, d) => { row["d" + d] = !dset.has(d) ? null : met === "clases" ? x.c : met === "plazas" ? x.p : met === "ocup" ? (x.pm > 0 ? x.r / x.pm : null) : (x.pm > 0 ? x.p * x.r / x.pm : null); });
       return row;
@@ -1267,7 +1392,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
     const [t, pp] = [per[0], per.slice(2)], clave = t === "S" ? "semanas" : "meses";
     filas = unidades.map((u, i) => {
       const x = u[clave].find(y => y.p === pp);
-      return { _i: i, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl: x ? x.clases : null, pl: x ? x.plazas : null,
+      return { _i: i, ck: "u:" + u.ukey, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl: x ? x.clases : null, pl: x ? x.plazas : null,
         oc: x ? x.reservas : null, pc: x ? x.ocup : null, dias: x ? x.dias : null };
     });
     cols = [{ k: "cl", l: "Clases", n: 1 }, { k: "pl", l: "Plazas ofertadas", n: 1 }, { k: "oc", l: "Plazas ocupadas", n: 1 },
@@ -1290,7 +1415,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       <label>Hasta <select id="h1-${key}">${horas.slice(1).map(h => `<option value="${h}"${h === h1 ? " selected" : ""}>${String(h).padStart(2, "0")}:00</option>`).join("")}</select></label>
       ${filtrado ? `<span class="tag b">filtrado</span>` : ""}</div>` : ""}
     ${resumen}
-    ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
+    ${tabla(id, [{ k: "_cmp", l: "Comparar", h: r => cmpBox(r.ck) }, { k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
       { k: "zona", l: key === "of" ? "Zona" : "Ciudad" }, ...cols], filas, { limit: 400, click: per === "dia", sel: r => r._i === sel })}
     <p class="nota">Pulsa un centro para ver sus clases por hora. "Por día de la semana" es una semana tipo: la suma de la media de cada día (solo días completos; los festivos sin clases no cuentan). Plazas ocupadas y % reservado: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>
     <p class="nota"><b>*</b> = aforo estimado (ver «Qué datos son estimados y cómo», arriba). Clases / plazas ocupadas por semana: una <b>semana tipo</b> (media de cada día de la semana, incluye lo ya programado; plazas ocupadas = plazas ofertadas × % reservado). <b>Clases dadas</b> y <b>Reservas dadas</b>: el total real de lo ya ocurrido en el periodo de las fechas de arriba. Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
@@ -1559,7 +1684,7 @@ function mapa() {
 /* ---------- arranque ---------- */
 const RENDER = { resumen: conClases("resumen", resumen), ocupacion: conClases("ocupacion", ocupacion), facturacion, oferta: conHorario("oferta", ofertaTab),
   curvas: conClases("curvas", curvas), clases: conClases("clases", clases), proximas, precios, estudios,
-  cadenas: conHorario("cadenas", cadenas), alertas, mapa };
+  cadenas: conHorario("cadenas", cadenas), comparador: conHorario("comparador", comparador), alertas, mapa };
 function render() { RENDER[tabActual](); }
 function activar(t) {
   tabActual = t;
@@ -1577,6 +1702,10 @@ document.addEventListener("keydown", e => {
   if (tabActual === "clases" && claseSel != null) { claseSel = null; clases(); }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  $("#cmp-ir").addEventListener("click", () => activar("comparador"));
+  $("#cmp-vaciar").addEventListener("click", () => { [...CMP].forEach(cmpQuitar); if (tabActual === "comparador") render(); });
+});
 (async function () {
   try { await cargar(); } catch (e) { $("#meta").textContent = "No se han podido cargar los datos: " + e.message; return; }
   const gen = META.generado ? new Date(META.generado).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "";

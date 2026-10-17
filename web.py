@@ -358,7 +358,8 @@ def datos_fecha(g, g_all, ahora, idx, meses, ukey):
     d["_r"], d["_m"] = d["reservas"].where(ok, 0), d["plazas"].where(ok, 0)
     d["_x"] = d["reservas"].where(dada & d["reservas"].notna(), 0)
     d["_g"] = dada.astype(int)          # clases ya dadas (para el mapa de calor: solo clases dadas)
-    agg = dict(c=("_c", "sum"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"), g=("_g", "sum"))
+    d["_n"] = ok.astype(int)            # clases ya dadas con reservas y aforo conocidos (para la media por clase)
+    agg = dict(c=("_c", "sum"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"), g=("_g", "sum"), n=("_n", "sum"))
 
     def util(t):
         return t[(t["c"] > 0) | (t["r"] > 0) | (t["x"] > 0) | (t["g"] > 0)]
@@ -366,7 +367,7 @@ def datos_fecha(g, g_all, ahora, idx, meses, ukey):
     dia = util(d.groupby("fecha").agg(**agg).reset_index())
     out = {"dd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in dia["fecha"]],
            "dc": [int(v) for v in dia["c"]], "dp": [int(round(v)) for v in dia["p"]], "dr": [int(round(v)) for v in dia["r"]],
-           "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]], "dg": [int(v) for v in dia["g"]]}
+           "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]], "dg": [int(v) for v in dia["g"]], "dn": [int(v) for v in dia["n"]]}
     # por hora y por clase, en el fichero de cada mes
     d["hora"] = d["inicio_local"].dt.hour
     d["mes"] = d["fecha"].dt.strftime("%Y-%m")
