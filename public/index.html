@@ -160,6 +160,7 @@ a { color: var(--accent); }
     <label>Fechas<span class="rango"><input type="date" id="f-f0"><input type="date" id="f-f1"></span></label>
     <label>Día de la semana<span class="dias" id="f-dias"></span></label>
     <label class="sw"><input type="checkbox" id="f-fest" checked> Incluir festivos</label>
+    <label class="sw" title="Algunos centros de Mindbody no publican su aforo. Apagado: solo cuentan datos publicados (aforo y reservas reales). Encendido: se estima el aforo con el máximo de plazas libres visto, y las reservas salen de ahí."><input type="checkbox" id="f-est"> Incluir estimaciones (aforo no publicado)</label>
     <label class="sw"><input type="checkbox" id="f-vs" checked> BeatCore siempre visible (ignora marca, estudio y disciplina para dar perspectiva)</label>
     <button type="button" id="f-reset">Quitar filtros</button>
   </div>
@@ -204,7 +205,7 @@ const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["facturacion
 
 let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null, OF = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
-const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
+const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true, est: false };
 let tabActual = "resumen", chart = null, claseSel = null;
 const sortState = {};
 
@@ -240,6 +241,7 @@ async function asegurarClases() {
   HC = new Array(N);   // la clase tiene alguna foto previa a su inicio (curva)
   for (let i = 0; i < N; i++) HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
   GA = []; GB = [];
+  respaldarEst(); aplicarEst();
 }
 function conClases(panel, fn) {
   return () => {
@@ -252,6 +254,32 @@ function conClases(panel, fn) {
   };
 }
 
+
+/* ---------- datos estimados: apagados por defecto; se activan con "Incluir estimaciones" ---------- */
+let BK = null, BKP = null;
+function respaldarEst() {
+  BK = new Map();
+  for (let i = 0; i < N; i++) if (D.af[i] === 1) BK.set(i, { a: D.a[i], r: D.r[i], l: D.l[i], hf: D.hf[i], hf0: D.hf0[i],
+    cr: D.checkpoints.map((_, j) => D.cr[j][i]), cl: D.checkpoints.map((_, j) => D.cl[j][i]) });
+}
+function respaldarEstPX() {
+  BKP = new Map();
+  if (!PX || !PX.af) return;
+  for (let i = 0; i < PX.n; i++) if (PX.af[i] === 1) BKP.set(i, { a: PX.a[i], r: PX.r[i], l: PX.l[i] });
+}
+function aplicarEst() {
+  if (!D || !BK) return;
+  const ult = D.checkpoints.length - 1;
+  BK.forEach((b, i) => {
+    D.a[i] = F.est ? b.a : null; D.r[i] = F.est ? b.r : null; D.l[i] = F.est ? b.l : null;
+    D.hf[i] = F.est ? b.hf : null; D.hf0[i] = F.est ? b.hf0 : null;
+    D.checkpoints.forEach((_, j) => { D.cr[j][i] = F.est ? b.cr[j] : null; D.cl[j][i] = F.est ? b.cl[j] : null; });
+    OCC[i] = D.r[i] != null && D.a[i] > 0 ? Math.min(1, D.r[i] / D.a[i]) : null;
+    HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
+  });
+  if (BKP) BKP.forEach((b, i) => { PX.a[i] = F.est ? b.a : null; PX.r[i] = F.est ? b.r : null; PX.l[i] = F.est ? b.l : null; });
+}
+
 /* ---------- carga ---------- */
 async function cargar() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
@@ -259,6 +287,7 @@ async function cargar() {
   DIDX = D;
   if (META.hasta) { const d0 = new Date(META.hasta + "T00:00:00Z"); d0.setUTCDate(d0.getUTCDate() - VENTANA_DIAS); F90 = d0.toISOString().slice(0, 10); }
   try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
+  respaldarEstPX();
   try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
   try { OF = await get("data/oferta.json"); } catch (e) { OF = null; }
   EST = D.estudios;
@@ -313,7 +342,7 @@ function estudiosSelect() {
 }
 function leerFiltros() {
   F.centro = $("#f-centro").value; F.marca = $("#f-marca").value; F.estudio = $("#f-estudio").value; F.disc = $("#f-disc").value;
-  F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked;
+  F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked; F.est = $("#f-est").checked;
   F.dias = new Set([...document.querySelectorAll("#f-dias input:checked")].map(x => +x.dataset.d));
 }
 function pasaBase(i, ignorarDisc) {
@@ -938,8 +967,10 @@ function vistaRango(u) {
     const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
     if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
     if (u.dg && u.dg[i] > 0) fechasDowG[dow].add(f);
-    const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
-    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i]; G += (u.dg ? u.dg[i] : 0);
+    const E = F.est && u.dpe ? 1 : 0;      // lo estimado solo cuenta si se ha activado
+    const dp_ = u.dp[i] + (E ? u.dpe[i] : 0), dr_ = u.dr[i] + (E ? u.dre[i] : 0), dm_ = u.dm[i] + (E ? u.dme[i] : 0), dx_ = u.dx[i] + (E ? u.dxe[i] : 0);
+    const d = dia[dow]; d.c += u.dc[i]; d.p += dp_; d.r += dr_; d.m += dm_;
+    R += dr_; M += dm_; C += u.dc[i]; X += dx_; G += (u.dg ? u.dg[i] : 0);
   }
   const celdas = new Map();
   for (const mes of mesesNecesarios()) {
@@ -951,7 +982,8 @@ function vistaRango(u) {
       const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
       const k = dow * 100 + e.hh[i];
       const c = celdas.get(k) || { d: dow, h: e.hh[i], c: 0, p: 0, r: 0, pm: 0, g: 0 };
-      c.c += e.hc[i]; c.p += e.hp[i]; c.r += e.hr[i]; c.pm += e.hm[i]; c.g += (e.hg ? e.hg[i] : 0); celdas.set(k, c);
+      const E = F.est && e.hpe ? 1 : 0;
+      c.c += e.hc[i]; c.p += e.hp[i] + (E ? e.hpe[i] : 0); c.r += e.hr[i] + (E ? e.hre[i] : 0); c.pm += e.hm[i] + (E ? e.hme[i] : 0); c.g += (e.hg ? e.hg[i] : 0); celdas.set(k, c);
     }
   }
   const dias = dia.map((d, i) => {
@@ -976,7 +1008,8 @@ function topClasesRango(u) {
       if (e.kc[i] > 0) dias.add(f);
       const n = h.nombres[e.kn[i]];
       const x = m.get(n) || { clase: n, c: 0, p: 0, r: 0, mm: 0 };
-      x.c += e.kc[i]; x.p += e.kp[i]; x.r += e.kr[i]; x.mm += e.km[i]; m.set(n, x);
+      const E = F.est && e.kpe ? 1 : 0;
+      x.c += e.kc[i]; x.p += e.kp[i] + (E ? e.kpe[i] : 0); x.r += e.kr[i] + (E ? e.kre[i] : 0); x.mm += e.km[i] + (E ? e.kme[i] : 0); m.set(n, x);
     }
   }
   const nd = Math.max(1, dias.size);
@@ -1551,7 +1584,7 @@ function activar(t) {
   if (location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
   render();
 }
-function refrescar() { leerFiltros(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
+function refrescar() { leerFiltros(); aplicarEst(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
 
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
@@ -1571,11 +1604,11 @@ document.addEventListener("keydown", e => {
   montarFiltros();
   $("#f-centro").addEventListener("change", () => { marcasSelect(); estudiosSelect(); refrescar(); });
   $("#f-marca").addEventListener("change", () => { estudiosSelect(); refrescar(); });
-  ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest"].forEach(s => $(s).addEventListener("change", refrescar));
+  ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest", "#f-est"].forEach(s => $(s).addEventListener("change", refrescar));
   $("#f-dias").addEventListener("change", refrescar);
   $("#f-reset").addEventListener("click", () => {
     ["#f-centro", "#f-marca", "#f-estudio", "#f-disc"].forEach(s => $(s).value = "");
-    $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true;
+    $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true; $("#f-est").checked = false;
     document.querySelectorAll("#f-dias input").forEach(x => x.checked = true);
     marcasSelect(); estudiosSelect(); refrescar();
   });
