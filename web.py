@@ -884,6 +884,13 @@ def main():
     ea = pd.Series((c["aforo_fuente"] == "estimado").astype(float).values).groupby(pd.Series(e_idx)).mean()
     for k_, e_ in enumerate(est_tab):
         e_["ea"] = round(float(ea.get(k_, 0.0)), 2)
+    # distancia al BeatCore más cercano (m): catálogo si está, si no la de web/ubicaciones.json
+    _dcat = {int(i): d for i, d in zip(cat["id"], cat["distancia_m"]) if pd.notna(d)}
+    _ubd = {k: v.get("dist_bc_m") for k, v in (_UBIC or {}).items() if k != "_sedes"}
+    for e_ in est_tab:
+        dm_ = None if e_["p"] else (_dcat.get(e_["id"]) if e_["id"] in _dcat else _ubd.get(e_["n"]))
+        if dm_ is not None:
+            e_["dm"] = int(round(dm_))
     arr = {
         "e": e_idx, "c": i_centro, "p": i_plat, "k": i_clase, "f": i_fecha, "d": i_disc,
         "w": lista(c["inicio_local"].dt.weekday),
