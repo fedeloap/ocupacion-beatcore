@@ -225,10 +225,11 @@ def clases_unicas(snap):
     ml = s.groupby(g)["libres_n"].max().rename("max_libres")
     s = s.sort_values("captured_at").groupby(g, as_index=False).tail(1)
     s = s.merge(ml, left_on=g, right_index=True, how="left")
-    # una clase ya pasada cuya última foto es de más de 8 h antes de empezar desapareció de la agenda (no se dio): no cuenta,
-    # igual que en las pestañas de clases (analisis.cargar)
+    # una clase ya pasada cuya última foto es de más de 8 h antes de empezar desapareció de la agenda: si tenía 0 reservas se dio
+    # vacía (cuenta); si tenía reservas se trata como cancelada (igual que en analisis.cargar)
     ahora_ = snap["captured_at"].max()
-    s = s[~((s["inicio_local"] <= ahora_) & ((s["inicio_local"] - s["captured_at"]) > pd.Timedelta(hours=8)))]
+    s = s[~((s["inicio_local"] <= ahora_) & ((s["inicio_local"] - s["captured_at"]) > pd.Timedelta(hours=8))
+            & ~(pd.to_numeric(s["ocupadas"], errors="coerce") == 0))]
     # una clase cancelada en cualquiera de sus fotos (Mindbody la marca cancelada solo al final) no cuenta
     canc = snap_canc.groupby(g)["_c"].max().rename("_cancelada")
     s = s.merge(canc, left_on=g, right_index=True, how="left")

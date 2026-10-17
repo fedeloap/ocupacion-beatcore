@@ -109,6 +109,14 @@ def cargar():
         c2 = c2[~c2.set_index(key_est).index.isin(fin.set_index(key_est).index)]
         c2 = c2.drop(columns=["libres_n"], errors="ignore").merge(max_libres, left_on=key_est, right_index=True, how="left")
         fin = pd.concat([fin, c2[fin.columns.intersection(c2.columns)]], ignore_index=True)
+        # Clases ya pasadas que dejaron de salir en la agenda estando a 0 reservas (la plataforma oculta las vacías): se dieron
+        # sin nadie apuntado (Fede, 17/10/2026). Si tenían reservas al desaparecer, se tratan como canceladas y no cuentan.
+        c3 = todo[(todo["inicio_local"] <= ahora) & (todo["captured_at"] < todo["inicio_local"])]
+        c3 = c3.sort_values("captured_at").groupby(key_est, as_index=False).tail(1)
+        c3 = c3[(pd.to_numeric(c3["ocupadas"], errors="coerce") == 0) & (c3["cancelada"].astype(str).str.lower() != "true")]
+        c3 = c3[~c3.set_index(key_est).index.isin(fin.set_index(key_est).index)]
+        c3 = c3.drop(columns=["libres_n"], errors="ignore").merge(max_libres, left_on=key_est, right_index=True, how="left")
+        fin = pd.concat([fin, c3[fin.columns.intersection(c3.columns)]], ignore_index=True)
     return fin.drop(columns=["_k"])
 
 
