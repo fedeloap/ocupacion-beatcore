@@ -52,6 +52,14 @@ td.mejor { background: rgb(var(--accent-rgb) / .22); font-weight: 700; }
 td.peor { background: rgb(var(--comp-rgb) / .18); }
 table.cmp-t td, table.cmp-t th { text-align: center; }
 table.cmp-t td:first-child, table.cmp-t th:first-child { text-align: left; font-weight: 600; }
+.inf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; margin-top: 12px; align-items: start; }
+.inf-grid > div > b { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
+.inf-grid input[type=number], .inf-grid select { width: 100%; }
+.ms { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: 6px 8px; }
+.ms summary { cursor: pointer; font-size: 14px; }
+.ms .lista { max-height: 220px; overflow: auto; margin: 6px 0; display: grid; gap: 2px; }
+.ms .lista label { display: flex; gap: 6px; align-items: center; font-size: 13px; text-transform: none; letter-spacing: 0; font-weight: 400; color: inherit; }
+.ms input[type=search] { width: 100%; }
 details.filtros { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
 details.filtros summary { cursor: pointer; font-weight: 600; font-family: var(--display); }
 .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin-top: 12px; align-items: end; }
@@ -1689,10 +1697,7 @@ function mapa() {
     : `<p class="aviso">Falta el enlace del mapa. Hay que poner el enlace de inserción del My Maps (<code>https://www.google.com/maps/d/embed?mid=...</code>) en <code>web/config.json</code> (<code>mapa_url</code>).</p>`;
 }
 
-/* ---------- informes: Excel solo con datos (se genera en el navegador con los datos de la web) ---------- */
-const INF_ZONAS = ["Chamberí", "Salamanca", "Diagonal", "Valencia"];
-const INF_BLOQUES = [["resumen", "Resumen por zona y disciplina"], ["centros", "Centros de cada zona, con distancia a BeatCore"],
-  ["top5", "Los 5 centros con más reservas"], ["dias", "Por día de la semana"]];
+/* ---------- informes: buscador abierto sobre todas las clases dadas; tabla en pantalla y Excel solo con datos ---------- */
 const INF_MES = {};
 async function infMeses(a, b) {
   const ms = ((DIDX && DIDX.meses) || []).map(m => m.mes).filter(m => m >= a.slice(0, 7) && m <= b.slice(0, 7));
@@ -1700,120 +1705,202 @@ async function infMeses(a, b) {
     .then(j => { INF_MES[m] = j; })));
   return ms.map(m => CLM[m] || INF_MES[m]).filter(Boolean);
 }
+const INF_DIMS = [["zona", "Zona"], ["marca", "Marca / cadena"], ["centro", "Centro"], ["disc", "Disciplina"], ["dia", "Día de la semana"],
+  ["hora", "Hora"], ["clase", "Nombre de la clase"], ["fecha", "Fecha"], ["mes", "Mes"], ["plat", "Plataforma"]];
+const INF_METS = [["clases", "Clases dadas", "0"], ["res", "Reservas", "0"], ["media", "Media de gente por clase", "0.0"], ["plazas", "Plazas por clase", "0.0"],
+  ["ocup", "Ocupación", "0%"], ["llenas", "% de clases llenas", "0%"], ["centros", "Nº de centros", "0"], ["share", "% de las reservas del total", "0.0%"],
+  ["shareg", "% de las reservas dentro de su primer grupo", "0.0%"], ["dist", "Distancia a BeatCore (m)", "0"]];
+const INF_METS_DEF = ["clases", "res", "media", "plazas", "ocup", "dist"];
+const INF_PRESETS = [
+  ["Zonas BeatCore por disciplina", { zona: ["Chamberí", "Salamanca", "Diagonal", "Valencia"], dims: ["zona", "disc"], orden: "res" }],
+  ["Centros de cada zona BeatCore", { zona: ["Chamberí", "Salamanca", "Diagonal", "Valencia"], dims: ["zona", "disc", "centro"], mets: ["clases", "res", "media", "plazas", "ocup", "share", "shareg", "dist"], orden: "res" }],
+  ["Boutiques con más clases", { dims: ["centro"], mets: ["clases", "res", "media", "plazas", "ocup"], orden: "clases", limite: "50" }],
+  ["Boutiques con más afluencia", { dims: ["centro"], mets: ["clases", "res", "media", "plazas", "ocup"], orden: "res", limite: "50" }],
+  ["Cadenas con más clases", { dims: ["marca"], mets: ["clases", "centros", "res", "media", "plazas", "ocup"], orden: "clases", limite: "50" }],
+  ["Por día de la semana", { dims: ["dia"], orden: "dia" }],
+  ["Por hora del día", { dims: ["hora"], orden: "hora" }]
+];
+function msHtml(id, titulo, items) {
+  return `<div><b>${esc(titulo)}</b><details class="ms" id="${id}"><summary>Todos</summary>
+    <input type="search" placeholder="Buscar…" aria-label="Buscar en ${esc(titulo)}">
+    <div class="lista">${items.map(([v, l]) => `<label><input type="checkbox" value="${esc(v)}">${esc(l)}</label>`).join("")}</div>
+    <button type="button" class="ms-q">Quitar selección</button></details></div>`;
+}
+function msResumen(el) {
+  const sel = [...el.querySelectorAll(".lista input:checked")].map(x => x.parentElement.textContent);
+  el.querySelector("summary").textContent = !sel.length ? "Todos" : sel.length <= 2 ? sel.join(", ") : `${sel.length} elegidos`;
+}
 function informes() {
   const p = $("#p-informes");
   if (p.dataset.listo) return;
   p.dataset.listo = "1";
-  p.innerHTML = `<section><h2 style="margin:0 0 8px">Informe en Excel</h2>
-    <div class="fgrid">
-      <label>Fechas<span class="rango"><input type="date" id="inf-f0" min="${esc(META.desde)}" max="${esc(META.hasta)}" value="${esc(META.desde)}">
-        <input type="date" id="inf-f1" min="${esc(META.desde)}" max="${esc(META.hasta)}" value="${esc(META.hasta)}"></span></label>
-      <label>Zonas<span class="dias" id="inf-z">${INF_ZONAS.map(z => `<label><input type="checkbox" value="${esc(z)}" checked>${esc(zn(z))}</label>`).join("")}</span></label>
-      <label>Disciplinas<span class="dias" id="inf-d">${DISCS.map(d => `<label><input type="checkbox" value="${esc(d)}"${d === "Lagree" || d === "Reformer" ? " checked" : ""}>${esc(d)}</label>`).join("")}</span></label>
-      <label>Hojas<span class="dias" id="inf-b">${INF_BLOQUES.map(([k, l]) => `<label><input type="checkbox" value="${k}" checked>${esc(l)}</label>`).join("")}</span></label>
+  const E = DIDX.estudios, dic = DIDX.dic;
+  const marcas = [...new Set(E.map(e => e.m))].sort((x, y) => x.localeCompare(y, "es"));
+  const centros = E.map((e, i) => [i, e.n + (e.z && e.z !== "Nacional" ? " · " + zn(e.z) : "")]).sort((x, y) => x[1].localeCompare(y[1], "es"));
+  const horas = Array.from({ length: 25 }, (_, h) => h);
+  p.innerHTML = `<section><h2 style="margin:0 0 4px">Buscador e informe en Excel</h2>
+    <p class="nota">Todas las clases ya dadas que tenemos. Lo que no marques cuenta como «todos». Elige cómo agrupar y qué columnas quieres.</p>
+    <div class="row" id="inf-pre">${INF_PRESETS.map(([l], i) => `<button type="button" data-i="${i}">${esc(l)}</button>`).join("")}<button type="button" id="inf-limpiar">Limpiar todo</button></div>
+    <div class="inf-grid">
+      <div><b>Fechas</b><span class="rango"><input type="date" id="inf-f0" min="${esc(META.desde)}" max="${esc(META.hasta)}" value="${esc(META.desde)}">
+        <input type="date" id="inf-f1" min="${esc(META.desde)}" max="${esc(META.hasta)}" value="${esc(META.hasta)}"></span></div>
+      <div><b>Horas</b><span class="rango"><select id="inf-h0">${horas.slice(0, 24).map(h => `<option value="${h}">${String(h).padStart(2, "0")}:00</option>`).join("")}</select>
+        <select id="inf-h1">${horas.slice(1).map(h => `<option value="${h}"${h === 24 ? " selected" : ""}>${String(h).padStart(2, "0")}:00</option>`).join("")}</select></span></div>
+      ${msHtml("inf-zona", "Zona", dic.centro.map(z => [z, zn(z)]))}
+      ${msHtml("inf-marca", "Marca / cadena", marcas.map(m => [m, m]))}
+      ${msHtml("inf-centro", "Centro", centros)}
+      ${msHtml("inf-disc", "Disciplina", DISCS.map(d => [d, d]))}
+      ${msHtml("inf-dia", "Día de la semana", DIAS.map((d, i) => [i, d]))}
+      ${msHtml("inf-plat", "Plataforma", dic.plat.map(x => [x, x]))}
     </div>
-    <p><button type="button" id="inf-go">Descargar Excel</button> <span id="inf-msg"></span></p></section>`;
-  $("#inf-go").addEventListener("click", infGenerar);
+    <div class="inf-grid">
+      <div><b>Agrupar por (en este orden)</b><div class="dias" id="inf-dims" style="flex-wrap:wrap">${INF_DIMS.map(([k, l]) => `<label><input type="checkbox" value="${k}">${esc(l)}</label>`).join("")}</div></div>
+      <div><b>Columnas</b><div class="dias" id="inf-mets" style="flex-wrap:wrap">${INF_METS.map(([k, l]) => `<label><input type="checkbox" value="${k}"${INF_METS_DEF.includes(k) ? " checked" : ""}>${esc(l)}</label>`).join("")}</div></div>
+    </div>
+    <div class="inf-grid">
+      <div><b>Ordenar por</b><select id="inf-orden"><option value="grupo">Orden del grupo</option>${INF_METS.filter(m => m[0] !== "dist").map(([k, l]) => `<option value="${k}"${k === "res" ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></div>
+      <div><b>Mostrar solo las primeras</b><input type="number" id="inf-lim" min="1" placeholder="Todas"></div>
+      <div><b>Mínimo de clases dadas</b><input type="number" id="inf-min" min="1" placeholder="Sin mínimo"></div>
+      <div><b>Excel: una hoja por</b><select id="inf-hojas"><option value="">Una sola hoja</option>${INF_DIMS.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></div>
+    </div>
+    <p><button type="button" id="inf-ver">Ver tabla</button> <button type="button" id="inf-go">Descargar Excel</button> <span id="inf-msg"></span></p></section>
+    <section id="inf-res"></section>`;
+  p.querySelectorAll("details.ms").forEach(el => {
+    el.addEventListener("change", () => msResumen(el));
+    el.querySelector("input[type=search]").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      el.querySelectorAll(".lista label").forEach(l => l.hidden = !!q && !l.textContent.toLowerCase().includes(q));
+    });
+    el.querySelector(".ms-q").addEventListener("click", () => { el.querySelectorAll(".lista input").forEach(x => x.checked = false); msResumen(el); });
+  });
+  $("#inf-pre").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.id === "inf-limpiar") infPon({}); else if (b.dataset.i != null) infPon(INF_PRESETS[+b.dataset.i][1]);
+  });
+  $("#inf-ver").addEventListener("click", () => infVer());
+  $("#inf-go").addEventListener("click", () => infExcel());
+}
+function infPon(c) {
+  const ms = { zona: "inf-zona", marca: "inf-marca", centro: "inf-centro", disc: "inf-disc", dia: "inf-dia", plat: "inf-plat" };
+  for (const [k, id] of Object.entries(ms)) {
+    const el = $("#" + id), v = (c[k] || []).map(String);
+    el.querySelectorAll(".lista input").forEach(x => x.checked = v.includes(x.value));
+    msResumen(el);
+  }
+  const dims = c.dims || [], mets = c.mets || INF_METS_DEF;
+  document.querySelectorAll("#inf-dims input").forEach(x => x.checked = dims.includes(x.value));
+  document.querySelectorAll("#inf-mets input").forEach(x => x.checked = mets.includes(x.value));
+  $("#inf-orden").value = c.orden || "res"; $("#inf-lim").value = c.limite || ""; $("#inf-min").value = ""; $("#inf-hojas").value = "";
+  $("#inf-h0").value = 0; $("#inf-h1").value = 24;
+  $("#inf-f0").value = META.desde; $("#inf-f1").value = META.hasta;
 }
 const infSel = id => [...document.querySelectorAll(`#${id} input:checked`)].map(x => x.value);
-async function infGenerar() {
-  const msg = $("#inf-msg");
-  if (typeof XLSX === "undefined") { msg.textContent = "No se ha cargado la librería de Excel. Recarga la página."; return; }
+const infSet = id => new Set(infSel(id));
+async function infCalcular() {
+  const E = DIDX.estudios, dic = DIDX.dic;
   const a = $("#inf-f0").value || META.desde, b = $("#inf-f1").value || META.hasta;
-  const zonas = infSel("inf-z"), discs = infSel("inf-d"), bl = new Set(infSel("inf-b"));
-  if (a > b || !zonas.length || !discs.length || !bl.size) { msg.textContent = "Revisa las fechas y marca al menos una zona, una disciplina y una hoja."; return; }
-  msg.textContent = "Generando…";
+  const h0 = +$("#inf-h0").value, h1 = +$("#inf-h1").value;
+  const S = { zona: infSet("inf-zona"), marca: infSet("inf-marca"), centro: infSet("inf-centro"), disc: infSet("inf-disc"), dia: infSet("inf-dia"), plat: infSet("inf-plat") };
+  const dims = INF_DIMS.filter(([k]) => infSel("inf-dims").includes(k)), mets = INF_METS.filter(([k]) => infSel("inf-mets").includes(k));
+  if (a > b) throw new Error("La fecha de inicio es posterior a la final.");
+  if (!mets.length) throw new Error("Marca al menos una columna.");
   const trozos = await infMeses(a, b);
-  const dic = DIDX.dic, E = DIDX.estudios;
-  const acc = new Map(), dia = new Map(), idsDatos = new Set();
-  const suma = (m, k, x, j) => {
-    let t = m.get(k); if (!t) { t = [0, 0, 0, 0]; m.set(k, t); }
-    t[0]++;
-    if (x.r[j] != null && x.a[j]) { t[1]++; t[2] += x.r[j]; t[3] += x.a[j]; }
+  const val = {
+    zona: (x, j) => zn(dic.centro[x.c[j]]), marca: (x, j) => E[x.e[j]].m, centro: (x, j) => E[x.e[j]].n, disc: (x, j) => dic.disc[x.d[j]],
+    dia: (x, j) => DIAS[x.w[j]], hora: (x, j) => String(Math.floor(x.h[j] / 60)).padStart(2, "0") + ":00", clase: (x, j) => dic.clase[x.k[j]],
+    fecha: (x, j) => dic.fecha[x.f[j]], mes: (x, j) => dic.fecha[x.f[j]].slice(0, 7), plat: (x, j) => dic.plat[x.p[j]]
   };
+  const G = new Map();
   for (const x of trozos) for (let j = 0; j < x.n; j++) {
     const f = dic.fecha[x.f[j]];
     if (f < a || f > b) continue;
-    const z = dic.centro[x.c[j]], d = dic.disc[x.d[j]];
-    if (!zonas.includes(z) || !discs.includes(d)) continue;
-    if (E[x.e[j]].id > 0) idsDatos.add(E[x.e[j]].id);
-    suma(acc, z + "|" + d + "|" + x.e[j], x, j);
-    suma(dia, z + "|" + d + "|" + x.w[j], x, j);
+    const hh = Math.floor(x.h[j] / 60);
+    if (hh < h0 || hh >= h1) continue;
+    if (S.zona.size && !S.zona.has(dic.centro[x.c[j]])) continue;
+    if (S.marca.size && !S.marca.has(E[x.e[j]].m)) continue;
+    if (S.centro.size && !S.centro.has(String(x.e[j]))) continue;
+    if (S.disc.size && !S.disc.has(dic.disc[x.d[j]])) continue;
+    if (S.dia.size && !S.dia.has(String(x.w[j]))) continue;
+    if (S.plat.size && !S.plat.has(dic.plat[x.p[j]])) continue;
+    const vs = dims.map(([k]) => val[k](x, j)), key = vs.join("\u0001");
+    let g = G.get(key);
+    if (!g) { g = { vs, t: [0, 0, 0, 0, 0, 0], ce: new Set(), e0: x.e[j] }; G.set(key, g); }
+    const t = g.t; t[0]++; g.ce.add(x.e[j]);
+    if (x.r[j] != null && x.a[j]) { t[1]++; t[2] += x.r[j]; t[3] += x.a[j]; }
+    if (x.l[j] != null) { t[5]++; if (x.l[j] === 1) t[4]++; }
   }
-  const sum = ts => ts.reduce((s, t) => [s[0] + t[0], s[1] + t[1], s[2] + t[2], s[3] + t[3]], [0, 0, 0, 0]);
-  const c = (v, z) => v == null || isNaN(v) ? null : { v, t: "n", z };
-  const media = t => t[1] ? t[2] / t[1] : null, plazas = t => t[1] ? t[3] / t[1] : null, ocup = t => t[3] ? t[2] / t[3] : null;
-  const por = (t, base) => t[1] && base ? t[2] / base : null;
-  const filasZD = (z, d) => [...acc.entries()].map(([k, t]) => { const [z2, d2, i] = k.split("|"); return z2 === z && d2 === d ? [E[+i], t] : null; })
-    .filter(Boolean).sort((p, q) => q[1][2] - p[1][2] || q[1][0] - p[1][0]);
-  const cab = ["Centro", "Distancia a BeatCore (m)", "Clases dadas", "Reservas", "Media de gente por clase", "Plazas por clase", "Ocupación",
-    "% de las reservas de la disciplina en la zona", "% de las reservas de la zona"];
-  const linea = (nombre, dm, t, bd, bz) => [nombre, c(dm, "0"), c(t[0], "0"), t[1] ? c(t[2], "0") : null, c(media(t), "0.0"), c(plazas(t), "0.0"),
-    c(ocup(t), "0%"), c(por(t, bd), "0.0%"), c(por(t, bz), "0.0%")];
-  const cabP = [["Periodo", a, b]];
-  const wb = XLSX.utils.book_new();
-  const hoja = (nombre, filas, anchos) => {
-    const ws = XLSX.utils.aoa_to_sheet([...cabP, [], ...filas]);
-    ws["!cols"] = anchos.map(w => ({ wch: w }));
-    XLSX.utils.book_append_sheet(wb, ws, nombre.slice(0, 31));
+  let rows = [...G.values()];
+  const totRes = rows.reduce((s, g) => s + g.t[2], 0);
+  const resG = new Map();
+  rows.forEach(g => { const k = g.vs[0] ?? ""; resG.set(k, (resG.get(k) || 0) + g.t[2]); });
+  const minC = +$("#inf-min").value || 0;
+  rows = rows.filter(g => g.t[0] >= minC).map(g => {
+    const t = g.t, m = {
+      clases: t[0], res: t[1] ? t[2] : null, media: t[1] ? t[2] / t[1] : null, plazas: t[1] ? t[3] / t[1] : null, ocup: t[3] ? t[2] / t[3] : null,
+      llenas: t[5] ? t[4] / t[5] : null, centros: g.ce.size, share: t[1] && totRes ? t[2] / totRes : null,
+      shareg: t[1] && resG.get(g.vs[0] ?? "") ? t[2] / resG.get(g.vs[0] ?? "") : null,
+      dist: dims.some(d => d[0] === "centro") && !E[g.e0].p && E[g.e0].dm != null ? E[g.e0].dm : null
+    };
+    return { vs: g.vs, m, ast: dims.some(d => d[0] === "centro") && E[g.e0].ea >= 0.5 };
+  });
+  const orden = $("#inf-orden").value, DO = { dia: DIAS, grupo: null };
+  const cmpV = (x, y) => (x == null && y == null) ? 0 : x == null ? 1 : y == null ? -1 : (typeof x === "string" ? x.localeCompare(y, "es") : y - x);
+  if (orden === "grupo") rows.sort((p, q) => { for (let i = 0; i < dims.length; i++) { const r = dims[i][0] === "dia" ? DIAS.indexOf(p.vs[i]) - DIAS.indexOf(q.vs[i]) : String(p.vs[i]).localeCompare(String(q.vs[i]), "es"); if (r) return r; } return 0; });
+  else rows.sort((p, q) => cmpV(p.m[orden], q.m[orden]));
+  const lim = +$("#inf-lim").value;
+  const total = rows.length;
+  if (lim > 0) rows = rows.slice(0, lim);
+  const nomS = { zona: "Zona", marca: "Marca / cadena", centro: "Centro", disc: "Disciplina", dia: "Día de la semana", plat: "Plataforma" };
+  const filtros = [["Periodo", a, b]];
+  for (const [k, id] of [["zona", "inf-zona"], ["marca", "inf-marca"], ["centro", "inf-centro"], ["disc", "inf-disc"], ["dia", "inf-dia"], ["plat", "inf-plat"]]) {
+    const el = $("#" + id), sel = [...el.querySelectorAll(".lista input:checked")].map(x => x.parentElement.textContent);
+    if (sel.length) filtros.push([nomS[k], sel.join(", ")]);
+  }
+  if (h0 > 0 || h1 < 24) filtros.push(["Horas", String(h0).padStart(2, "0") + ":00", String(h1).padStart(2, "0") + ":00"]);
+  if (minC) filtros.push(["Mínimo de clases dadas", minC]);
+  return { dims, mets: mets.filter(m => m[0] !== "dist" || dims.some(d => d[0] === "centro")), rows, total, filtros, a, b };
+}
+async function infVer() {
+  const msg = $("#inf-msg"), out = $("#inf-res");
+  msg.textContent = "Calculando…";
+  let R;
+  try { R = await infCalcular(); } catch (e) { msg.textContent = e.message; return; }
+  msg.textContent = "";
+  const cols = [...R.dims.map(([k, l], i) => ({ k: "g" + i, l, h: r => esc(r["g" + i]) + (i === R.dims.length - 1 && r._ast ? ' <span class="est" title="Aforo estimado: ver «Qué datos son estimados y cómo», arriba">*</span>' : "") })),
+    ...R.mets.map(([k, l, z]) => ({ k, l, n: 1, f: v => v == null ? "–" : z === "0%" ? pct(v) : z === "0.0%" ? num(v * 100) + "%" : z === "0.0" ? num(v) : String(Math.round(v)) }))];
+  const filas = R.rows.map((r, i) => { const o = { _i: i, _ast: r.ast, ...r.m }; r.vs.forEach((v, j) => o["g" + j] = v); return o; });
+  sortState["inf-t"] = null;
+  const pintar = () => {
+    out.innerHTML = `<p class="nota">${R.total} fila${R.total === 1 ? "" : "s"}${R.total > R.rows.length ? ` (mostrando las primeras ${R.rows.length})` : ""} · del ${R.a} al ${R.b}. Los centros con * tienen el aforo estimado.</p>` + tabla("inf-t", cols, filas, { limit: 300 });
+    enlazarTabla(out, "inf-t", pintar);
   };
-  if (bl.has("resumen")) {
-    const cabR = ["Disciplina", "Clases dadas", "Reservas", "Media de gente por clase", "Plazas por clase", "Ocupación"];
-    const fs = [["Zona", ...cabR]];
-    for (const z of zonas) for (const d of discs) {
-      const t = sum(filasZD(z, d).map(r => r[1]));
-      if (t[0]) fs.push([zn(z), d, c(t[0], "0"), t[1] ? c(t[2], "0") : null, c(media(t), "0.0"), c(plazas(t), "0.0"), c(ocup(t), "0%")]);
-    }
-    fs.push([], ["Total de las zonas", ...cabR]);
-    for (const d of discs) {
-      const t = sum(zonas.flatMap(z => filasZD(z, d).map(r => r[1])));
-      if (t[0]) fs.push(["Total", d, c(t[0], "0"), t[1] ? c(t[2], "0") : null, c(media(t), "0.0"), c(plazas(t), "0.0"), c(ocup(t), "0%")]);
-    }
-    hoja("Resumen", fs, [20, 18, 14, 12, 18, 14, 12]);
-  }
-  if (bl.has("centros") || bl.has("top5")) {
-    const catDisc = r => DISC_CAT[r.disciplina] || "Otros";
-    const H = {};
-    for (const z of zonas) {
-      const zt = sum(discs.flatMap(d => filasZD(z, d).map(r => r[1])));
-      const fs = [], f5 = [];
-      for (const d of discs) {
-        const fl = filasZD(z, d), dt = sum(fl.map(r => r[1]));
-        if (!fl.length) continue;
-        fs.push([d], cab);
-        fl.forEach(([e, t]) => fs.push(linea(e.n, e.p ? null : e.dm, t, dt[2], zt[2])));
-        // centros del catálogo en la zona a 1 km o menos sin clases en el periodo: salen sin cifras
-        CATROWS.filter(r => r.zona === z && !r.propio && r.distancia_m != null && r.distancia_m <= 1000 && catDisc(r) === d && !idsDatos.has(+r.id))
-          .sort((p, q) => p.distancia_m - q.distancia_m).forEach(r => fs.push([r.estudio, c(Math.round(r.distancia_m), "0")]));
-        fs.push(linea("Total " + d, null, dt, dt[2], zt[2]), []);
-        f5.push([d], ["Puesto", cab[0], ...cab.slice(2)]);
-        fl.slice(0, 5).forEach(([e, t], n) => { const l = linea(e.n, e.p ? null : e.dm, t, dt[2], zt[2]); f5.push([n + 1, l[0], ...l.slice(2)]); });
-        const rest = fl.slice(5);
-        if (rest.length) {
-          const rt = sum(rest.map(r => r[1]));
-          f5.push(["", `Resto (${rest.length} centros)`, c(rt[0], "0"), rt[1] ? c(rt[2], "0") : null, null, null, null, c(por(rt, dt[2]), "0.0%"), c(por(rt, zt[2]), "0.0%")]);
-        }
-        f5.push([]);
-      }
-      H[z] = { fs, f5 };
-    }
-    if (bl.has("centros")) for (const z of zonas) if (H[z].fs.length) hoja(zn(z), H[z].fs, [44, 14, 12, 12, 16, 14, 12, 22, 22]);
-    if (bl.has("top5")) {
-      const fs = [];
-      for (const z of zonas) if (H[z].f5.length) fs.push([zn(z)], ...H[z].f5);
-      if (fs.length) hoja("Top 5", fs, [8, 44, 12, 12, 16, 14, 12, 22, 22]);
-    }
-  }
-  if (bl.has("dias")) {
-    const fs = [["Zona", "Disciplina", "Día", "Clases dadas", "Reservas", "Media de gente por clase", "Plazas por clase", "Ocupación"]];
-    for (const z of zonas) for (const d of discs) for (let w = 0; w < 7; w++) {
-      const t = dia.get(z + "|" + d + "|" + w);
-      if (t) fs.push([zn(z), d, DIAS[w], c(t[0], "0"), t[1] ? c(t[2], "0") : null, c(media(t), "0.0"), c(plazas(t), "0.0"), c(ocup(t), "0%")]);
-    }
-    hoja("Por día", fs, [20, 18, 8, 14, 12, 18, 14, 12]);
-  }
-  if (!wb.SheetNames.length) { msg.textContent = "No hay clases en ese periodo con esas zonas y disciplinas."; return; }
-  XLSX.writeFile(wb, `informe_${a}_${b}.xlsx`);
+  pintar();
+}
+async function infExcel() {
+  const msg = $("#inf-msg");
+  if (typeof XLSX === "undefined") { msg.textContent = "No se ha cargado la librería de Excel. Recarga la página."; return; }
+  msg.textContent = "Generando…";
+  let R;
+  try { R = await infCalcular(); } catch (e) { msg.textContent = e.message; return; }
+  if (!R.rows.length) { msg.textContent = "No hay clases con esos filtros."; return; }
+  const c = (v, z) => v == null || isNaN(v) ? null : { v, t: "n", z };
+  const cab = [...R.dims.map(d => d[1]), ...R.mets.map(m => m[1])];
+  const lin = r => [...r.vs, ...R.mets.map(([k, , z]) => c(r.m[k], z))];
+  const anchos = [...R.dims.map(() => 30), ...R.mets.map(() => 18)];
+  const wb = XLSX.utils.book_new();
+  const hoja = (nombre, filas) => {
+    const ws = XLSX.utils.aoa_to_sheet([...R.filtros, [], cab, ...filas.map(lin)]);
+    ws["!cols"] = anchos.map(w => ({ wch: w }));
+    const n = (nombre || "Datos").replace(/[\\\/?*\[\]:]/g, " ").slice(0, 31);
+    let nn = n, i = 2; while (wb.SheetNames.includes(nn)) nn = n.slice(0, 28) + " " + i++;
+    XLSX.utils.book_append_sheet(wb, ws, nn);
+  };
+  const sep = $("#inf-hojas").value, di = R.dims.findIndex(d => d[0] === sep);
+  if (sep && di >= 0) {
+    const m = new Map(); R.rows.forEach(r => { const k = r.vs[di]; if (!m.has(k)) m.set(k, []); m.get(k).push(r); });
+    m.forEach((f, k) => hoja(String(k), f));
+  } else hoja("Datos", R.rows);
+  XLSX.writeFile(wb, `informe_${R.a}_${R.b}.xlsx`);
   msg.textContent = "Listo.";
 }
 
