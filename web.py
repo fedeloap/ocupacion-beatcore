@@ -55,6 +55,21 @@ def sin_acentos(s):
     return "".join(ch for ch in unicodedata.normalize("NFD", str(s)) if unicodedata.category(ch) != "Mn")
 
 
+def _forzadas():
+    try:
+        d = json.load(open("web/disciplina_estudio.json", encoding="utf-8"))
+        return {k.lower(): v for k, v in d.items() if not k.startswith("_")}
+    except Exception:
+        return {}
+
+
+def disciplina_fila(clase, f, forz):
+    """Disciplina de una clase: BeatCore siempre Lagree; estudios forzados por web/disciplina_estudio.json; si no, por el nombre."""
+    if f[3]:
+        return "Lagree"
+    return forz.get(str(f[1]).lower()) or disciplina(clase, f[4])
+
+
 def disciplina(clase, disc_catalogo):
     t = sin_acentos(clase).lower()
     for nombre, rx in REGLAS:
@@ -624,7 +639,8 @@ def proximas(snap, mapa, propios, festivos):
     lleno = s["llena"].astype(str).str.lower().map({"true": True, "false": False})
     lleno = lleno.where(lleno.notna(), (res / cap) >= 0.999).map({True: 1, False: 0})
     filas, est_tab, e_idx = fichas(s, mapa, propios)
-    disc = ["Lagree" if f[3] else disciplina(k, f[4]) for k, f in zip(s["clase"], filas)]
+    forz = _forzadas()
+    disc = [disciplina_fila(k, f, forz) for k, f in zip(s["clase"], filas)]
     fecha = s["inicio_local"].dt.strftime("%Y-%m-%d")
     fest = [int(bool(f) and (f["zonas"] == "todas" or z in f["zonas"]))
             for f, z in zip((festivos.get(d) for d in fecha), s["centro_beatcore"])]
@@ -829,7 +845,8 @@ def main():
                         break
 
     # BeatCore es Lagree (no Pilates reformer): todas sus clases van en "Lagree" (decisión de Fede, 17/10/2026)
-    disc = ["Lagree" if f[3] else disciplina(k, f[4]) for k, f in zip(c["clase"], filas)]
+    forz = _forzadas()
+    disc = [disciplina_fila(k, f, forz) for k, f in zip(c["clase"], filas)]
     snap = cargar_snapshots()
     cr, cl, hf, hf0 = curvas(c, snap)
     prox = proximas(snap, mapa, propios, festivos)
