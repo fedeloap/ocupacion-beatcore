@@ -204,11 +204,7 @@ def clases_unicas(snap):
     occ = occ.where(occ.notna(), s["plazas"] - s["libres_n"])
     r = occ.where(s["plataforma"] != "bsport").clip(lower=0)
     s["reservas"] = r.where(s["plazas"].isna(), r.clip(upper=s["plazas"]))
-    # Datos ESTIMADOS (Mindbody sin aforo publicado): no se mezclan con los reales. Plazas y reservas reales quedan vacías
-    # en esas clases; la versión estimada se guarda aparte (plazas_e, reservas_e) y solo se usa si se activa en la web.
-    s["est_aforo"] = est.reindex(s.index).fillna(False).astype(bool)
-    s["plazas_e"], s["reservas_e"] = s["plazas"], s["reservas"]
-    s.loc[s["est_aforo"], ["plazas", "reservas"]] = np.nan
+    s["est_aforo"] = est.reindex(s.index).fillna(False).astype(bool)      # aforo estimado (Mindbody sin aforo publicado)
     s["zona"] = s["centro_beatcore"].fillna("").replace("", "Nacional")
     s["fecha"] = s["inicio_local"].dt.normalize()
     return s.reset_index(drop=True)
@@ -362,16 +358,7 @@ def datos_fecha(g, g_all, ahora, idx, meses, ukey):
     d["_r"], d["_m"] = d["reservas"].where(ok, 0), d["plazas"].where(ok, 0)
     d["_x"] = d["reservas"].where(dada & d["reservas"].notna(), 0)
     d["_g"] = dada.astype(int)          # clases ya dadas (para el mapa de calor: solo clases dadas)
-    # lo estimado (aforo de Mindbody sin publicar), en columnas aparte: solo se suma si el usuario lo activa
-    ef = d["est_aforo"].fillna(False).astype(bool) if "est_aforo" in d.columns else pd.Series(False, index=d.index)
-    pe = d["plazas_e"] if "plazas_e" in d.columns else pd.Series(np.nan, index=d.index)
-    re_ = d["reservas_e"] if "reservas_e" in d.columns else pd.Series(np.nan, index=d.index)
-    oke = ef & dada & re_.notna() & (pe > 0)
-    d["_pe"] = (pe.fillna(0) * dentro).where(ef, 0)
-    d["_re"], d["_me"] = re_.where(oke, 0), pe.where(oke, 0)
-    d["_xe"] = re_.where(ef & dada & re_.notna(), 0)
-    agg = dict(c=("_c", "sum"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"), g=("_g", "sum"),
-               pe=("_pe", "sum"), re=("_re", "sum"), me=("_me", "sum"), xe=("_xe", "sum"))
+    agg = dict(c=("_c", "sum"), p=("_p", "sum"), r=("_r", "sum"), m=("_m", "sum"), x=("_x", "sum"), g=("_g", "sum"))
 
     def util(t):
         return t[(t["c"] > 0) | (t["r"] > 0) | (t["x"] > 0) | (t["g"] > 0)]
@@ -379,9 +366,7 @@ def datos_fecha(g, g_all, ahora, idx, meses, ukey):
     dia = util(d.groupby("fecha").agg(**agg).reset_index())
     out = {"dd": [idx.setdefault(f.strftime("%Y-%m-%d"), len(idx)) for f in dia["fecha"]],
            "dc": [int(v) for v in dia["c"]], "dp": [int(round(v)) for v in dia["p"]], "dr": [int(round(v)) for v in dia["r"]],
-           "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]], "dg": [int(v) for v in dia["g"]],
-           "dpe": [int(round(v)) for v in dia["pe"]], "dre": [int(round(v)) for v in dia["re"]],
-           "dme": [int(round(v)) for v in dia["me"]], "dxe": [int(round(v)) for v in dia["xe"]]}
+           "dm": [int(round(v)) for v in dia["m"]], "dx": [int(round(v)) for v in dia["x"]], "dg": [int(v) for v in dia["g"]]}
     # por hora y por clase, en el fichero de cada mes
     d["hora"] = d["inicio_local"].dt.hour
     d["mes"] = d["fecha"].dt.strftime("%Y-%m")
@@ -394,11 +379,9 @@ def datos_fecha(g, g_all, ahora, idx, meses, ukey):
             "hd": [fi.setdefault(f.strftime("%Y-%m-%d"), len(fi)) for f in h["fecha"]], "hh": [int(v) for v in h["hora"]],
             "hc": [int(v) for v in h["c"]], "hp": [int(round(v)) for v in h["p"]], "hr": [int(round(v)) for v in h["r"]],
             "hm": [int(round(v)) for v in h["m"]], "hx": [int(round(v)) for v in h["x"]], "hg": [int(v) for v in h["g"]],
-            "hpe": [int(round(v)) for v in h["pe"]], "hre": [int(round(v)) for v in h["re"]], "hme": [int(round(v)) for v in h["me"]],
             "kd": [fi.setdefault(f.strftime("%Y-%m-%d"), len(fi)) for f in k["fecha"]],
             "kn": [ni.setdefault(str(n), len(ni)) for n in k["clase"]], "kc": [int(v) for v in k["c"]],
-            "kp": [int(round(v)) for v in k["p"]], "kr": [int(round(v)) for v in k["r"]], "km": [int(round(v)) for v in k["m"]],
-            "kpe": [int(round(v)) for v in k["pe"]], "kre": [int(round(v)) for v in k["re"]], "kme": [int(round(v)) for v in k["me"]]}
+            "kp": [int(round(v)) for v in k["p"]], "kr": [int(round(v)) for v in k["r"]], "km": [int(round(v)) for v in k["m"]]}
     return out
 
 
@@ -547,7 +530,8 @@ def oferta_datos(snap, mapa, propios, lista_cadenas, precio_cad=None, pb=None):
                 nombre_u += f" ({ub[0] or 'sin ubicar'})"
             ukey = f"{est}|{zona}|{pv}"
             a_u = {k: v for k, v in a.items() if k not in ("celdas", "top")}
-            unidades.append({**datos_fecha(g, g_all, ahora, fechas_idx, meses_h, ukey), "ukey": ukey, "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
+            est_frac = round(float(g_all["est_aforo"].mean()), 2) if "est_aforo" in g_all.columns and len(g_all) else 0.0
+            unidades.append({**datos_fecha(g, g_all, ahora, fechas_idx, meses_h, ukey), "ukey": ukey, "est": est_frac, "prov": ub[1], "ciu": ub[0], "fact": fact, "marca": g["marca"].iloc[0], "extras": extras_u.get((est, zona), []),
                              "fmeses": facturacion_meses(g, a, ahora, fact["precio_ses"], g_all), "estudio": nombre_u, "estudio_captura": est, "zona": zona, "propio": int(g["propio"].iloc[0]),
                              "plat": g["plataforma"].iloc[0], "cadenas": pert, "parcial": bool(g["parcial"].all()), **a_u})
     for cad in lista_cadenas:
@@ -858,6 +842,9 @@ def main():
     llena = c["llena_b"].map({True: 1, False: 0})
     fuente = c["aforo_fuente"].map({"publicado": 0, "estimado": 1})
 
+    ea = pd.Series((c["aforo_fuente"] == "estimado").astype(float).values).groupby(pd.Series(e_idx)).mean()
+    for k_, e_ in enumerate(est_tab):
+        e_["ea"] = round(float(ea.get(k_, 0.0)), 2)
     arr = {
         "e": e_idx, "c": i_centro, "p": i_plat, "k": i_clase, "f": i_fecha, "d": i_disc,
         "w": lista(c["inicio_local"].dt.weekday),

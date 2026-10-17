@@ -32,6 +32,10 @@ h3 { margin: 0 0 6px; font-family: var(--display); font-weight: 600; font-size: 
 .meta, .nota { margin: 0; color: var(--muted); font-size: 13px; max-width: none; }
 .nota { margin-top: 8px; }
 .aviso { background: rgb(var(--comp-rgb) / .12); border: 1px solid rgb(var(--comp-rgb) / .5); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+details.metodo-est { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+details.metodo-est summary { cursor: pointer; }
+details.metodo-est ul { margin: 8px 0 2px; padding-left: 20px; display: grid; gap: 4px; }
+.est { color: var(--comp); font-weight: 700; cursor: help; }
 details.filtros { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
 details.filtros summary { cursor: pointer; font-weight: 600; font-family: var(--display); }
 .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin-top: 12px; align-items: end; }
@@ -149,6 +153,13 @@ a { color: var(--accent); }
 </header>
 <div id="aviso" class="aviso" hidden></div>
 
+<details class="metodo-est"><summary><b>Qué datos son estimados y cómo</b></summary>
+  <ul>
+    <li><b>Dato publicado</b>: plazas libres de cada clase (siempre) y, en la mayoría de centros, también el aforo y las reservas.</li>
+    <li><b>Dato estimado</b>: en algunos centros de Mindbody (los que llevan <b>*</b>, unos 30: Solid Studio, Kore Lab, The Nomad Club, FS8, City Pilates, Soma Club, Puls y otros) la agenda no publica el aforo. En ellos, el <b>aforo</b> es el <b>máximo de plazas libres visto</b> en las fotos de esa clase y de las de su mismo tipo (porque alguna vez estuvo vacía, o casi), y las <b>reservas</b> son aforo menos plazas libres.</li>
+    <li>Estos centros salen marcados con <b>*</b>. La cifra es un <b>mínimo</b>: si una clase nunca se vio vacía, el aforo real puede ser mayor.</li>
+    <li>En bsport solo sabemos si una clase está llena o no, así que no hay reservas ni porcentaje.</li>
+  </ul></details>
 <details class="filtros" open id="filtros">
   <summary>Filtros</summary>
   <div class="fgrid">
@@ -160,7 +171,6 @@ a { color: var(--accent); }
     <label>Fechas<span class="rango"><input type="date" id="f-f0"><input type="date" id="f-f1"></span></label>
     <label>Día de la semana<span class="dias" id="f-dias"></span></label>
     <label class="sw"><input type="checkbox" id="f-fest" checked> Incluir festivos</label>
-    <label class="sw" title="Algunos centros de Mindbody no publican su aforo. Apagado: solo cuentan datos publicados (aforo y reservas reales). Encendido: se estima el aforo con el máximo de plazas libres visto, y las reservas salen de ahí."><input type="checkbox" id="f-est"> Incluir estimaciones (aforo no publicado)</label>
     <label class="sw"><input type="checkbox" id="f-vs" checked> BeatCore siempre visible (ignora marca, estudio y disciplina para dar perspectiva)</label>
     <button type="button" id="f-reset">Quitar filtros</button>
   </div>
@@ -205,7 +215,7 @@ const TABS = [["resumen", "Resumen"], ["ocupacion", "Ocupación"], ["facturacion
 
 let D, CAT, META, N, OCC, EST, HC, PX = null, CAD = null, OF = null;           // datos
 let CATROWS = [];                        // catálogo como objetos
-const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true, est: false };
+const F = { centro: "", marca: "", estudio: "", disc: "", dias: new Set([0, 1, 2, 3, 4, 5, 6]), h0: 0, h1: 24, f0: "", f1: "", vs: true };
 let tabActual = "resumen", chart = null, claseSel = null;
 const sortState = {};
 
@@ -241,7 +251,6 @@ async function asegurarClases() {
   HC = new Array(N);   // la clase tiene alguna foto previa a su inicio (curva)
   for (let i = 0; i < N; i++) HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
   GA = []; GB = [];
-  respaldarEst(); aplicarEst();
 }
 function conClases(panel, fn) {
   return () => {
@@ -254,31 +263,9 @@ function conClases(panel, fn) {
   };
 }
 
-
-/* ---------- datos estimados: apagados por defecto; se activan con "Incluir estimaciones" ---------- */
-let BK = null, BKP = null;
-function respaldarEst() {
-  BK = new Map();
-  for (let i = 0; i < N; i++) if (D.af[i] === 1) BK.set(i, { a: D.a[i], r: D.r[i], l: D.l[i], hf: D.hf[i], hf0: D.hf0[i],
-    cr: D.checkpoints.map((_, j) => D.cr[j][i]), cl: D.checkpoints.map((_, j) => D.cl[j][i]) });
-}
-function respaldarEstPX() {
-  BKP = new Map();
-  if (!PX || !PX.af) return;
-  for (let i = 0; i < PX.n; i++) if (PX.af[i] === 1) BKP.set(i, { a: PX.a[i], r: PX.r[i], l: PX.l[i] });
-}
-function aplicarEst() {
-  if (!D || !BK) return;
-  const ult = D.checkpoints.length - 1;
-  BK.forEach((b, i) => {
-    D.a[i] = F.est ? b.a : null; D.r[i] = F.est ? b.r : null; D.l[i] = F.est ? b.l : null;
-    D.hf[i] = F.est ? b.hf : null; D.hf0[i] = F.est ? b.hf0 : null;
-    D.checkpoints.forEach((_, j) => { D.cr[j][i] = F.est ? b.cr[j] : null; D.cl[j][i] = F.est ? b.cl[j] : null; });
-    OCC[i] = D.r[i] != null && D.a[i] > 0 ? Math.min(1, D.r[i] / D.a[i]) : null;
-    HC[i] = D.checkpoints.some((_, j) => j < ult && (D.cr[j][i] != null || D.cl[j][i] != null));
-  });
-  if (BKP) BKP.forEach((b, i) => { PX.a[i] = F.est ? b.a : null; PX.r[i] = F.est ? b.r : null; PX.l[i] = F.est ? b.l : null; });
-}
+let ESTSET = new Set();
+const estAst = n => ESTSET.has(n) ? ' <span class="est" title="Aforo estimado: este centro no publica su aforo (ver «Qué datos son estimados y cómo», arriba)">*</span>' : "";
+const estU = f => f >= 0.5 ? ' <span class="est" title="Aforo estimado: este centro no publica su aforo (ver «Qué datos son estimados y cómo», arriba)">*</span>' : "";
 
 /* ---------- carga ---------- */
 async function cargar() {
@@ -287,10 +274,10 @@ async function cargar() {
   DIDX = D;
   if (META.hasta) { const d0 = new Date(META.hasta + "T00:00:00Z"); d0.setUTCDate(d0.getUTCDate() - VENTANA_DIAS); F90 = d0.toISOString().slice(0, 10); }
   try { PX = await get("data/proximas.json"); } catch (e) { PX = null; }
-  respaldarEstPX();
   try { CAD = (await get("data/cadenas.json")).filas; } catch (e) { CAD = null; }
   try { OF = await get("data/oferta.json"); } catch (e) { OF = null; }
   EST = D.estudios;
+  ESTSET = new Set(EST.filter(e => e.ea >= 0.5).map(e => e.n));
   await asegurarClases();
   CATROWS = CAT.rows.map(r => Object.fromEntries(CAT.cols.map((c, j) => [c, r[j]])));
   CATROWS.forEach(r => { r.disc_n = DISC_CAT[r.disciplina] || "Otros"; r.con_precio = r.precios_publicados === "Sí" || r.precios_publicados === "Parcial"; r.con_occ = !!r.captura; });
@@ -342,7 +329,7 @@ function estudiosSelect() {
 }
 function leerFiltros() {
   F.centro = $("#f-centro").value; F.marca = $("#f-marca").value; F.estudio = $("#f-estudio").value; F.disc = $("#f-disc").value;
-  F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked; F.est = $("#f-est").checked;
+  F.h0 = +$("#f-h0").value; F.h1 = +$("#f-h1").value; F.f0 = $("#f-f0").value; F.f1 = $("#f-f1").value; F.vs = $("#f-vs").checked; F.fest = $("#f-fest").checked;
   F.dias = new Set([...document.querySelectorAll("#f-dias input:checked")].map(x => +x.dataset.d));
 }
 function pasaBase(i, ignorarDisc) {
@@ -545,7 +532,7 @@ function ocupacion() {
     por.get(e).push(i);
   }
   const rows = [...por].map(([e, ix]) => { const m = metricas(ix); return { _i: e, estudio: EST[e].n, centro: zn(EST[e].z), marca: EST[e].m, propio: EST[e].p, n: m.n, nocc: m.nocc, ocup: m.ocup, llenas: m.llenas, aforo: m.aforo }; });
-  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
+  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
     { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
@@ -579,7 +566,7 @@ function curvas() {
   const rows = todas.filter(r => momentos.some(j => r["n" + j] > 0));
   const celda = j => ({ k: "o" + j, l: `${cps[j]} h antes`, n: 1,
     h: r => r["o" + j] == null ? "–" : `${pct(r["o" + j])} <small>(${r["n" + j]})</small>` });
-  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
     ...momentos.map(celda),
     { k: "fin", l: "Total (al empezar)", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` }];
@@ -625,7 +612,7 @@ function proximas() {
   }
   const mA = metricas2(rows.filter(r => r.propio)), mB = metricas2(rows.filter(r => !r.propio));
   const cols = [{ k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
-    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "clase", l: "Clase" },
     { k: "ocup", l: "Reservado ahora", n: 1, h: r => r.llena === true ? "<b>Llena</b>" : (r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 60)}px"></span>${pct(r.ocup)}`) },
     { k: "aforo", l: "Plazas ofrecidas", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Plazas reservadas", n: 1 },
@@ -846,7 +833,7 @@ function facturacion() {
   const ultimo = meses[meses.length - 1];
   // centros
   const filas = todas.map(u => {
-    const r = { nombre: u.estudio, cadena: cadDe(u), zn: lugar(u), cuota: u.fact.cuota, base: u.fact.base, ps: u.fact.precio_ses,
+    const r = { est: u.est, nombre: u.estudio, cadena: cadDe(u), zn: lugar(u), cuota: u.fact.cuota, base: u.fact.base, ps: u.fact.precio_ses,
       origen: u.fact.origen || "sin precio", parcial: u.parcial };
     meses.forEach(p => { const m = M(u, p); r["o_" + p] = m ? m.fact_obs : null; r["e_" + p] = m ? m.fact_est : null; r["r_" + p] = m ? m.res_est : null; });
     r.rm = ultimo ? r["r_" + ultimo] : null;
@@ -886,7 +873,7 @@ function facturacion() {
     { k: "con", l: "Centros con estimación", n: 1, h: r => `${r.con} <small>de ${r.cen}</small>` },
     { k: "ps", l: "€ / sesión (media)", n: 1, f: eur }, ...colPer, ...colsMes,
     { k: "media", l: "Media por centro / mes", n: 1, f: eur0 }];
-  const colsE = [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.parcial ? " <small>(parcial)</small>" : "") },
+  const colsE = [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.parcial ? " <small>(parcial)</small>" : "") },
     { k: "cadena", l: "Cadena" }, { k: "zn", l: "Ciudad" },
     { k: "cuota", l: "Cuota 8/mes", n: 1, h: r => r.cuota == null ? "–" : eur(r.cuota) + (r.base === "4/mes" ? " <small>(4/mes)</small>" : "") },
     { k: "ps", l: "€ / sesión", n: 1, f: eur }, ...colPer, ...colsMes,
@@ -908,6 +895,7 @@ function facturacion() {
       <li><b>€ por sesión</b> = cuota de 8 al mes menos un 10 %, entre 8. Sin ella: la de 4 menos un 10 %, entre 4; si no, la más baja entre la ilimitada entre 10 y la clase suelta menos un 25 %. Precios con IVA.</li>
       <li>Los meses anteriores a la primera captura no tienen dato. Cada mes nuevo se añade solo.</li>
       <li>En blanco: centro sin precio o sin reservas publicadas (bsport). Los totales suman solo lo que tiene estimación.</li>
+      <li>En los centros con <b>*</b> el aforo es estimado, y por tanto sus reservas y su facturación también (ver «Qué datos son estimados y cómo», arriba).</li>
       <li>Salen todos los centros y cadenas, sin BeatCore. Con fechas en los filtros de arriba aparece una columna "Facturado en el periodo" (reservas de las clases ya dadas en esas fechas por el € por sesión); las columnas por mes no cambian.</li>
     </ul></div>
     ${tabla("t-fm", colsT, tot, { limit: 36 })}</section>
@@ -967,10 +955,8 @@ function vistaRango(u) {
     const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
     if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
     if (u.dg && u.dg[i] > 0) fechasDowG[dow].add(f);
-    const E = F.est && u.dpe ? 1 : 0;      // lo estimado solo cuenta si se ha activado
-    const dp_ = u.dp[i] + (E ? u.dpe[i] : 0), dr_ = u.dr[i] + (E ? u.dre[i] : 0), dm_ = u.dm[i] + (E ? u.dme[i] : 0), dx_ = u.dx[i] + (E ? u.dxe[i] : 0);
-    const d = dia[dow]; d.c += u.dc[i]; d.p += dp_; d.r += dr_; d.m += dm_;
-    R += dr_; M += dm_; C += u.dc[i]; X += dx_; G += (u.dg ? u.dg[i] : 0);
+    const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
+    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i]; G += (u.dg ? u.dg[i] : 0);
   }
   const celdas = new Map();
   for (const mes of mesesNecesarios()) {
@@ -982,8 +968,7 @@ function vistaRango(u) {
       const dow = (new Date(f + "T00:00:00Z").getUTCDay() + 6) % 7;
       const k = dow * 100 + e.hh[i];
       const c = celdas.get(k) || { d: dow, h: e.hh[i], c: 0, p: 0, r: 0, pm: 0, g: 0 };
-      const E = F.est && e.hpe ? 1 : 0;
-      c.c += e.hc[i]; c.p += e.hp[i] + (E ? e.hpe[i] : 0); c.r += e.hr[i] + (E ? e.hre[i] : 0); c.pm += e.hm[i] + (E ? e.hme[i] : 0); c.g += (e.hg ? e.hg[i] : 0); celdas.set(k, c);
+      c.c += e.hc[i]; c.p += e.hp[i]; c.r += e.hr[i]; c.pm += e.hm[i]; c.g += (e.hg ? e.hg[i] : 0); celdas.set(k, c);
     }
   }
   const dias = dia.map((d, i) => {
@@ -1008,8 +993,7 @@ function topClasesRango(u) {
       if (e.kc[i] > 0) dias.add(f);
       const n = h.nombres[e.kn[i]];
       const x = m.get(n) || { clase: n, c: 0, p: 0, r: 0, mm: 0 };
-      const E = F.est && e.kpe ? 1 : 0;
-      x.c += e.kc[i]; x.p += e.kp[i] + (E ? e.kpe[i] : 0); x.r += e.kr[i] + (E ? e.kre[i] : 0); x.mm += e.km[i] + (E ? e.kme[i] : 0); m.set(n, x);
+      x.c += e.kc[i]; x.p += e.kp[i]; x.r += e.kr[i]; x.mm += e.km[i]; m.set(n, x);
     }
   }
   const nd = Math.max(1, dias.size);
@@ -1263,7 +1247,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       const pd = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, pm: 0 }));
       cel.forEach(c => { cl += c.c / nf(c.d); pl += c.p / nf(c.d); r += c.r; pm += c.pm; const x = pd[c.d]; x.c += c.c / nf(c.d); x.p += c.p / nf(c.d); x.r += c.r; x.pm += c.pm; });
       const pc = pm > 0 ? r / pm : null;
-      const row = { _i: i, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp,
+      const row = { _i: i, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp,
         cg: u._clases_dadas != null ? u._clases_dadas : null, rg: u._clases_dadas != null && u.plazas_med > 0 ? u.reservas : null, sa: u.sin_aforo, nc: u.n_clases };
       pd.forEach((x, d) => { row["d" + d] = !dset.has(d) ? null : met === "clases" ? x.c : met === "plazas" ? x.p : met === "ocup" ? (x.pm > 0 ? x.r / x.pm : null) : (x.pm > 0 ? x.p * x.r / x.pm : null); });
       return row;
@@ -1283,7 +1267,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
     const [t, pp] = [per[0], per.slice(2)], clave = t === "S" ? "semanas" : "meses";
     filas = unidades.map((u, i) => {
       const x = u[clave].find(y => y.p === pp);
-      return { _i: i, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl: x ? x.clases : null, pl: x ? x.plazas : null,
+      return { _i: i, est: u.est, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl: x ? x.clases : null, pl: x ? x.plazas : null,
         oc: x ? x.reservas : null, pc: x ? x.ocup : null, dias: x ? x.dias : null };
     });
     cols = [{ k: "cl", l: "Clases", n: 1 }, { k: "pl", l: "Plazas ofertadas", n: 1 }, { k: "oc", l: "Plazas ocupadas", n: 1 },
@@ -1306,10 +1290,10 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       <label>Hasta <select id="h1-${key}">${horas.slice(1).map(h => `<option value="${h}"${h === h1 ? " selected" : ""}>${String(h).padStart(2, "0")}:00</option>`).join("")}</select></label>
       ${filtrado ? `<span class="tag b">filtrado</span>` : ""}</div>` : ""}
     ${resumen}
-    ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
+    ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + estU(r.est) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
       { k: "zona", l: key === "of" ? "Zona" : "Ciudad" }, ...cols], filas, { limit: 400, click: per === "dia", sel: r => r._i === sel })}
     <p class="nota">Pulsa un centro para ver sus clases por hora. "Por día de la semana" es una semana tipo: la suma de la media de cada día (solo días completos; los festivos sin clases no cuentan). Plazas ocupadas y % reservado: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>
-    <p class="nota">Clases / plazas ocupadas por semana: una <b>semana tipo</b> (media de cada día de la semana, incluye lo ya programado; plazas ocupadas = plazas ofertadas × % reservado). <b>Clases dadas</b> y <b>Reservas dadas</b>: el total real de lo ya ocurrido en el periodo de las fechas de arriba. Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
+    <p class="nota"><b>*</b> = aforo estimado (ver «Qué datos son estimados y cómo», arriba). Clases / plazas ocupadas por semana: una <b>semana tipo</b> (media de cada día de la semana, incluye lo ya programado; plazas ocupadas = plazas ofertadas × % reservado). <b>Clases dadas</b> y <b>Reservas dadas</b>: el total real de lo ya ocurrido en el periodo de las fechas de arriba. Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
     <div id="dc-${key}"></div>`;
   return { html, bind: () => {
     const m = $("#me-" + key); if (m) m.addEventListener("change", e => { el.dataset["met" + key] = e.target.value; render(); });
@@ -1389,7 +1373,7 @@ function ofertaTab() {
 function claseCols() {
   return [
     { k: "fecha", l: "Fecha" }, { k: "hora", l: "Hora" }, { k: "centro", l: "Centro" },
-    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+    { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "clase", l: "Clase" }, { k: "disc", l: "Disciplina" }, { k: "plat", l: "Plataforma" },
     { k: "aforo", l: "Aforo", n: 1, f: (v, r) => v == null ? "–" : v + (r.est ? "*" : "") }, { k: "res", l: "Reservas", n: 1 },
     { k: "ocup", l: "Ocupación", n: 1, f: pct }, { k: "llena", l: "Llena", f: v => v == null ? "–" : v ? "Sí" : "No" },
@@ -1516,7 +1500,7 @@ function precios() {
     med.push({ grupo: gr, zona: z === "Todas" ? "Todas" : zn(z), estudios: e.length, con: gg.filter(r => r.con_precio).length, suelta: medDe(gg, "clase_suelta"),
       cuatro: medDe(gg, "cuatro_mes"), ocho: medDe(gg, "ocho_mes"), clase: median(gg.map(r => r.ocho_mes).filter(v => v != null).map(v => v / 8)), ilim: medDe(gg, "ilimitada") });
   }
-  const colsT = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+  const colsT = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" },
     { k: "clase_suelta", l: "Clase suelta", n: 1, f: eur }, { k: "cuatro_mes", l: "4/mes", n: 1, f: eur }, { k: "ocho_mes", l: "8/mes", n: 1, f: eur },
     { k: "doce_mes", l: "12/mes", n: 1, f: eur }, { k: "ilimitada", l: "Ilimitada", n: 1, f: eur }, { k: "oferta_entrada", l: "Oferta entrada", n: 1, f: eur }, { k: "precios_publicados", l: "Precios" }];
@@ -1549,7 +1533,7 @@ function estudios() {
   const q = (el.dataset.q || "").toLowerCase();
   const rows = catFiltrado().filter(r => !q || [r.estudio, r.disciplina, r.plataforma, r.marca, r.grupo].join(" ").toLowerCase().includes(q))
     .map(r => ({ ...r, tienePrecio: r.precios_publicados, tieneOcc: r.con_occ ? "Sí" : "No" }));
-  const cols = [{ k: "estudio", l: "Estudio", h: r => /^https?:\/\//.test(r.web || "") ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.estudio)}</a>${r.propio ? ' <span class="tag">BeatCore</span>' : ""}` : esc(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+  const cols = [{ k: "estudio", l: "Estudio", h: r => /^https?:\/\//.test(r.web || "") ? `<a href="${esc(r.web)}" target="_blank" rel="noopener noreferrer">${esc(r.estudio)}</a>${r.propio ? ' <span class="tag">BeatCore</span>' : ""}` : esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "zona", l: "Centro", f: zn }, { k: "grupo", l: "Tipo" }, { k: "disciplina", l: "Disciplina" }, { k: "cadena", l: "Cadena" },
     { k: "distancia_m", l: "Distancia", n: 1, f: v => v == null ? "–" : Math.round(v) + " m" },
     { k: "clase_suelta", l: "Suelta", n: 1, f: eur }, { k: "ocho_mes", l: "8/mes", n: 1, f: eur }, { k: "ilimitada", l: "Ilimitada", n: 1, f: eur },
@@ -1584,7 +1568,7 @@ function activar(t) {
   if (location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
   render();
 }
-function refrescar() { leerFiltros(); aplicarEst(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
+function refrescar() { leerFiltros(); aplicar(); document.querySelectorAll('#zona-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.z === F.centro))); render(); }
 
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
@@ -1604,11 +1588,11 @@ document.addEventListener("keydown", e => {
   montarFiltros();
   $("#f-centro").addEventListener("change", () => { marcasSelect(); estudiosSelect(); refrescar(); });
   $("#f-marca").addEventListener("change", () => { estudiosSelect(); refrescar(); });
-  ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest", "#f-est"].forEach(s => $(s).addEventListener("change", refrescar));
+  ["#f-estudio", "#f-disc", "#f-h0", "#f-h1", "#f-f0", "#f-f1", "#f-vs", "#f-fest"].forEach(s => $(s).addEventListener("change", refrescar));
   $("#f-dias").addEventListener("change", refrescar);
   $("#f-reset").addEventListener("click", () => {
     ["#f-centro", "#f-marca", "#f-estudio", "#f-disc"].forEach(s => $(s).value = "");
-    $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true; $("#f-est").checked = false;
+    $("#f-h0").value = 0; $("#f-h1").value = 24; $("#f-f0").value = $("#f-f1").value = ""; $("#f-vs").checked = true; $("#f-fest").checked = true;
     document.querySelectorAll("#f-dias input").forEach(x => x.checked = true);
     marcasSelect(); estudiosSelect(); refrescar();
   });
