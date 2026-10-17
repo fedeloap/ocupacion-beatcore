@@ -549,8 +549,8 @@ function ocupacion() {
     const e = D.e[i]; if (!por.has(e)) por.set(e, []);
     por.get(e).push(i);
   }
-  const rows = [...por].map(([e, ix]) => { const m = metricas(ix); return { _i: e, estudio: EST[e].n, centro: zn(EST[e].z), marca: EST[e].m, propio: EST[e].p, n: m.n, nocc: m.nocc, ocup: m.ocup, llenas: m.llenas, aforo: m.aforo }; });
-  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
+  const rows = [...por].map(([e, ix]) => { const m = metricas(ix); return { _i: e, ck: cmpKeyEst(e), estudio: EST[e].n, centro: zn(EST[e].z), marca: EST[e].m, propio: EST[e].p, n: m.n, nocc: m.nocc, ocup: m.ocup, llenas: m.llenas, aforo: m.aforo }; });
+  const cols = [{ k: "_cmp", l: "Comparar", h: r => cmpBox(r.ck) }, { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") }, { k: "centro", l: "Centro" }, { k: "marca", l: "Marca" },
     { k: "n", l: "Clases", n: 1 }, { k: "ocup", l: "Ocupación", n: 1, h: r => r.ocup == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.ocup * 80)}px"></span>${pct(r.ocup)}` },
     { k: "llenas", l: "% llenas", n: 1, f: pct }, { k: "aforo", l: "Plazas/clase (mediana)", n: 1, f: v => num(v) }];
   if (!sortState["t-rank"]) sortState["t-rank"] = { k: "ocup", dir: -1 };
@@ -580,11 +580,11 @@ function curvas() {
     o.fin = mean(fin); o.nf = fin.length;
     return o;
   };
-  const todas = [...por].map(([e, ix]) => ({ _i: e, estudio: EST[e].n, centro: zn(EST[e].z), propio: EST[e].p, ...calc(ix) }));
+  const todas = [...por].map(([e, ix]) => ({ _i: e, ck: cmpKeyEst(e), estudio: EST[e].n, centro: zn(EST[e].z), propio: EST[e].p, ...calc(ix) }));
   const rows = todas.filter(r => momentos.some(j => r["n" + j] > 0));
   const celda = j => ({ k: "o" + j, l: `${cps[j]} h antes`, n: 1,
     h: r => r["o" + j] == null ? "–" : `${pct(r["o" + j])} <small>(${r["n" + j]})</small>` });
-  const cols = [{ k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
+  const cols = [{ k: "_cmp", l: "Comparar", h: r => cmpBox(r.ck) }, { k: "estudio", l: "Estudio", h: r => esc(r.estudio) + estAst(r.estudio) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") },
     { k: "centro", l: "Centro" }, { k: "n", l: "Clases", n: 1 },
     ...momentos.map(celda),
     { k: "fin", l: "Total (al empezar)", n: 1, h: r => r.fin == null ? "–" : `<b>${pct(r.fin)}</b> <small>(${r.nf})</small>` }];
@@ -1213,6 +1213,12 @@ document.addEventListener("change", e => {
   if (c.checked) { if (!cmpAnadir(c.dataset.k)) c.checked = false; } else cmpQuitar(c.dataset.k);
   if (tabActual === "comparador") render();
 });
+let CMPUK = null;
+function cmpKeyEst(e) {
+  if (!OF) return "";
+  if (!CMPUK) CMPUK = new Map(OF.unidades.map(u => [u.estudio + "|" + u.zona, "u:" + u.ukey]));
+  return CMPUK.get(EST[e].n + "|" + EST[e].z) || "";
+}
 function cmpItem(k) {
   if (!OF) return null;
   if (k.startsWith("u:")) { const u = OF.unidades.find(x => x.ukey === k.slice(2)); return u ? { k, nombre: u.estudio, tipo: "Centro", us: [u], sub: lugar(u) } : null; }
