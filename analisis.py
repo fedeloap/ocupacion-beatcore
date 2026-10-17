@@ -96,7 +96,7 @@ def cargar():
     max_libres = todo.groupby(key_est)["libres_n"].max().rename("max_libres")
 
     fin = fin[fin["captured_at"] <= fin["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN)]
-    fin = fin.sort_values("captured_at").groupby(key, as_index=False).tail(1)
+    fin = fin.sort_values("captured_at").groupby(key_est, as_index=False).tail(1)     # una fila por clase (en Mindbody, aunque cambie su id)
     fin = fin.merge(max_libres, left_on=key_est, right_index=True, how="left")
     # Clases ya dadas cuya foto final falló (la ventana de captura no las cogió): se usa su última foto de las
     # 8 h previas a empezar (la curva guarda las próximas 6 h). Así el recuento coincide con la pestaña Oferta.
@@ -105,7 +105,7 @@ def cargar():
         c2 = todo[(todo["captured_at"] <= todo["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN))
                   & (todo["captured_at"] >= todo["inicio_local"] - pd.Timedelta(hours=8))
                   & (todo["inicio_local"] <= ahora)]
-        c2 = c2.sort_values("captured_at").groupby(key, as_index=False).tail(1)
+        c2 = c2.sort_values("captured_at").groupby(key_est, as_index=False).tail(1)
         c2 = c2[~c2.set_index(key_est).index.isin(fin.set_index(key_est).index)]
         c2 = c2.drop(columns=["libres_n"], errors="ignore").merge(max_libres, left_on=key_est, right_index=True, how="left")
         fin = pd.concat([fin, c2[fin.columns.intersection(c2.columns)]], ignore_index=True)

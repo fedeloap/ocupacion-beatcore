@@ -912,6 +912,23 @@ def main():
                   for f in cadenas["filas"]}
     pb = {k: v for k, v in json.load(open("web/precios_beatcore.json", encoding="utf-8")).items() if not k.startswith("_")}         if os.path.exists("web/precios_beatcore.json") else {}
     oferta = oferta_datos(snap, mapa, propios, nombres_cadenas, precio_cad, pb)
+    # control de coherencia: las clases ya dadas de cada centro deben coincidir entre Oferta y las pestañas de clases
+    try:
+        ahora_ = pd.to_datetime(oferta["ahora"])
+        dadas_c = c[c["inicio_local"] <= ahora_].groupby(["estudio", "centro_beatcore"]).size()
+        malos = []
+        for u in oferta["unidades"]:
+            if u["zona"] == "Nacional":
+                continue
+            n_o, n_c = sum(u["dg"]), int(dadas_c.get((u["estudio_captura"], u["zona"]), 0))
+            if abs(n_o - n_c) > max(5, 0.1 * max(n_o, n_c)):
+                malos.append(f'{u["estudio"]}: Oferta {n_o} / Clases {n_c}')
+        if malos:
+            print("AVISO coherencia (clases dadas distintas entre pestañas):", "; ".join(malos[:10]))
+        else:
+            print("Coherencia Oferta / Clases: ok")
+    except Exception as ex:
+        print("No se pudo comprobar la coherencia:", ex)
     ficheros_h = oferta.pop("_ficheros")
     for viejo in (glob.glob(os.path.join(OUT, "data", "oferta_h_*.json")) + glob.glob(os.path.join(OUT, "data", "oferta_clases.json"))
                   + glob.glob(os.path.join(OUT, "data", "clases_2*.json"))):
