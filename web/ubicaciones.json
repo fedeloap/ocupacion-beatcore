@@ -255,25 +255,41 @@
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28015",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "Club Pilates Eixample": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
   "cp": "08009",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.39347,
+  "lng": 2.16688,
+  "dist_bc_m": 655,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "Club Pilates Goya": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28009",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.42161,
+  "lng": -3.676202,
+  "dist_bc_m": 338,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "Pomona Club Serrano": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28006",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.4336657,
+  "lng": -3.6864724,
+  "dist_bc_m": 1262,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "esBarre": {
   "ciudad": "Madrid",
@@ -653,6 +669,12 @@
   "cp": "",
   "fuente": "nombre"
  },
+ "PILAT3S Las Tablas": {
+  "ciudad": "Madrid",
+  "provincia": "Madrid",
+  "cp": "",
+  "fuente": "nombre"
+ },
  "BARRY´S BOOTCAMP": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
@@ -855,241 +877,401 @@
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28003",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.442716,
+  "lng": -3.715214,
+  "dist_bc_m": 1490,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "MYND PILATES": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28002",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.5529892,
+  "lng": -3.6168502,
+  "dist_bc_m": 15121,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "Pomona Club O'Donnell (Retiro)": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28009",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.4218145,
+  "lng": -3.6783019,
+  "dist_bc_m": 279,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "CLUB PILATES abando": {
   "ciudad": "Vizcaya",
   "provincia": "Bizkaia",
   "cp": "48001",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES alcorcon": {
   "ciudad": "Alcorcón",
   "provincia": "Madrid",
   "cp": "28925",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES alicante": {
   "ciudad": "Alicante",
   "provincia": "Alicante",
   "cp": "03003",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES azca": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28020",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.45421,
+  "lng": 3.69274,
+  "dist_bc_m": 166006,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES badalona": {
   "ciudad": "Badalona",
   "provincia": "Barcelona",
   "cp": "08911",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.446369,
+  "lng": 2.24928,
+  "dist_bc_m": 9195,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES boadilla": {
   "ciudad": "Boadilla",
   "provincia": "Madrid",
   "cp": "28660",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.42219,
+  "lng": -3.89614,
+  "dist_bc_m": 16451,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES bonanova": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
   "cp": "08022",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES carabanchel": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28025",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES castelldefels": {
   "ciudad": "Castelldefels",
   "provincia": "Barcelona",
   "cp": "08860",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES condeorgaz": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28043",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.461093,
+  "lng": -3.634866,
+  "dist_bc_m": 5484,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "CLUB PILATES entenza": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
   "cp": "08015",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.37819,
+  "lng": 2.15285,
+  "dist_bc_m": 2203,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES granviavalencia": {
   "ciudad": "Valencia ",
   "provincia": "Valencia",
   "cp": "46005",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 39.4678875,
+  "lng": -0.36604,
+  "dist_bc_m": 994,
+  "bc_cercano": "BeatCore Ruzafa"
  },
  "CLUB PILATES guindalera": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28028",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.4333,
+  "lng": -3.67168,
+  "dist_bc_m": 1135,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "CLUB PILATES imperial": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28005",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.403087,
+  "lng": -3.717069,
+  "dist_bc_m": 3609,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES indautxu": {
   "ciudad": "Bilbao",
   "provincia": "Bizkaia",
   "cp": "48011",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 43.2624,
+  "lng": -2.94017,
+  "dist_bc_m": 320822,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES lamoraleja": {
   "ciudad": "Alcobendas",
   "provincia": "Madrid",
   "cp": "28109",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.51798,
+  "lng": -3.65113,
+  "dist_bc_m": 10340,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES lapetxina": {
   "ciudad": "Valencia",
   "provincia": "Valencia",
   "cp": "46008",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 39.476003,
+  "lng": -0.389368,
+  "dist_bc_m": 1629,
+  "bc_cercano": "BeatCore Ruzafa"
  },
  "CLUB PILATES lasrozas": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28232",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.48749,
+  "lng": -3.86227,
+  "dist_bc_m": 14798,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES majadahonda": {
   "ciudad": "Majadahonda",
   "provincia": "Madrid",
   "cp": "28222",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.45438,
+  "lng": -3.88854,
+  "dist_bc_m": 15924,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES malagueta": {
   "ciudad": "Malaga",
   "provincia": "Málaga",
   "cp": "29016",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES pac%C3%ADfico": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28007",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.40210440000001,
+  "lng": -3.679270499999999,
+  "dist_bc_m": 2472,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "CLUB PILATES palmaavenidas": {
   "ciudad": "Palma de Mallorca",
   "provincia": "Illes Balears",
   "cp": "07006",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES pinardechamart%C3%ADn": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28033",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.48103,
+  "lng": -3.6718,
+  "dist_bc_m": 5878,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES poblenou": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
   "cp": "08005",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40685,
+  "lng": 2.20293,
+  "dist_bc_m": 3685,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES ponzano": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28003",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES pozuelo": {
   "ciudad": " Pozuelo de Alarcon",
   "provincia": "Madrid",
   "cp": "28224",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.43218,
+  "lng": -3.80327,
+  "dist_bc_m": 8542,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES prosperidad": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28002",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.447178,
+  "lng": -3.669859,
+  "dist_bc_m": 2635,
+  "bc_cercano": "BeatCore Salamanca"
  },
  "CLUB PILATES quintadelosmolinos": {
   "ciudad": "Madrid",
   "provincia": "Madrid",
   "cp": "28037",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES romareda": {
   "ciudad": "Zaragoza",
   "provincia": "Zaragoza",
   "cp": "50006",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES sabadellcentre": {
   "ciudad": "Sabadell, Barcelona",
   "provincia": "Barcelona",
   "cp": "08201",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.5466246,
+  "lng": 2.1006138,
+  "dist_bc_m": 17363,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES sagradafamilia": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
   "cp": "08025",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.404171,
+  "lng": 2.169328,
+  "dist_bc_m": 1065,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES sanbernardo": {
   "ciudad": "Sevilla",
   "provincia": "Sevilla",
   "cp": "41018",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 37.380385,
+  "lng": -5.982105,
+  "dist_bc_m": 392608,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES sanpablo": {
   "ciudad": "La Coruña",
   "provincia": "A Coruña",
   "cp": "15004",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES sansebastiandelosreyes": {
   "ciudad": "San Sebastián de los Reyes, Madrid",
   "provincia": "Madrid",
   "cp": "28702",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 40.442503,
+  "lng": -3.786229,
+  "dist_bc_m": 7167,
+  "bc_cercano": "BeatCore Chamberí"
  },
  "CLUB PILATES santcugat": {
   "ciudad": "Sant Cugat del Vallés",
   "provincia": "Barcelona",
   "cp": "08172",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.47386,
+  "lng": 2.0909036,
+  "dist_bc_m": 10330,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES santgervasi": {
   "ciudad": "Barcelona",
   "provincia": "Barcelona",
-  "cp": "",
-  "fuente": "nombre"
+  "cp": "08021",
+  "fuente": "glofox",
+  "lat": 41.3977479,
+  "lng": 2.1406126,
+  "dist_bc_m": 1677,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "CLUB PILATES terrassanord": {
   "ciudad": "Terrassa",
   "provincia": "Barcelona",
   "cp": "08221",
-  "fuente": "glofox"
+  "fuente": "glofox",
+  "lat": 41.40822,
+  "lng": 2.13605,
+  "dist_bc_m": 2399,
+  "bc_cercano": "BeatCore Diagonal"
  },
  "BARRY´S BOOTCAMP Barcelona": {
   "ciudad": "Barcelona",
@@ -1464,90 +1646,21 @@
   "fuente": "Fede: FS8 solo tiene Chamberí y Valencia en España; el resto es de fuera"
  },
  "_sedes": {
-  "B3B WOMAN": {
-   "B3B Power · Strength · Barre": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
-    "fuente": "nombre de la sede"
-   },
-   "B3B Reformer / Barreformer": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
-    "fuente": "nombre de la sede"
-   },
-   "B3B GMC": {
+  "Vibe Pilates & Fitness": {
+   "15078": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
-    "fuente": "nombre de la sede"
+    "fuente": "bsport"
    },
-   "B3B CHAMARTIN": {
+   "15077": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
-    "fuente": "nombre de la sede"
-   }
-  },
-  "Rohi by Kore Studio": {
-   "12503": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
     "fuente": "bsport"
    },
-   "21719": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
+   "15076": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
     "fuente": "bsport"
-   }
-  },
-  "PILAT3S": {
-   "PILAT3S Palácio SottoMayor": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S SAGRADA FAMILIA": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S DOURO FOZ": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Quinta da Fonte": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Infante Santo": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Braga": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Estoril Riviera": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Avenidas Novas": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Sheffield": {
-    "ciudad": "Sheffield",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
-   },
-   "PILAT3S Oeiras": {
-    "ciudad": "Portugal",
-    "provincia": "Fuera de España",
-    "fuente": "nombre de la sede"
    }
   },
   "Dark Studio": {
@@ -1574,22 +1687,22 @@
     "fuente": "bsport"
    }
   },
+  "Rohi by Kore Studio": {
+   "12503": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   },
+   "21719": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
   "Aero Studio Seijaku": {
    "20985": {
     "ciudad": "València",
     "provincia": "Valencia",
-    "fuente": "bsport"
-   }
-  },
-  "Batelier Studio": {
-   "12490": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "12489": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
     "fuente": "bsport"
    }
   },
@@ -1605,20 +1718,51 @@
     "fuente": "bsport"
    }
   },
-  "Vibe Pilates & Fitness": {
-   "15077": {
+  "VERDE Studio": {
+   "19789": {
+    "ciudad": "Barcelona",
+    "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "Soma Club Ruzafa": {
+   "21688": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   },
+   "21646": {
+    "ciudad": "València",
+    "provincia": "Valencia",
+    "fuente": "bsport"
+   }
+  },
+  "ARDE BARRE": {
+   "Arde Barre La Moraleja": {
+    "ciudad": "Alcobendas",
+    "provincia": "Madrid",
+    "fuente": "nombre de la sede"
+   },
+   "20396": {
+    "ciudad": "Santander",
+    "provincia": "Cantabria",
+    "fuente": "bsport"
+   },
+   "12375": {
     "ciudad": "Madrid",
     "provincia": "Madrid",
     "fuente": "bsport"
-   },
-   "15076": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
+   }
+  },
+  "The Sanctuary": {
+   "16718": {
+    "ciudad": "València",
+    "provincia": "Valencia",
     "fuente": "bsport"
    },
-   "15078": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
+   "16717": {
+    "ciudad": "València",
+    "provincia": "Valencia",
     "fuente": "bsport"
    }
   },
@@ -1636,58 +1780,10 @@
     "fuente": "bsport"
    }
   },
-  "Soma Club Ruzafa": {
-   "21646": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   },
-   "21688": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   }
-  },
-  "VERDE Studio": {
-   "19789": {
+  "SHE Barre Gràcia": {
+   "19209": {
     "ciudad": "Barcelona",
     "provincia": "Barcelona",
-    "fuente": "bsport"
-   }
-  },
-  "ARDE BARRE": {
-   "12375": {
-    "ciudad": "Madrid",
-    "provincia": "Madrid",
-    "fuente": "bsport"
-   },
-   "Arde Barre La Moraleja": {
-    "ciudad": "Alcobendas",
-    "provincia": "Madrid",
-    "fuente": "nombre de la sede"
-   },
-   "20396": {
-    "ciudad": "Santander",
-    "provincia": "Cantabria",
-    "fuente": "bsport"
-   }
-  },
-  "Musa House": {
-   "17057": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   }
-  },
-  "The Sanctuary": {
-   "16718": {
-    "ciudad": "València",
-    "provincia": "Valencia",
-    "fuente": "bsport"
-   },
-   "16717": {
-    "ciudad": "València",
-    "provincia": "Valencia",
     "fuente": "bsport"
    }
   },
@@ -1698,10 +1794,15 @@
     "fuente": "bsport"
    }
   },
-  "SHE Barre Gràcia": {
-   "19209": {
-    "ciudad": "Barcelona",
-    "provincia": "Barcelona",
+  "Batelier Studio": {
+   "12489": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
+    "fuente": "bsport"
+   },
+   "12490": {
+    "ciudad": "Madrid",
+    "provincia": "Madrid",
     "fuente": "bsport"
    }
   },
@@ -1709,6 +1810,13 @@
    "17287": {
     "ciudad": "Barcelona",
     "provincia": "Barcelona",
+    "fuente": "bsport"
+   }
+  },
+  "Musa House": {
+   "17057": {
+    "ciudad": "València",
+    "provincia": "Valencia",
     "fuente": "bsport"
    }
   }

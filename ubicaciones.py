@@ -107,9 +107,36 @@ def glofox_dir(branch_id):
         tok = r.json().get("token")
         b = requests.get(f"https://api.glofox.com/2.0/branches/{branch_id}", headers={**UA, "Authorization": f"Bearer {tok}"}, timeout=25).json()
         a = b.get("address") or {}
-        return a.get("city") or "", str(a.get("postal_code") or "")
+        return a.get("city") or "", str(a.get("postal_code") or ""), a.get("latitude"), a.get("longitude")
     except Exception:
-        return "", ""
+        return "", "", None, None
+
+
+def coords_beatcore():
+    """Coordenadas de los 4 BeatCore, del mapa de Google (web/config.json -> mapa_url)."""
+    import html as _h
+    try:
+        mid = re.search(r"mid=([^&]+)", json.load(open("web/config.json", encoding="utf-8")).get("mapa_url", "")).group(1)
+        t = requests.get(f"https://www.google.com/maps/d/kml?mid={mid}&forcekml=1", headers=UA, timeout=40).content.decode("utf-8", "ignore")
+    except Exception:
+        return {}
+    out = {}
+    for p_ in re.findall(r"<Placemark>.*?</Placemark>", t, flags=re.S):
+        n = _h.unescape(re.search(r"<name>(.*?)</name>", p_, re.S).group(1))
+        if not n.lower().startswith("beatcore"):
+            continue
+        la, lo = re.search(r"Latitud:\s*([-\d.]+)", p_), re.search(r"Longitud:\s*([-\d.]+)", p_)
+        if la and lo:
+            out[n] = (float(la.group(1)), float(lo.group(1)))
+    return out
+
+
+def metros(a, b):
+    import math
+    (la1, lo1), (la2, lo2) = a, b
+    p1, p2 = math.radians(la1), math.radians(la2)
+    h = math.sin((p2 - p1) / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(math.radians(lo2 - lo1) / 2) ** 2
+    return int(round(2 * 6371000 * math.asin(math.sqrt(h))))
 
 
 # Estudios cuya agenda mezcla centros de distintas ciudades: la ubicación se decide por sede.
@@ -168,7 +195,7 @@ def main():
         ciudad = prov = cp = ""
         fuente = ""
         if plat == "glofox" and e.get("branch_id"):
-            c, cp_ = glofox_dir(e["branch_id"])
+            c, cp_, lat_, lng_ = glofox_dir(e["branch_id"])
             m = re.match(r"^(\d{2})\d{3}$", cp_ or "")
             if m and m.group(1) in PROVINCIAS:
                 prov, cp, ciudad, fuente = PROVINCIAS[m.group(1)], cp_, c, "glofox"
@@ -182,12 +209,20 @@ def main():
                 ciudad, prov, fuente = v[0], v[1], "nombre"
         cuenta[fuente or "sin ubicar"] += 1
         out[est] = {"ciudad": ciudad, "provincia": prov, "cp": cp, "fuente": fuente}
+        if plat == "glofox" and e.get("branch_id") and lat_ and lng_:
+            out[est]["lat"], out[est]["lng"] = float(lat_), float(lng_)
     try:
         for k, v in json.load(open("web/ubicaciones_manual.json", encoding="utf-8")).items():
             if not k.startswith("_"):
                 out[k] = {"ciudad": v.get("ciudad", ""), "provincia": v.get("provincia", ""), "cp": "", "fuente": v.get("fuente", "manual")}
     except FileNotFoundError:
         pass
+    # distancia al BeatCore más cercano (solo donde hay coordenadas: centros de Glofox)
+    bc = coords_beatcore()
+    for est_, v in out.items():
+        if "lat" in v and bc:
+            nombre, d_ = min(((n, metros((v["lat"], v["lng"]), xy)) for n, xy in bc.items()), key=lambda t: t[1])
+            v["dist_bc_m"], v["bc_cercano"] = d_, nombre
     # ubicación por sede, solo para estudios cuya agenda mezcla ciudades
     sedes = {}
     cache_bs = {}

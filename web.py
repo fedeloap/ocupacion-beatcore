@@ -162,6 +162,25 @@ def es_extra(df):
     return de_estudio & df["clase"].astype(str).str.contains(cfg.get("patron", "$^"), case=False, regex=True)
 
 
+_ZONA_BC = {"BeatCore Chamberí": "Chamberí", "BeatCore Salamanca": "Salamanca", "BeatCore Diagonal": "Diagonal", "BeatCore Ruzafa": "Valencia"}
+
+
+def zona_cercana(df):
+    """Centros de cadenas capturados sin zona que están a 1 km o menos de un BeatCore (distancia en web/ubicaciones.json,
+    calculada con las coordenadas de su agenda) pasan a la zona de ese BeatCore."""
+    _ubicacion("", "Nacional")
+    cerca = {e: _ZONA_BC.get(v.get("bc_cercano")) for e, v in (_UBIC or {}).items()
+             if e != "_sedes" and v.get("dist_bc_m") is not None and v["dist_bc_m"] <= 1000 and _ZONA_BC.get(v.get("bc_cercano"))}
+    if not cerca or "centro_beatcore" not in df.columns:
+        return df
+    vacio = df["centro_beatcore"].isna() | (df["centro_beatcore"].astype(str) == "")
+    m = vacio & df["estudio"].isin(cerca)
+    if m.any():
+        df = df.copy()
+        df.loc[m, "centro_beatcore"] = df.loc[m, "estudio"].map(cerca)
+    return df
+
+
 def quitar_hasta(df):
     """Oculta las capturas de un estudio anteriores a una fecha (web/excluidos.json: estudios_hasta)."""
     try:
@@ -186,6 +205,7 @@ def cargar_snapshots():
     s["inicio_local"] = pd.to_datetime(s["inicio_local"])
     s = s[~fuera_de_espana(s)]
     s = quitar_hasta(s)
+    s = zona_cercana(s)
     m = es_extra(s)
     EXTRAS.clear()
     EXTRAS.append(s[m])
@@ -811,6 +831,7 @@ def main():
     raw = raw[~es_extra(raw)]
     raw = raw[~fuera_de_espana(raw)]
     raw = quitar_hasta(raw)
+    raw = zona_cercana(raw)
     # cadenas nacionales (fuera del radio de BeatCore): sin centro; solo se usan en la pestaña Cadenas
     sin_centro = raw["centro_beatcore"].isna() | (raw["centro_beatcore"].astype(str) == "")
     nac = raw[sin_centro].copy()

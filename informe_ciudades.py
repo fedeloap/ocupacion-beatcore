@@ -19,6 +19,7 @@ DISCS = [("Lagree", "Lagree (incluye BeatCore)"), ("Reformer", "Pilates Reformer
 idx = json.load(open("public/data/clases.json", encoding="utf-8"))
 est, dic = idx["estudios"], idx["dic"]
 acc = collections.defaultdict(lambda: [0, 0, 0.0, 0.0])      # clases, con reservas, reservas, plazas
+todo = collections.defaultdict(lambda: [0, 0.0])             # clases y reservas de cualquier disciplina, por centro
 zonas = {z for _, z in CIUDADES}
 for m in idx["meses"]:
     d = json.load(open(f"public/data/clases_{m['mes']}.json", encoding="utf-8"))
@@ -28,9 +29,15 @@ for m in idx["meses"]:
             continue
         z = dic["centro"][d["c"][j]]
         disc = dic["disc"][d["d"][j]]
-        if z not in zonas or disc not in ("Lagree", "Reformer"):
+        if z not in zonas:
             continue
         e = est[d["e"][j]]
+        t_ = todo[(z, e["n"])]
+        t_[0] += 1
+        if d["r"][j] is not None and d["a"][j]:
+            t_[1] += d["r"][j]
+        if disc not in ("Lagree", "Reformer"):
+            continue
         x = acc[(z, disc, e["n"], e["p"])]
         x[0] += 1
         if d["r"][j] is not None and d["a"][j]:
@@ -130,7 +137,58 @@ for hoja, zona in CIUDADES:
     for i, a in enumerate([44, 14, 12, 16, 14, 12, 24, 26], 1):
         ws.column_dimensions[get_column_letter(i)].width = a
 
+# ---------------- Valencia: distancias de todos los estudios de Pilates y Lagree (al final de la hoja)
+import pandas as pd
+ws = wb["Valencia"]
+cat = pd.read_csv("web/estudios.csv")
+ub = json.load(open("web/ubicaciones.json", encoding="utf-8"))
+rx = "eformer|pilates|lagree"
+v = cat[(cat["zona"] == "Valencia") & (cat["disciplina"].fillna("").str.contains(rx, case=False) | cat["estudio"].str.contains(rx, case=False))]
+filas = []
+for _, r_ in v.iterrows():
+    filas.append((r_["estudio"], 0 if r_.get("propio") in (True, "True", 1) else (None if pd.isna(r_["distancia_m"]) else int(r_["distancia_m"])),
+                  r_["disciplina"] if isinstance(r_["disciplina"], str) else "", r_["plataforma"] if isinstance(r_["plataforma"], str) else ""))
+# centros de cadenas con coordenadas (Glofox) que están en Valencia ciudad y no salen en el catálogo
+nombres = {f[0].lower() for f in filas}
+for k, x in ub.items():
+    if k != "_sedes" and x.get("provincia") == "Valencia" and x.get("dist_bc_m") is not None and k.lower() not in nombres and "PILATES" in k.upper():
+        filas.append((k, x["dist_bc_m"], "Pilates reformer", "Glofox"))
+filas.sort(key=lambda t: (t[1] is None, t[1] or 0))
+MOTIVO = {"TIMP": "Agenda con login: no se puede leer", "Wix": "Sin agenda pública que podamos leer", "Virtuagym": "Sin agenda pública que podamos leer",
+          "No identificada": "No se ha localizado su agenda pública", "bsport": "Solo dice si la clase está llena: no hay reservas",
+          "App propia": "Solo en su app", "Tribu": "Sin agenda pública que podamos leer"}
+datos = collections.defaultdict(lambda: [0, 0.0])
+for (z, d_, n_, p_), x in acc.items():
+    if z == "Valencia":
+        datos[n_][0] += x[0]
+        datos[n_][1] += x[2] if x[1] else 0
+r = ws.max_row + 3
+ws.cell(r, 1, "Estudios de Pilates y Lagree en Valencia, por distancia a BeatCore Ruzafa").font = Font(bold=True, size=12)
+r += 1
+cab(ws, r, ["Estudio", "Distancia a BeatCore (m)", "Disciplina (catálogo)", "Plataforma de reservas", "Clases dadas (11-16/10)", "Reservas", "¿Vemos sus reservas?"])
+for nombre, dist, disc, plat in filas:
+    r += 1
+    cl, rs = datos.get(nombre, [0, 0.0])
+    tc, tr = todo.get(("Valencia", nombre), [0, 0.0])
+    if rs > 0:
+        ve = "Sí"
+    elif tc > 0:
+        ve = f"Hay agenda ({tc} clases dadas, {tr:.0f} reservas), pero sus clases no son Reformer ni Lagree"
+        cl, rs = tc, tr
+    else:
+        ve = MOTIVO.get(plat, "No hay datos de reservas") if plat else "No hay datos de reservas"
+    for i, val in enumerate([nombre, dist, disc, plat or "–", cl or None, rs or None, ve], 1):
+        ws.cell(r, i, val)
+    ws.cell(r, 2).number_format = "#,##0"
+r += 2
+ws.cell(r, 1, "Distancia = metros en línea recta hasta el BeatCore más cercano (en Valencia, BeatCore Ruzafa).")
+ws.column_dimensions["G"].width = 62
+
 os.makedirs("informes", exist_ok=True)
 ruta = os.path.join("informes", f"lagree_reformer_valencia_barcelona_{DESDE}_{HASTA}.xlsx")
-wb.save(ruta)
+try:
+    wb.save(ruta)
+except PermissionError:          # el Excel está abierto: se guarda con otro nombre
+    ruta = ruta.replace(".xlsx", "_con_distancias.xlsx")
+    wb.save(ruta)
 print(ruta)
