@@ -3,5 +3,13 @@
   "estudios_contienen": [
     "pomona"
   ],
-  "patron": "recovery|sauna|open gym"
+  "patron": "recovery|sauna|open gym",
+  "reglas": [
+    {
+      "estudios_contienen": [
+        "beatcore"
+      ],
+      "patron": "^personal\\.?$"
+    }
+  ]
 }

@@ -159,7 +159,13 @@ def es_extra(df):
     de_estudio = pd.Series(False, index=df.index)
     for t in cfg.get("estudios_contienen", []):
         de_estudio |= est.str.contains(t.lower(), regex=False)
-    return de_estudio & df["clase"].astype(str).str.contains(cfg.get("patron", "$^"), case=False, regex=True)
+    m = de_estudio & df["clase"].astype(str).str.contains(cfg.get("patron", "$^"), case=False, regex=True)
+    for r in cfg.get("reglas", []):
+        de = pd.Series(False, index=df.index)
+        for t in r.get("estudios_contienen", []):
+            de |= est.str.contains(t.lower(), regex=False)
+        m |= de & df["clase"].astype(str).str.contains(r["patron"], case=False, regex=True)
+    return m
 
 
 _ZONA_BC = {"BeatCore Chamberí": "Chamberí", "BeatCore Salamanca": "Salamanca", "BeatCore Diagonal": "Diagonal", "BeatCore Ruzafa": "Valencia"}
