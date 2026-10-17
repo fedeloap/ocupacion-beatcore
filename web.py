@@ -184,11 +184,16 @@ def clases_unicas(snap):
     s = snap.copy()
     s["kid"] = clave_clase(s)
     s["libres_n"] = pd.to_numeric(s["libres"], errors="coerce")
+    s["_c"] = s["cancelada"].astype(str).str.lower() == "true"
     g = ["plataforma", "estudio", "sede", "kid"]
+    snap_canc = s
     ml = s.groupby(g)["libres_n"].max().rename("max_libres")
     s = s.sort_values("captured_at").groupby(g, as_index=False).tail(1)
     s = s.merge(ml, left_on=g, right_index=True, how="left")
-    s = s[s["cancelada"].astype(str).str.lower() != "true"].copy()
+    # una clase cancelada en cualquiera de sus fotos (Mindbody la marca cancelada solo al final) no cuenta
+    canc = snap_canc.groupby(g)["_c"].max().rename("_cancelada")
+    s = s.merge(canc, left_on=g, right_index=True, how="left")
+    s = s[(s["cancelada"].astype(str).str.lower() != "true") & ~s["_cancelada"].fillna(False)].copy()
     cap = pd.to_numeric(s["capacidad"], errors="coerce")
     est = (s["plataforma"] == "mindbody") & ~(cap > 0) & (s["max_libres"] > 0) & (s["max_libres"] <= analisis.AFORO_MAX_PLAUSIBLE)
     s["plazas"] = cap.where(cap > 0, s["max_libres"].where(est))

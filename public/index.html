@@ -930,7 +930,7 @@ function vistaRango(u) {
   const fechasDow = Array.from({ length: 7 }, () => new Set());
   const fechasDowG = Array.from({ length: 7 }, () => new Set());
   const dia = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, m: 0 }));
-  let R = 0, M = 0, C = 0, X = 0;
+  let R = 0, M = 0, C = 0, X = 0, G = 0;
   const todas = new Set();
   for (let i = 0; i < u.dd.length; i++) {
     const f = OF.fechas[u.dd[i]];
@@ -939,7 +939,7 @@ function vistaRango(u) {
     if (u.dc[i] > 0) { fechasDow[dow].add(f); todas.add(f); }
     if (u.dg && u.dg[i] > 0) fechasDowG[dow].add(f);
     const d = dia[dow]; d.c += u.dc[i]; d.p += u.dp[i]; d.r += u.dr[i]; d.m += u.dm[i];
-    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i];
+    R += u.dr[i]; M += u.dm[i]; C += u.dc[i]; X += u.dx[i]; G += (u.dg ? u.dg[i] : 0);
   }
   const celdas = new Map();
   for (const mes of mesesNecesarios()) {
@@ -961,7 +961,7 @@ function vistaRango(u) {
   });
   const ps = u.fact ? u.fact.precio_ses : null;
   return { ...u, dias, celdas: [...celdas.values()], ocup: M > 0 ? R / M : null, reservas: R, plazas_med: M, n_clases: C, n_dias: todas.size,
-    _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X };
+    _rango: true, _fp: ps != null ? Math.round(X * ps) : null, _res_rango: X, _clases_dadas: G };
 }
 function topClasesRango(u) {
   // "Qué clases tiene": clases del periodo, sacadas de los ficheros mensuales ya cargados
@@ -1230,15 +1230,18 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
       const pd = Array.from({ length: 7 }, () => ({ c: 0, p: 0, r: 0, pm: 0 }));
       cel.forEach(c => { cl += c.c / nf(c.d); pl += c.p / nf(c.d); r += c.r; pm += c.pm; const x = pd[c.d]; x.c += c.c / nf(c.d); x.p += c.p / nf(c.d); x.r += c.r; x.pm += c.pm; });
       const pc = pm > 0 ? r / pm : null;
-      const row = { _i: i, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp, sa: u.sin_aforo, nc: u.n_clases };
+      const row = { _i: i, nombre: u.estudio, zona: key === "of" ? zn(u.zona) : lugar(u), propio: u.propio, parcial: u.parcial, cl, pl: pl || null, pc, oc: pc != null && pl ? pl * pc : null, fo: factMesActual(u).obs, fe: factMesActual(u).est, fp: u._fp,
+        cg: u._clases_dadas != null ? u._clases_dadas : null, rg: u._clases_dadas != null && u.plazas_med > 0 ? u.reservas : null, sa: u.sin_aforo, nc: u.n_clases };
       pd.forEach((x, d) => { row["d" + d] = !dset.has(d) ? null : met === "clases" ? x.c : met === "plazas" ? x.p : met === "ocup" ? (x.pm > 0 ? x.r / x.pm : null) : (x.pm > 0 ? x.p * x.r / x.pm : null); });
       return row;
     });
     const f = met === "ocup" ? pct : (v => v == null ? "–" : met === "clases" ? numC(v) : num(v, 0));
     cols = [{ k: "cl", l: "Clases / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "pl", l: "Plazas ofertadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
-      { k: "oc", l: "Plazas ocupadas / semana", n: 1, f: v => v == null ? "–" : Math.round(v) },
+      { k: "oc", l: "Plazas ocupadas / semana tipo", n: 1, f: v => v == null ? "–" : Math.round(v) },
       { k: "pc", l: "% reservado", n: 1, h: r => r.pc == null ? "–" : `<span class="bar ${r.propio ? "a" : ""}" style="width:${Math.round(r.pc * 60)}px"></span>${pct(r.pc)}` },
+      { k: "cg", l: "Clases dadas", n: 1, f: v => v == null ? "–" : v },
+      { k: "rg", l: "Reservas dadas", n: 1, f: v => v == null ? "–" : v },
       ...(hayRango() ? [{ k: "fp", l: "Facturado en el periodo", n: 1, f: eur0 }] : [
         { k: "fo", l: `Facturado hasta hoy (${etiquetaFact()})`, n: 1, f: eur0 },
         { k: "fe", l: `Estimado mes completo (${etiquetaFact()})`, n: 1, f: eur0 }]),
@@ -1273,7 +1276,7 @@ function tablaCentros(el, key, unidades, tituloPrimera) {
     ${tabla(id, [{ k: "nombre", l: "Centro", h: r => esc(r.nombre) + (r.propio ? ' <span class="tag">BeatCore</span>' : "") + (r.parcial ? ' <small>(parcial)</small>' : "") },
       { k: "zona", l: key === "of" ? "Zona" : "Ciudad" }, ...cols], filas, { limit: 400, click: per === "dia", sel: r => r._i === sel })}
     <p class="nota">Pulsa un centro para ver sus clases por hora. "Por día de la semana" es una semana tipo: la suma de la media de cada día (solo días completos; los festivos sin clases no cuentan). Plazas ocupadas y % reservado: solo clases ya dadas con aforo y reservas conocidos. Las clases sin aforo publicado cuentan en clases pero no en plazas, así que las plazas ofertadas son un mínimo. "(parcial)": aún no hay una semana completa capturada.</p>
-    <p class="nota">Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
+    <p class="nota">Clases / plazas ocupadas por semana: una <b>semana tipo</b> (media de cada día de la semana, incluye lo ya programado; plazas ocupadas = plazas ofertadas × % reservado). <b>Clases dadas</b> y <b>Reservas dadas</b>: el total real de lo ya ocurrido en el periodo de las fechas de arriba. Facturación: "hasta hoy" son las reservas de las clases ya dadas que hemos capturado por su € por sesión (cuenta desde el primer día medido); "estimado" es el mes completo. En blanco: sin precio o sin reservas publicadas.</p>
     <div id="dc-${key}"></div>`;
   return { html, bind: () => {
     const m = $("#me-" + key); if (m) m.addEventListener("change", e => { el.dataset["met" + key] = e.target.value; render(); });

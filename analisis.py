@@ -73,7 +73,8 @@ def franja(h):
 def cargar():
     fin = leer("data/*.csv")
     plan = leer("data/plan/*.csv")
-    todo = pd.concat([fin, plan], ignore_index=True)
+    curva = leer("data/curva/*.csv")
+    todo = pd.concat([fin, plan, curva], ignore_index=True)
     for d in (fin, todo):
         d["captured_at"] = pd.to_datetime(d["captured_at"])
         d["inicio_local"] = pd.to_datetime(d["inicio_local"])
@@ -97,6 +98,17 @@ def cargar():
     fin = fin[fin["captured_at"] <= fin["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN)]
     fin = fin.sort_values("captured_at").groupby(key, as_index=False).tail(1)
     fin = fin.merge(max_libres, left_on=key_est, right_index=True, how="left")
+    # Clases ya dadas cuya foto final falló (la ventana de captura no las cogió): se usa su última foto de las
+    # 8 h previas a empezar (la curva guarda las próximas 6 h). Así el recuento coincide con la pestaña Oferta.
+    if len(curva):
+        ahora = todo["captured_at"].max()
+        c2 = todo[(todo["captured_at"] <= todo["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN))
+                  & (todo["captured_at"] >= todo["inicio_local"] - pd.Timedelta(hours=8))
+                  & (todo["inicio_local"] <= ahora)]
+        c2 = c2.sort_values("captured_at").groupby(key, as_index=False).tail(1)
+        c2 = c2[~c2.set_index(key_est).index.isin(fin.set_index(key_est).index)]
+        c2 = c2.drop(columns=["libres_n"], errors="ignore").merge(max_libres, left_on=key_est, right_index=True, how="left")
+        fin = pd.concat([fin, c2[fin.columns.intersection(c2.columns)]], ignore_index=True)
     return fin.drop(columns=["_k"])
 
 
