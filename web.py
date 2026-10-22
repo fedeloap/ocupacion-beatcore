@@ -165,6 +165,9 @@ def es_extra(df):
         for t in r.get("estudios_contienen", []):
             de |= est.str.contains(t.lower(), regex=False)
         m |= de & df["clase"].astype(str).str.contains(r["patron"], case=False, regex=True)
+    # sesiones con aforo publicado de 1 o 2 plazas: tratamientos o entrenamiento individual, no clases (Fede, 22/10/2026)
+    if "capacidad" in df.columns:
+        m |= pd.to_numeric(df["capacidad"], errors="coerce").between(1, 2)
     return m
 
 
