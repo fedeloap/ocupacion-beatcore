@@ -325,7 +325,7 @@ function opciones(sel, items, todo) {
 function montarFiltros() {
   opciones($("#f-centro"), centrosOrdenados().map(c => [c, zn(c)]), "Todos");
   marcasSelect();
-  opciones($("#f-disc"), DISCS.map(d => [d, d]), "Todas");
+  opciones($("#f-disc"), [["DIRECTA", "Lagree + Reformer (competencia directa)"], ...DISCS.map(d => [d, d])], "Todas");
   const horas = Array.from({ length: 25 }, (_, h) => [h, String(h).padStart(2, "0") + ":00"]);
   $("#f-h0").innerHTML = horas.slice(0, 24).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
   $("#f-h1").innerHTML = horas.slice(1).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
@@ -363,7 +363,7 @@ function leerFiltros() {
 function pasaBase(i, ignorarDisc) {
   if (F.centro) { if (D.dic.centro[D.c[i]] !== F.centro) return false; }
   else if (D.dic.centro[D.c[i]] === "Nacional") return false;       // las cadenas nacionales solo salen al elegir ese centro
-  if (!ignorarDisc && F.disc && D.dic.disc[D.d[i]] !== F.disc) return false;
+  if (!ignorarDisc && F.disc && !discOK(D.dic.disc[D.d[i]])) return false;
   if (!F.dias.has(D.w[i])) return false;
   if (!F.fest && D.fe[i]) return false;
   const h = D.h[i] / 60;
@@ -380,6 +380,7 @@ function pasaComp(i) {
   return true;
 }
 let GA = [], GB = [];
+const discOK = d => F.disc === "DIRECTA" ? (d === "Lagree" || d === "Reformer") : d === F.disc;
 function aplicar() {
   GA = []; GB = [];
   for (let i = 0; i < N; i++) {
@@ -623,7 +624,7 @@ function proximas() {
   for (let i = 0; i < P.n; i++) {
     const e = EP[P.e[i]], f = P.dic.fecha[P.f[i]];
     if (F.centro && P.dic.centro[P.c[i]] !== F.centro) continue;
-    if (F.disc && P.dic.disc[P.d[i]] !== F.disc) continue;
+    if (F.disc && !discOK(P.dic.disc[P.d[i]])) continue;
     if (!F.dias.has(P.w[i]) || (!F.fest && P.fe[i])) continue;
     const h = P.h[i] / 60;
     if (h < F.h0 || h >= F.h1) continue;
@@ -1576,7 +1577,7 @@ function detalleClase(i) {
 function catFiltrado(conPropios = true) {
   const idE = F.estudio !== "" ? EST[+F.estudio].id : null;
   return CATROWS.filter(r => (conPropios || !r.propio) && (!F.centro || r.zona === F.centro) && (!F.marca || r.marca === F.marca) &&
-    (idE == null || r.id === idE) && (!F.disc || r.disc_n === F.disc));
+    (idE == null || r.id === idE) && (!F.disc || discOK(r.disc_n)));
 }
 function precios() {
   const el = $("#p-precios");
