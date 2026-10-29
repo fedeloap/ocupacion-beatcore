@@ -9436,3 +9436,526 @@ captured_at,plataforma,estudio,centro_beatcore,sede,clase_id,clase,inicio_local,
 2026-10-29 15:38:54,marianatek,RED SPOT VLC,Valencia,Valencia,8142,FORM — RED,2026-10-29 17:10,,11,8,3,,False,False,0
 2026-10-29 15:38:54,marianatek,RED SPOT VLC,Valencia,Valencia,8151,FLOW — RED,2026-10-29 18:10,,11,6,5,,False,False,0
 2026-10-29 15:38:54,marianatek,RED SPOT VLC,Valencia,Valencia,8160,FORM — RED,2026-10-29 19:10,,11,11,0,,True,False,2
+2026-10-29 16:08:53,momence,AMA Studio,Chamberí,AMA Studio: Juan de Austria,145275473,Classic Lagree [English Class],2026-10-29 18:00,50,8,4,4,,False,False,False
+2026-10-29 16:08:53,momence,AMA Studio,Salamanca,AMA Studio: Lagasca,145278068,Classic Lagree [Spanish Class],2026-10-29 18:30,50,10,5,5,,False,False,False
+2026-10-29 16:08:53,momence,AMA Studio,Chamberí,AMA Studio: Juan de Austria,145275478,Classic Lagree [English Class],2026-10-29 19:00,50,8,7,1,,False,False,False
+2026-10-29 16:08:53,momence,AMA Studio,Salamanca,AMA Studio: Lagasca,145278304,Classic Lagree [Spanish Class],2026-10-29 19:30,50,5,1,4,,False,False,False
+2026-10-29 16:08:53,momence,AMA Studio,Chamberí,AMA Studio: Juan de Austria,145275482,Classic Lagree [English Class],2026-10-29 20:00,50,8,6,2,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,142700720,Funcional: Full Body Workout,2026-10-29 17:00,50,16,3,13,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,Chamberí,Mooves Studio Olavide,143077581,Barre Mat ,2026-10-29 17:30,50,14,1,13,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,142708691,Tone & Stretching,2026-10-29 18:00,50,16,16,0,,True,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,142708732,Funcional: Upper Body ,2026-10-29 18:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,Chamberí,Mooves Studio Olavide,138158327,Pilates,2026-10-29 18:30,50,14,14,0,,True,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,138160360,Pilates,2026-10-29 19:00,50,16,13,3,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,142712747,Hybrid Training ,2026-10-29 19:00,50,8,7,1,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,Chamberí,Mooves Studio Olavide,138162228,Strength: Glutes & Abs ,2026-10-29 19:30,50,14,11,3,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,138163141,Barré,2026-10-29 20:00,50,18,15,3,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,142715637,Funcional: Upper Body ,2026-10-29 20:00,50,8,6,2,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,Chamberí,Mooves Studio Olavide,138164859,HYROX,2026-10-29 20:30,50,14,8,6,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,143078070,Pilates,2026-10-29 21:00,50,16,10,6,,False,False,False
+2026-10-29 16:08:53,momence,Mooves Studio,,Mooves Studio Ponzano,143080518,Funcional: Upper Body ,2026-10-29 21:00,50,8,4,4,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,Chamberí,"Reformer Room - Calle de Hortaleza, 110",141791980,Reformer: Full Body Sculpt,2026-10-29 17:00,50,8,2,6,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Hortaleza, 110",132838973,Recovery: 45' (Infrared Sauna Only),2026-10-29 17:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Infrared Room - Calle de Hortaleza, 110",132848432,Recovery: 25' (Infrared Sauna Only),2026-10-29 17:00,25,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,Chamberí,"Reformer Room - Calle de Hortaleza, 110",141821564,Reformer: Cardio & Tone,2026-10-29 18:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Hortaleza, 110",132839060,Recovery: 45' (Infrared Sauna Only),2026-10-29 18:00,45,1,1,0,,True,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Infrared Room - Calle de Hortaleza, 110",132848491,Recovery: 25' (Infrared Sauna Only),2026-10-29 18:00,25,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Orense, 69",132858207,Recovery: 45' (Infrared Sauna & Cold Plunge),2026-10-29 18:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Reformer Room - Calle de Orense, 69",141898575,Reformer: Power Legs & Glutes,2026-10-29 18:00,50,10,5,5,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Mat Room - Calle de Orense, 69",141789944,Mat: Pilates Sculpt (Hot),2026-10-29 18:15,50,12,2,10,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Orense, 69",132839934,Recovery: 45' (Infrared Sauna & Cold Plunge),2026-10-29 19:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Hortaleza, 110",132912549,Recovery: 45' (Infrared Sauna Only),2026-10-29 19:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Infrared Room - Calle de Hortaleza, 110",132848534,Recovery: 25' (Infrared Sauna Only),2026-10-29 19:00,25,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Reformer Room - Calle de Orense, 69",141890148,Reformer: Booty Core Blast,2026-10-29 19:00,50,10,6,4,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,Chamberí,"Reformer Room - Calle de Hortaleza, 110",141819828,Reformer: Full Body Sculpt,2026-10-29 19:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Mat Room - Calle de Orense, 69",141789969,Mat: Pilates Sculpt (Hot),2026-10-29 19:30,50,12,6,6,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Infrared Room - Calle de Hortaleza, 110",132848598,Recovery: 25' (Infrared Sauna Only),2026-10-29 20:00,25,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Recovery Room - Calle de Orense, 69",132858266,Recovery: 45' (Infrared Sauna & Cold Plunge),2026-10-29 20:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,,"Reformer Room - Calle de Orense, 69",141897653,Reformer: Full Body Sculpt,2026-10-29 20:00,50,10,9,1,,False,False,False
+2026-10-29 16:08:53,momence,Olimpia - The Wellness Circuit,Chamberí,"Reformer Room - Calle de Hortaleza, 110",141846023,Reformer: Power Legs & Glutes,2026-10-29 20:00,50,8,6,2,,False,False,False
+2026-10-29 16:08:53,momence,Prana House,Chamberí,Prana House,136974952,Sculpt 50',2026-10-29 18:00,50,17,17,0,,True,False,False
+2026-10-29 16:08:53,momence,Prana House,Chamberí,Prana House,136975073,Barre 45',2026-10-29 19:00,45,15,15,0,,True,False,False
+2026-10-29 16:08:53,momence,Prana House,Chamberí,Prana House,136975184,Vinyāsa 75',2026-10-29 20:00,75,20,5,15,,False,False,False
+2026-10-29 16:08:53,momence,Casa Kavi,Chamberí,Sala Moksha,142980742,Canto Terapéutico💫,2026-10-29 18:00,75,10,4,6,,False,False,False
+2026-10-29 16:08:53,momence,Casa Kavi,Chamberí,Sala Asana,145177405,Hatha Raja,2026-10-29 18:00,75,18,9,9,,False,False,False
+2026-10-29 16:08:53,momence,Casa Kavi,Chamberí,Sala Moksha,145508385,Meditación guiada ,2026-10-29 19:30,30,12,7,5,,False,False,False
+2026-10-29 16:08:53,momence,Casa Kavi,Chamberí,Sala Asana,142019510,Hatha Vinyasa ,2026-10-29 19:30,60,18,10,8,,False,False,False
+2026-10-29 16:08:53,momence,Casa Kavi,Chamberí,Sala Asana,142019693,Yin Yoga y Medicina China,2026-10-29 20:40,60,18,8,10,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio FRIDA KAHLO,126043721,Reformer Burn · Halloween Edition,2026-10-29 16:15,50,18,13,5,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio CELIA CRUZ,128058873,BARRE (Total Body),2026-10-29 16:30,50,14,5,9,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio FRIDA KAHLO,128181533,Reformer Burn · Halloween Edition,2026-10-29 17:00,50,9,4,5,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio FRIDA KAHLO,126043960,REFORMER STRENGTH (Total Body + Abs)  ,2026-10-29 17:15,50,18,13,5,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio SHAKIRA,127911748,FUERZA (Total Body+ Abs),2026-10-29 17:30,50,12,11,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio CELIA CRUZ,128059144,BARRE (Total Body),2026-10-29 17:30,50,14,4,10,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio CELIA CRUZ,126043734,BAILE + FUERZA (Glutes + Legs + Abs),2026-10-29 17:30,50,18,3,15,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio SHAKIRA,135355149,FUERZA (Total Body+ Abs),2026-10-29 17:30,50,8,4,4,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio FRIDA KAHLO,128181606,Reformer Burn · Halloween Edition,2026-10-29 18:00,50,9,9,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,145381951,FACE WORKOUT (Entrenamiento facial),2026-10-29 18:15,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,128031218,FACE WORKOUT (Entrenamiento facial),2026-10-29 18:15,45,1,1,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio FRIDA KAHLO,126044225,Reformer Burn · Halloween Edition,2026-10-29 18:15,50,23,22,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio SHAKIRA,126716042,FUERZA (Total Body+ Abs),2026-10-29 18:20,50,8,7,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio SHAKIRA,142298089,FUERZA (Total Body+ Abs),2026-10-29 18:30,50,12,10,2,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio CELIA CRUZ,126044170,PILATES SCULPT (Total Body),2026-10-29 18:30,50,15,15,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio CELIA CRUZ,126716087,BAILE + FUERZA (Glutes + Legs + Abs),2026-10-29 18:30,50,18,10,8,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,128031597,FACE WORKOUT (Entrenamiento facial),2026-10-29 19:00,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio FRIDA KAHLO,128181666,Reformer Burn · Halloween Edition,2026-10-29 19:00,50,9,9,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,135556473,DRENAJE LINFÁTICO O MADEROTERAPIA (Total Body),2026-10-29 19:00,45,1,1,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio SHAKIRA,126716145,FUERZA (Total Body+ Abs),2026-10-29 19:10,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio FRIDA KAHLO,126044427,Reformer Burn · Halloween Edition,2026-10-29 19:15,50,23,22,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio SHAKIRA,126044444,FUERZA (Total Body+ Abs),2026-10-29 19:30,50,12,12,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio CELIA CRUZ,126044331,BAILE + FUERZA (Glutes + Legs + Abs),2026-10-29 19:30,50,18,17,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio CELIA CRUZ,128059640,BAILE + FUERZA (Glutes + Legs + Abs),2026-10-29 19:30,50,18,15,3,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,128031692,FACE WORKOUT (Entrenamiento facial),2026-10-29 19:45,45,1,1,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,135556523,DERMAPEN (Microneedling),2026-10-29 19:45,45,1,1,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio FRIDA KAHLO,128181782,Reformer Burn · Halloween Edition,2026-10-29 20:00,50,9,9,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio SHAKIRA,128059741,FUERZA (Total Body+ Abs),2026-10-29 20:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio FRIDA KAHLO,126044568,Reformer Burn · Halloween Edition,2026-10-29 20:15,50,23,20,3,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio SHAKIRA,126044630,FUERZA (Total Body+ Abs),2026-10-29 20:30,50,12,11,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca - studio CELIA CRUZ,126044550,CARDIO DANCE (Salsa Y Bachata),2026-10-29 20:30,50,28,20,8,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio CELIA CRUZ,128060127,COREOGRAFÍA (Reggaeton),2026-10-29 20:30,50,28,22,6,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Salamanca,DAN'S Salamanca -studio CARMEN MIRANDA,138164276,FACE WORKOUT (Entrenamiento facial),2026-10-29 20:30,45,1,0,1,,False,False,False
+2026-10-29 16:08:53,momence,DAN'S,Chamberí,DAN'S Barcelo - studio SHAKIRA,128313707,FUERZA (Total Body+ Abs),2026-10-29 20:50,50,8,5,3,,False,False,False
+2026-10-29 16:08:53,momence,B3B Ayala,Salamanca,B3B AYALA,144303331,B3B Original,2026-10-29 16:45,50,40,10,30,,False,False,False
+2026-10-29 16:08:53,momence,B3B Ayala,Salamanca,B3B AYALA,144306847,B3B Strength,2026-10-29 18:00,50,34,21,13,,False,False,False
+2026-10-29 16:08:53,momence,B3B Ayala,Salamanca,B3B AYALA,144309271,B3B Original,2026-10-29 19:00,50,40,18,22,,False,False,False
+2026-10-29 16:08:53,momence,B3B Ayala,Salamanca,B3B AYALA,144311805,B3B Power,2026-10-29 20:00,50,40,16,24,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Chamberí,Boutique Barre Chamberí,142592940,Barre Technique 45',2026-10-29 16:00,45,15,0,15,,False,True,False
+2026-10-29 16:08:53,momence,Boutique Barre,Chamberí,Boutique Barre Chamberí,142590766,Barre Technique,2026-10-29 17:45,50,15,13,2,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Salamanca,Boutique Barre Goya,142535873,Barre Technique,2026-10-29 17:45,50,17,12,5,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Salamanca,Boutique Barre Goya,142535897,Barre Technique,2026-10-29 19:00,50,17,11,6,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Chamberí,Boutique Barre Chamberí,142590750,Barre Technique,2026-10-29 19:00,50,15,13,2,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Salamanca,Boutique Barre Goya,142535913,Barre Technique,2026-10-29 20:10,50,17,10,7,,False,False,False
+2026-10-29 16:08:53,momence,Boutique Barre,Chamberí,Boutique Barre Chamberí,142590757,Barre Technique,2026-10-29 20:10,50,15,13,2,,False,False,False
+2026-10-29 16:08:53,momence,TRIB3 Chamberí,Chamberí,TRIB3 Chamberi,138157812,STRENGTH 45' – ARMS,2026-10-29 18:15,60,14,12,2,,False,False,False
+2026-10-29 16:08:53,momence,TRIB3 Chamberí,Chamberí,TRIB3 Chamberi,138161073,BURPEES ON ELM STREET - HALLOWEEN WEEK 29/10,2026-10-29 19:15,60,21,14,7,,False,False,False
+2026-10-29 16:08:53,momence,TRIB3 Chamberí,Chamberí,TRIB3 Chamberi,138163609,BURPEES ON ELM STREET - HALLOWEEN WEEK 29/10,2026-10-29 20:15,60,21,10,11,,False,False,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,Senda Studio,142393400,Align Flow [EN],2026-10-29 18:00,60,16,10,6,,False,False,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,,142393629,Align Flow online [EN],2026-10-29 18:00,60,,1,,,,False,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,Senda Studio,142354971,Jivamukti Yoga [EN],2026-10-29 19:15,60,16,9,7,,False,False,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,,142674602,Jivamukti Yoga online [EN],2026-10-29 19:15,60,,0,,,,True,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,Senda Studio,142392913,Candlelight Stretch & Yoga Nidra [EN],2026-10-29 20:30,60,15,10,5,,False,False,False
+2026-10-29 16:08:53,momence,Senda Studio,Diagonal,,142393021,Candlelight Stretch & Yoga Nidra [EN] Online,2026-10-29 20:30,60,,0,,,,False,False
+2026-10-29 16:08:53,momence,MOODBODY,Diagonal,Moodbody,137684802,Bodydefine,2026-10-29 17:00,45,16,0,16,,False,True,False
+2026-10-29 16:08:53,momence,MOODBODY,Diagonal,Moodbody,137692969,Aerobics,2026-10-29 18:00,45,18,15,3,,False,False,False
+2026-10-29 16:08:53,momence,MOODBODY,Diagonal,Moodbody,137697247,BodyDefine ,2026-10-29 19:15,45,16,10,6,,False,False,False
+2026-10-29 16:08:53,momence,MOODBODY,Diagonal,Moodbody,137700539,Salsa Urbana,2026-10-29 20:15,60,17,8,9,,False,False,False
+2026-10-29 16:08:53,momence,PILAT3S Gràcia,Diagonal,PILAT3S Gracia,138154324,PILAT3S Align,2026-10-29 16:30,50,18,0,18,,False,True,False
+2026-10-29 16:08:53,momence,PILAT3S Gràcia,Diagonal,PILAT3S Gracia,145876841,PILAT3S Align,2026-10-29 16:30,50,18,7,11,,False,False,False
+2026-10-29 16:08:53,momence,PILAT3S Gràcia,Diagonal,PILAT3S Gracia,138157742,PILAT3S TONE,2026-10-29 18:15,50,18,18,0,,True,False,False
+2026-10-29 16:08:53,momence,PILAT3S Gràcia,Diagonal,PILAT3S Gracia,138161066,PILAT3S POWER,2026-10-29 19:15,50,18,13,5,,False,False,False
+2026-10-29 16:08:53,momence,PILAT3S Gràcia,Diagonal,PILAT3S Gracia,138164469,PILAT3S Align,2026-10-29 20:30,50,18,10,8,,False,False,False
+2026-10-29 16:08:53,momence,Human Pilates,Diagonal,Human Pilates Córsega 423,138153205,Pilates con Máquinas,2026-10-29 16:00,55,4,4,0,,True,False,False
+2026-10-29 16:08:53,momence,Human Pilates,Diagonal,Human Pilates Córsega 423,138155218,Pilates con Máquinas,2026-10-29 17:00,55,4,3,1,,False,False,False
+2026-10-29 16:08:53,momence,Human Pilates,Diagonal,Human Pilates Córsega 423,138157484,Pilates con Máquinas,2026-10-29 18:00,55,4,4,0,,True,False,False
+2026-10-29 16:08:53,momence,Human Pilates,Diagonal,Human Pilates Córsega 423,125127322,Pilates con Máquinas,2026-10-29 19:00,55,5,5,0,,True,False,False
+2026-10-29 16:08:53,momence,Dharma Estudio,Diagonal,Dharma estudio,125235884,Reformer | Pilates,2026-10-29 17:00,50,6,5,1,,False,False,False
+2026-10-29 16:08:53,momence,Dharma Estudio,Diagonal,Dharma estudio,125238806,Reformer | Pilates,2026-10-29 18:00,50,6,5,1,,False,False,False
+2026-10-29 16:08:53,momence,Dharma Estudio,Diagonal,Dharma estudio,125243218,Reformer | Foundations ,2026-10-29 19:00,50,6,2,4,,False,False,False
+2026-10-29 16:08:53,momence,Dharma Estudio,Diagonal,Dharma estudio,125251727,Reformer | Control ++,2026-10-29 20:00,50,6,4,2,,False,False,False
+2026-10-29 16:08:53,momence,Corehaus,Diagonal,Corehaus,144955997,Full Body (Hamstrings & Biceps),2026-10-29 17:15,50,10,6,4,,False,False,False
+2026-10-29 16:08:53,momence,Corehaus,Diagonal,Corehaus,144956064,"Upper body focus (core,obliques&upper body)",2026-10-29 18:15,50,10,4,6,,False,False,False
+2026-10-29 16:08:53,momence,Corehaus,Diagonal,Corehaus,144956146,Full Body (Hamstrings & Biceps),2026-10-29 19:15,50,10,10,0,,True,False,False
+2026-10-29 16:08:53,momence,Corehaus,Diagonal,Corehaus,144956184,(ES)Full Body (Hamstrings & Biceps),2026-10-29 20:15,50,10,5,5,,False,False,False
+2026-10-29 16:08:53,momence,Casa Barré,Salamanca,Casa Barré - Ayala,145673005,Resistance,2026-10-29 18:00,55,20,17,3,,False,False,False
+2026-10-29 16:08:53,momence,Casa Barré,Salamanca,Casa Barré - Ayala,145673008,Interval,2026-10-29 19:15,60,20,9,11,,False,False,False
+2026-10-29 16:08:53,momence,Casa Barré,Salamanca,Casa Barré - Ayala,145673207,Resistance,2026-10-29 20:30,55,20,10,10,,False,False,False
+2026-10-29 16:08:53,momence,B3B Retiro,Salamanca,B3B Retiro,142249702,B3B Barre,2026-10-29 18:00,50,28,14,14,,False,False,False
+2026-10-29 16:08:53,momence,B3B Retiro,Salamanca,B3B Retiro,142252640,B3B Power,2026-10-29 19:00,50,28,26,2,,False,False,False
+2026-10-29 16:08:53,momence,B3B Retiro,Salamanca,B3B Retiro,142256311,B3B Barre,2026-10-29 20:00,50,28,10,18,,False,False,False
+2026-10-29 16:08:53,momence,Yogalates House,Salamanca,Yogalates House,145402107,Manifestation Circle (ENG/ESP),2026-10-29 18:00,60,12,4,8,,False,False,False
+2026-10-29 16:08:53,momence,Yogalates House,Salamanca,Yogalates House,145293667,60 min Ashtanga Yoga Fundamentals (ENG/ESP),2026-10-29 19:15,60,21,9,12,,False,False,False
+2026-10-29 16:08:53,momence,Yogalates House,Salamanca,Yogalates House,145293680,House Nidra Flow (ENG),2026-10-29 20:30,60,21,3,18,,False,False,False
+2026-10-29 16:08:53,momence,Studio 130,Valencia,Studio130,136504977,Abs & Glutes,2026-10-29 17:00,50,8,7,1,,False,False,False
+2026-10-29 16:08:53,momence,Studio 130,Valencia,Studio130,136567781,Abs & Glutes,2026-10-29 18:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Studio 130,Valencia,Studio130,144129019,Abs & Glutes 🇬🇧 English instructor,2026-10-29 19:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Studio 130,Valencia,Studio130,144129478,Abs & Glutes 🇬🇧 English instructor,2026-10-29 20:00,50,8,8,0,,True,False,False
+2026-10-29 16:08:53,momence,Barrefit,Diagonal,Gracia,137689877,🌙 GRACIA sala LUNA: Barre Blast 🍑🍑🍑🍑,2026-10-29 17:30,60,19,10,9,,False,False,False
+2026-10-29 16:08:53,momence,Barrefit,Diagonal,Gracia,142710443,👻 Candlelight Sessions 🕯️ ☀️ GRACIA sala SOL: Slow Burn 🍑🍑,2026-10-29 18:30,60,19,19,0,,True,False,False
+2026-10-29 16:08:53,momence,Barrefit,Diagonal,Gracia,137696485,👻 Candlelight Sessions 🕯️ 🌙 GRACIA sala LUNA: Barre Flow 🍑🍑🍑,2026-10-29 19:00,60,19,19,0,,True,False,False
+2026-10-29 16:08:53,momence,Barrefit,Diagonal,Gracia,142715697,👻 Candlelight Sessions 🕯️ ☀️ GRACIA sala SOL: Barre Flow 🍑🍑🍑,2026-10-29 20:00,60,19,15,4,,False,False,False
+2026-10-29 16:08:53,momence,Barrefit,Diagonal,Gracia,137701211,👻 Candlelight Sessions 🕯️🌙 GRACIA sala LUNA: Slow Burn 🍑🍑,2026-10-29 20:30,60,19,9,10,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Chamberí,Chamberí,BeatCore Chamberi,142308971,Essentials beatcore (Intermediate),2026-10-29 17:00,50,6,3,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Chamberí,Chamberí,BeatCore Chamberi,142309063,Essentials beatcore (Intermediate),2026-10-29 18:00,50,6,6,0,,True,False,False
+2026-10-29 16:08:53,momence,BeatCore Chamberí,Chamberí,BeatCore Chamberi,142309064,Essentials beatcore (Intermediate),2026-10-29 19:00,50,6,4,2,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Salamanca,Salamanca,BeatCore Salamanca,142128356,Basic beatcore,2026-10-29 17:00,50,6,3,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Salamanca,Salamanca,BeatCore Salamanca,142128410,Essential beatcore,2026-10-29 18:00,50,6,2,4,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Salamanca,Salamanca,BeatCore Salamanca,142128465,Essential beatcore,2026-10-29 19:00,50,6,4,2,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Salamanca,Salamanca,BeatCore Salamanca,142128505,Essential beatcore,2026-10-29 20:00,50,6,3,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,beatcore,143687461,Essentials beatcore,2026-10-29 18:00,50,8,5,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,Personal. ,143688527,Personal.,2026-10-29 18:00,50,4,0,4,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,beatcore,143687778,Essentials beatcore,2026-10-29 19:00,50,8,4,4,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,Personal. ,143688588,Personal.,2026-10-29 19:00,50,4,1,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,beatcore,143688075,Essentials beatcore,2026-10-29 20:00,50,8,2,6,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Diagonal,Diagonal,Personal. ,143688641,Personal.,2026-10-29 20:00,50,4,1,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Ruzafa,Valencia,beatcore Ruzafa,141058684,Essentials BeatCore (intermediate),2026-10-29 17:00,50,7,2,5,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Ruzafa,Valencia,beatcore Ruzafa,140357616,Essentials BeatCore (intermediate),2026-10-29 18:00,50,6,5,1,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Ruzafa,Valencia,beatcore Ruzafa,141058816,Essentials BeatCore (intermediate),2026-10-29 19:00,50,7,4,3,,False,False,False
+2026-10-29 16:08:53,momence,BeatCore Ruzafa,Valencia,beatcore Ruzafa,141058440,Basic BeatCore (Beginners),2026-10-29 20:00,50,7,7,0,,True,False,False
+2026-10-29 16:08:53,momence,the melt,Chamberí,the melt,143514829,lower body,2026-10-29 18:20,50,7,2,5,,False,False,False
+2026-10-29 16:08:53,momence,the melt,Chamberí,the melt,143514845,ADVANCED: lower body,2026-10-29 19:30,50,7,4,3,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Hermosilla,143150546,Barré,2026-10-29 17:00,50,12,5,7,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Hermosilla,131269814,Tone/Tonificación,2026-10-29 18:05,50,9,3,6,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Valdebebas,143150461,Tone/Tonificación,2026-10-29 18:05,50,15,5,10,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Hermosilla,126002628,Barré,2026-10-29 19:10,50,12,10,2,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Valdebebas,126002620,Barré,2026-10-29 19:10,50,15,10,5,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Hermosilla,138163621,Bosu Barré,2026-10-29 20:15,50,10,4,6,,False,False,False
+2026-10-29 16:08:53,momence,Cerclé Studio,Salamanca,Valdebebas,126006254,Bosu Barré,2026-10-29 20:15,50,15,11,4,,False,False,False
+2026-10-29 16:08:53,mindbody,esBarre,Chamberí,esBarre,9086d756-9831-4300-b38f-d0ce05bb0371,esPlay,2026-10-29 17:30,50,23,5,18,9,False,False,
+2026-10-29 16:08:53,mindbody,esBarre,Chamberí,esBarre,33ec4578-fb2b-43f9-ae9c-d185552f6dff,esPlay,2026-10-29 18:30,50,23,9,14,6,False,False,
+2026-10-29 16:08:53,mindbody,esBarre,Chamberí,esBarre,f9ae0c75-09d4-47d2-9652-c8b81b7f19da,esPlay,2026-10-29 19:30,50,23,11,12,5,False,False,
+2026-10-29 16:08:53,mindbody,esBarre,Chamberí,esBarre,82f038d4-13ca-4851-85f0-b359f2ee4fb6,esPlay,2026-10-29 20:35,50,23,4,19,6,False,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,345eccf7-a66c-4f05-b005-2ef59fa13535,Mayores 2d,2026-10-29 17:30,60,,,4,10,False,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,54ee7ab1-9a51-4c3b-a7b1-f87630afd530,Mayores 2d,2026-10-29 17:30,60,,,9,6,False,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,4c77f557-b241-4c01-8fec-4457d18a6e3e,Combo 2d,2026-10-29 18:30,60,,,5,10,False,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,500ff7e1-c415-44ef-b645-6823a4a82fa4,Combo 2d,2026-10-29 18:30,60,,,,,,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,4fbca80b-4d47-4c33-86c1-701eb114ec3e,Combo 2d ,2026-10-29 19:30,60,,,,,,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,0b32eafe-c78c-4c1a-acbc-39bc87ae2397,Combo 2d,2026-10-29 19:30,60,,,4,9,False,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,32de025e-9074-4466-868e-fda55ef6f8f7,Combo 2d,2026-10-29 19:30,60,,,,,,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,b155b35d-aaf5-4117-80bb-f96066414e84,Combo 2d,2026-10-29 20:30,60,,,,,,False,
+2026-10-29 16:08:53,mindbody,City Pilates,Chamberí,City Pilates,f8fcc393-3ceb-43d0-8338-11c72735fb57,Combo 2d,2026-10-29 20:30,60,,,10,10,False,False,
+2026-10-29 16:08:53,mindbody,Soma club,Chamberí,Soma club,2c1499e8-88cd-421f-9b39-59282cd195c6,Pilates Reformer,2026-10-29 17:30,50,,,6,6,False,False,
+2026-10-29 16:08:53,mindbody,Soma club,Chamberí,Soma club,58d29b9c-9f25-4ea3-8da2-bd91f982f2e9,Pilates Reformer,2026-10-29 18:30,50,,,3,6,False,False,
+2026-10-29 16:08:53,mindbody,Soma club,Chamberí,Soma club,170abbb5-2b26-4c05-be90-0e5e5a78caf8,Pilates Reformer,2026-10-29 19:30,50,,,6,6,False,False,
+2026-10-29 16:08:53,mindbody,Soma club,Chamberí,Soma club,c657008e-51f0-4855-a793-6c5796f3fc7d,Pilates Reformer,2026-10-29 20:30,50,,,6,6,False,False,
+2026-10-29 16:08:53,mindbody,Hot Yoga Madrid,Chamberí,Hot Yoga Madrid,6e8499da-b4da-4980-9484-c85126f3a40a,Hot Vinyasa Flow,2026-10-29 18:10,75,,,16,23,False,False,
+2026-10-29 16:08:53,mindbody,Hot Yoga Madrid,Chamberí,Hot Yoga Madrid,3a097efd-0664-4494-9053-66d74800961c,Hot Vinyasa Flow,2026-10-29 19:30,75,,,15,26,False,False,
+2026-10-29 16:08:53,mindbody,FS8 Chamberi,Chamberí,FS8 Chamberi,3ef40e0f-5203-4b92-b271-5cad2b104a70,FS8 ReformX,2026-10-29 18:10,50,,,13,13,False,False,
+2026-10-29 16:08:53,mindbody,FS8 Chamberi,Chamberí,FS8 Chamberi,23134ff2-89a6-4263-b172-ac90609709f7,FS8 ReformX,2026-10-29 19:20,50,,,8,15,False,False,
+2026-10-29 16:08:53,mindbody,GONG,Chamberí,GONG,11fabcd0-a506-41d7-8f93-3e134d63b5cf,Iyengar,2026-10-29 18:00,75,,,16,17,False,False,
+2026-10-29 16:08:53,mindbody,GONG,Chamberí,GONG,ec58bfa7-83f4-435e-be8e-4f6545b3ca44,Barre,2026-10-29 18:30,60,,,2,6,False,False,
+2026-10-29 16:08:53,mindbody,GONG,Chamberí,GONG,13924748-593b-4139-b0a6-232834c1f9f8,Barre,2026-10-29 19:30,60,,,0,10,True,False,
+2026-10-29 16:08:53,mindbody,GONG,Chamberí,GONG,56dd8e7d-0cdb-48f0-a7af-3d24b1549b28,Pilates dinámico,2026-10-29 19:30,60,,,2,10,False,False,
+2026-10-29 16:08:53,mindbody,PT FitLab,Chamberí,PT FitLab,9e1e7005-70bf-4af3-8f53-743bfa361b9f,Classic Pilates,2026-10-29 19:30,50,6,2,4,6,False,False,
+2026-10-29 16:08:53,mindbody,PT FitLab,Chamberí,PT FitLab,f91d959d-e8f8-421a-a239-d46d710a1836,CrossTraining,2026-10-29 19:30,60,6,1,5,5,False,False,
+2026-10-29 16:08:53,mindbody,PT FitLab,Chamberí,PT FitLab,42f6cba0-cedc-4cf3-abb4-afe557b18af3,FunctionalTraining,2026-10-29 20:30,60,6,0,6,6,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,a2dc2c2e-3773-459d-a77f-be6bc360531a,Iron Booty,2026-10-29 17:00,50,,,6,8,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,318c6356-4a7d-4888-b6e4-7d6c3e68f062,FLOOR Sculpt,2026-10-29 17:10,50,,,8,9,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,b8cacf9e-1851-4802-9c3f-75cac365cc3d,Toned Arms,2026-10-29 18:00,50,,,6,9,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,a31e4fd3-d86c-4fa2-b485-1203cc4ebc6a,FLOOR Sculpt,2026-10-29 18:20,50,,,9,10,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,992dd2f6-fc2a-428e-ad08-4675d9398e01,Iron Booty,2026-10-29 19:00,50,,,6,9,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,04935bcc-193b-4116-8e7a-eb316de60f57,FLOOR Sculpt,2026-10-29 19:30,50,,,5,10,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,3962c366-3bf7-42b6-832e-b2c4416835a8,Cardio Sculpt,2026-10-29 20:00,50,,,4,7,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,3850224e-d8b7-4d5d-a34c-997b4f9f14b6,FLOOR Sculpt,2026-10-29 20:40,50,,,8,11,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Chamberí,Chamberí,Solid Studio Chamberí,7d3db228-1607-47ea-b84d-42035c2e7084,Lower Body,2026-10-29 21:00,50,,,7,9,False,False,
+2026-10-29 16:08:53,mindbody,Lean Barre Studio,Chamberí,Lean Barre Studio,a80b51b1-63d3-4f0c-854c-c4fc05bef8f0,Lean Barre - Sculpt (Advanced),2026-10-29 17:20,50,15,15,0,,True,False,
+2026-10-29 16:08:53,mindbody,Lean Barre Studio,Chamberí,Lean Barre Studio,4063a336-8e2c-4c74-8e2e-68126cf9a2ad,Lean Barre - Sculpt (Advanced),2026-10-29 18:20,50,15,15,0,,True,False,
+2026-10-29 16:08:53,mindbody,Lean Barre Studio,Chamberí,Lean Barre Studio,49b9c47c-f692-4d88-be96-24ac430b5c98,Lean Barre - Sculpt (Advanced),2026-10-29 19:25,50,15,15,0,,True,False,
+2026-10-29 16:08:53,mindbody,Lean Barre Studio,Chamberí,Lean Barre Studio,d2b61fdf-bb16-48f1-836d-28d0007b1345,Lean Barre - Sculpt (Advanced),2026-10-29 20:30,50,15,14,1,13,False,False,
+2026-10-29 16:08:53,mindbody,barrelatte,Chamberí,barrelatte,abde3826-4bae-4c9e-840e-712e94651bb6,Matcha Latte (sculpt pilates),2026-10-29 16:50,50,,,1,6,False,False,
+2026-10-29 16:08:53,mindbody,barrelatte,Chamberí,barrelatte,d8563e76-b20e-4080-ada1-270d40fea491,Flat White,2026-10-29 18:00,50,,,0,1,True,False,
+2026-10-29 16:08:53,mindbody,barrelatte,Chamberí,barrelatte,9e1332e2-534d-4bf3-8040-fe5602eafcb1,Matcha Latte (sculpt pilates),2026-10-29 19:10,60,,,3,4,False,False,
+2026-10-29 16:08:53,mindbody,barrelatte,Chamberí,barrelatte,75d71398-942f-47ac-ae69-e7c298136347,Flat White,2026-10-29 20:15,50,,,5,8,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,e5489161-c32f-4a0a-8332-668b41d02db9,Toned Arms,2026-10-29 16:00,50,,,6,10,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,97375c82-0c0d-4926-bb1b-4f8951b3b225,Iron Booty,2026-10-29 17:00,50,,,8,10,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,14058a2d-cc23-42ed-9c73-0dc7063987c4,Cardio Sculpt,2026-10-29 18:00,50,,,,,,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,25399ffe-6b42-44b0-9fd3-8b731a918187,Toned Arms,2026-10-29 19:00,50,,,10,10,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,33c8ba43-ae29-4823-9991-245f6148d322,Iron Booty,2026-10-29 20:00,50,,,4,8,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Tribunal,Chamberí,Solid Studio Tribunal,cdf2bb9d-0772-4a2a-88c0-2b9c898e2f6c,Core and Back,2026-10-29 21:00,50,,,10,10,False,False,
+2026-10-29 16:08:53,mindbody,Royal Barre,Chamberí,Royal Barre,27cc382e-f847-4d7c-b709-b7cfcfe56379,Royal Barre,2026-10-29 18:00,45,,,14,10,False,False,
+2026-10-29 16:08:53,mindbody,Royal Barre,Chamberí,Royal Barre,80623155-c24c-49b3-8461-e0f0baea9ddd,Royal Barre,2026-10-29 19:00,45,,,9,10,False,False,
+2026-10-29 16:08:53,mindbody,Royal Barre,Chamberí,Royal Barre,4580091a-dc7c-4a52-8d8d-61c7b7ccdf0a,Royal Barre,2026-10-29 20:00,45,,,6,10,False,False,
+2026-10-29 16:08:53,mindbody,Inhala Hot Yoga,Chamberí,Inhala Hot Yoga,8ccc4239-9d10-4463-99a0-34ba438d9769,Hot Core · Abdomen,2026-10-29 17:15,45,28,3,25,27,False,False,
+2026-10-29 16:08:53,mindbody,Inhala Hot Yoga,Chamberí,Inhala Hot Yoga,97f560f4-3cef-407f-93d1-ed8e5b83162c,Hot Vinyasa Yoga,2026-10-29 18:15,75,28,10,18,21,False,False,
+2026-10-29 16:08:53,mindbody,Inhala Hot Yoga,Chamberí,Inhala Hot Yoga,922858e6-218c-4801-8058-75facf977b99,Bikram Yoga,2026-10-29 20:00,90,28,7,21,24,False,False,
+2026-10-29 16:08:53,mindbody,Body Koncept,Salamanca,Body Koncept,3555a199-833e-40b6-be88-ddbce3c929b8,Special Strength - Sala de fuerza,2026-10-29 18:00,60,,,5,6,False,False,
+2026-10-29 16:08:53,mindbody,Body Koncept,Salamanca,Body Koncept,ec159c24-0f47-4ab9-b484-6aeeb4381b4c,Intensity - Sala de Pilates ,2026-10-29 18:30,60,,,5,6,False,False,
+2026-10-29 16:08:53,mindbody,Body Koncept,Salamanca,Body Koncept,bac695a2-884f-48ba-82ac-b0150ccba3a6,Vital Move - Sala de Pilates,2026-10-29 19:30,60,,,6,8,False,False,
+2026-10-29 16:08:53,mindbody,SQUARE Fitness Studio Goya,Salamanca,SQUARE Fitness Studio Goya,086337c8-2697-4131-8790-d83a0a7f40f3,Lower Body · Glutes | Conditioning · ATOMIC,2026-10-29 18:10,50,16,11,5,11,False,False,
+2026-10-29 16:08:53,mindbody,SQUARE Fitness Studio Goya,Salamanca,SQUARE Fitness Studio Goya,2c35b470-0e95-412e-ae39-d7ad4d22a6d6,Lower Body · Glutes | Conditioning · ATOMIC,2026-10-29 19:15,50,16,12,4,15,False,False,
+2026-10-29 16:08:53,mindbody,SQUARE Fitness Studio Goya,Salamanca,SQUARE Fitness Studio Goya,d63ff50c-e143-4054-bac5-bada27832d9c,Lower Body · Glutes | Conditioning · ATOMIC,2026-10-29 20:20,50,16,7,9,12,False,False,
+2026-10-29 16:08:53,mindbody,VYV Vive Pilates,Salamanca,VYV Vive Pilates,2f5253b9-76d5-428a-ac1b-ee6e0f3de1ee,Maquinas,2026-10-29 18:00,50,7,5,2,,False,False,
+2026-10-29 16:08:53,mindbody,VYV Vive Pilates,Salamanca,VYV Vive Pilates,d8ca5d21-3817-4417-9e1c-492447c60375,Maquinas,2026-10-29 19:00,50,7,5,2,2,False,False,
+2026-10-29 16:08:53,mindbody,VYV Vive Pilates,Salamanca,VYV Vive Pilates,c7011f2e-55b4-4f76-b3e7-9127756a65b3,SUELO,2026-10-29 20:00,50,7,4,3,,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Velázquez,Salamanca,Orangetheory Velázquez,f3eb6820-41cd-4b78-a82f-56ccda813bd9,Orange 60 Minute,2026-10-29 18:15,60,26,10,16,18,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Velázquez,Salamanca,Orangetheory Velázquez,b6825c71-d6df-4c33-b69b-0985862438c7,Orange HYROX 60 Min 3G,2026-10-29 19:30,60,32,7,25,26,False,False,
+2026-10-29 16:08:53,mindbody,Garota Club,Salamanca,Garota Club,5dc6ffb8-d5d7-4538-a1f2-533170abeeae,Full Body - Lagree Microformer,2026-10-29 17:20,50,,,3,5,False,False,
+2026-10-29 16:08:53,mindbody,Garota Club,Salamanca,Garota Club,0a4a9e5d-13d1-4137-83fc-96046a68cba8,Full Body - Lagree Microformer,2026-10-29 18:30,50,,,5,5,False,False,
+2026-10-29 16:08:53,mindbody,Garota Club,Salamanca,Garota Club,16e52a86-7c81-4a6a-b752-d17a9e3b3eec,Full Body - Lagree Microformer,2026-10-29 19:40,50,,,1,4,False,False,
+2026-10-29 16:08:53,mindbody,Corazón Studio,Salamanca,Corazón Studio,bd02c66a-bc5b-4381-bb4b-d4a9740d3524,Sculpt | Heated Class,2026-10-29 17:00,50,,,4,17,False,False,
+2026-10-29 16:08:53,mindbody,Corazón Studio,Salamanca,Corazón Studio,89783c15-b98e-4f8b-b52f-43108ddb3995,Corazon Body Bar | Heated Class,2026-10-29 18:20,50,,,13,22,False,False,
+2026-10-29 16:08:53,mindbody,Corazón Studio,Salamanca,Corazón Studio,deb97051-ad0c-47ee-bab0-bc69bb665673,Sculpt | Heated Class,2026-10-29 19:30,50,,,0,16,True,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,5cb01c8c-4877-4bff-92ba-0b8a8c828976,Relax & Recovery: Cosmos,2026-10-29 16:15,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,5efcd412-6eb3-4e2f-b419-57d1f6e95732,Relax & Recovery: Infrared Sauna,2026-10-29 16:15,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,753db634-e183-4719-8eaf-042a86edb776,Relax & Recovery: Recovery Room,2026-10-29 16:15,50,,,2,2,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,9c12d9b8-d211-4f42-ba35-b37a58aec12c,Relax & Recovery: Cosmos,2026-10-29 17:15,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,df8f14a7-8f3a-4890-8474-f5b1e48c8106,Relax & Recovery: Infrared Sauna,2026-10-29 17:15,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,c38de38e-3275-488b-99dd-ec5ce19a4077,Relax & Recovery: Recovery Room,2026-10-29 17:15,50,,,2,2,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,126c0d96-1a75-4006-b5c8-bed06cc5bc16,Relax & Recovery: Cosmos,2026-10-29 18:15,50,,,0,1,True,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,cc2cd6d3-ffe2-4956-ad5c-246052479071,Relax & Recovery: Recovery Room,2026-10-29 18:15,50,,,2,2,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,392bb073-e62a-4fe0-85b6-b4ad56459ed4,Relax & Recovery: Infrared Sauna,2026-10-29 18:15,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,368c056d-4f4b-416e-83a8-598247a81109,Strength: Like An Athlete,2026-10-29 18:15,50,,,11,12,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,0958dc99-731c-465b-8144-7e5b341d9003,Pilates Sculpt,2026-10-29 18:15,50,,,9,12,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,28088a27-c948-442e-a347-95c82261a744,Relax & Recovery: Cosmos,2026-10-29 19:20,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,c3bb8c6d-9933-4bf8-a95d-7d48ec3dc1fb,Relax & Recovery: Infrared Sauna,2026-10-29 19:20,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,e6942dbb-552d-4ad8-8d2b-012c58d2cc1a,Relax & Recovery: Recovery Room,2026-10-29 19:20,50,,,2,2,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,8a924b02-cb23-48cf-81e7-99aaba8a63fd,Pilates Sculpt,2026-10-29 19:20,50,,,10,12,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,6c38b12f-38cf-43ec-ac1c-994821686607,Strength & Conditioning: Like a Runner,2026-10-29 19:20,50,,,6,7,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,12ca041a-aed2-4677-ae5e-3a7e4b0b1156,Relax & Recovery: Cosmos,2026-10-29 20:20,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,effd2a5e-9e1b-47f0-bcfb-a8575283db80,Relax & Recovery: Infrared Sauna,2026-10-29 20:20,50,,,1,1,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,37fd4eaf-acd9-4543-b7c4-349b842b6c00,Relax & Recovery: Recovery Room,2026-10-29 20:20,50,,,2,2,False,False,
+2026-10-29 16:08:53,mindbody,PULS,Salamanca,PULS,8edacdae-b405-4b74-8554-976b2dafc6e0,Strength: Like An Athlete,2026-10-29 20:20,50,,,7,12,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,d82b04ba-c8db-4afb-9ace-0ec51279dd5a,Estiramiento Personal - 25 minutos,2026-10-29 16:00,30,,,0,3,True,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,a05822da-175d-47cc-b484-92e570b36d8e,Estiramiento Personal - 25 minutos,2026-10-29 16:30,30,,,1,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,2a8406f9-18f8-4d54-a282-677283b83710,Estiramiento Personal - 25 minutos,2026-10-29 17:00,30,,,1,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,6bd745f7-6262-4fa6-981e-3b8c4e2c71bc,Estiramiento Personal - 25 minutos,2026-10-29 17:30,30,,,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,817e78b5-18ad-45d1-a2e0-0d0039f978ff,Estiramiento Personal - 25 minutos,2026-10-29 18:00,30,,,1,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,8dd9c6ed-8b06-48dd-aac0-b7603a4bbe53,Estiramiento Personal - 25 minutos,2026-10-29 18:30,30,,,1,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,5a093756-fbc8-438c-9334-ff40b7ef3915,Estiramiento Personal - 25 minutos,2026-10-29 19:00,30,,,0,3,True,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,854e0e1e-b1c9-4efe-a88d-ce95a27c1042,Estiramiento Personal - 25 minutos,2026-10-29 19:30,30,,,0,3,True,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,e3245852-2098-418a-981a-b7c735d9d411,Estiramiento Personal - 25 minutos,2026-10-29 20:00,30,,,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Estiro Estudio,Salamanca,Estiro Estudio,732f4938-cd89-41b1-ae06-5c8d3b958c67,Estiramiento Personal - 25 minutos,2026-10-29 20:30,30,,,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Kore Lab,Salamanca,Kore Lab,29c343d6-3354-4aad-b498-ef05e58c9f49,Intro to Lagree,2026-10-29 17:30,50,,,8,10,False,False,
+2026-10-29 16:08:53,mindbody,Kore Lab,Salamanca,Kore Lab,0beb2e6f-4ee9-4dfc-b2a0-2c5e3dfc1d5b,Classic Lagree ,2026-10-29 18:30,50,,,5,11,False,False,
+2026-10-29 16:08:53,mindbody,Kore Lab,Salamanca,Kore Lab,9b65aeed-9362-4452-8fbd-e459b8daa809,Classic Lagree ,2026-10-29 19:30,50,,,3,10,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,4ded81d5-b5d5-4bb3-b553-4b05e0d6aa51,Pilates x RED METHOD,2026-10-29 17:00,60,,,8,13,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,0a74424f-bb68-4278-a56c-6b41c6dba43d,Sculpt: Cardio & Core,2026-10-29 17:30,60,,,2,7,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,060c770e-3370-4d95-b0db-c43a50c4617d,Abs & Arms (Advanced),2026-10-29 18:05,60,,,6,13,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,fbc4b013-7fcf-4a70-8a1f-0fcc5150ab54,Sculpt: Cardio & Core,2026-10-29 18:30,60,,,1,8,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,9f887f76-0839-4cc3-a4e2-5458879df41d,Barre Cardio,2026-10-29 19:10,60,,,4,14,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,0fb5655a-56ea-466d-8b33-34066346cba3,Sculpt: Cardio & Core,2026-10-29 19:30,60,,,3,9,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,9624702d-e50a-47cc-adf9-306820229870,Pilates x RED METHOD (Heated),2026-10-29 20:15,60,,,2,14,False,False,
+2026-10-29 16:08:53,mindbody,Fitclub Collective,Salamanca,Fitclub Collective,f6524c94-4c48-4319-bccc-d6215ca37815,Sculpt: Cardio & Core,2026-10-29 20:30,60,,,2,9,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Barrio Salamanca,Salamanca,Solid Studio Barrio Salamanca,23ac30f2-e782-4351-a9b6-d20d236f383d,Iron Booty,2026-10-29 17:00,50,,,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Barrio Salamanca,Salamanca,Solid Studio Barrio Salamanca,4bcb3d59-3e59-4156-808c-f3ec9b712ad1,Core and Back,2026-10-29 18:00,50,,,0,5,True,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Barrio Salamanca,Salamanca,Solid Studio Barrio Salamanca,0e290913-6228-470e-8790-1fb2f8ea8d0e,Toned Arms,2026-10-29 19:00,50,,,0,4,True,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Barrio Salamanca,Salamanca,Solid Studio Barrio Salamanca,6cd42253-d95e-476c-86d5-a6cc3242f43b,Cardio Sculpt,2026-10-29 20:00,50,,,5,6,False,False,
+2026-10-29 16:08:53,mindbody,Solid Studio Barrio Salamanca,Salamanca,Solid Studio Barrio Salamanca,62655bb9-2be8-408c-88f0-26dcd48773d8,FLOOR Sculpt,2026-10-29 20:20,50,,,10,12,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,55a4f1ee-7089-4c96-9563-46921b05772d,MEGAREFORMER Sweat,2026-10-29 17:00,60,,,4,8,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,eb9e9931-dc76-4628-8a8c-267a3cf35db8,HIIT Full Body (E.Funcional),2026-10-29 17:00,60,,,10,10,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,20d6ff41-dd2c-46e1-a02b-1715d2c6c960,MEGAREFORMER Arms & Abs,2026-10-29 18:00,60,,,1,6,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,7189bfd0-59e0-4122-8e59-1329f02a5807,HIIT Full Body (E.Funcional),2026-10-29 18:00,60,,,8,10,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,e9dc7b97-648b-4362-8bc1-e1058bd16c44,MEGAREFORMER Sculpt,2026-10-29 19:00,60,,,1,8,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,61090b83-4116-4ef6-8267-3cca31ffc836, MAT Pilates Sculpt,2026-10-29 19:00,60,,,6,14,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,ecaf4406-9caa-45b3-a180-5291106c79cd,MEGAREFORMER Sweat,2026-10-29 20:00,60,,,3,7,False,False,
+2026-10-29 16:08:53,mindbody,The Nomad Club,Salamanca,The Nomad Club,df92ca6e-ded1-4f03-ab49-c53415a25a51,MEGAREFORMER Flow,2026-10-29 21:00,60,,,5,7,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,710e8f61-d67e-43cc-ab51-17f791b55151,Pilates Reformer,2026-10-29 17:00,50,4,1,3,4,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,281ae9ce-fb07-4332-b078-0ce6fb4ce2a8,Pilates Reformer,2026-10-29 18:00,50,4,2,2,4,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,56dd0cb4-273e-40dd-8ced-c85c51234095,Pilates Mat Sculpt,2026-10-29 18:00,50,14,11,3,6,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,5e24f3d8-9268-444d-9c96-258516f9094a,Pilates Reformer,2026-10-29 19:00,50,4,3,1,2,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,acb6263a-d963-48db-a678-37627e69bd55,Barre Form,2026-10-29 19:10,50,18,16,2,9,False,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,4838eccc-3d48-4de4-ba76-939cccba4b55,Pilates Reformer,2026-10-29 20:00,50,4,4,0,3,True,False,
+2026-10-29 16:08:53,mindbody,HOM House of Movement,Salamanca,HOM House of Movement,0a840c03-6f53-4a1e-a4ab-fc25843a44b8,Barre Form,2026-10-29 20:15,50,18,6,12,15,False,False,
+2026-10-29 16:08:53,mindbody,Tabula Rasa,Diagonal,Tabula Rasa,d6c3cf29-36b9-4c6b-ade1-659f92d33d19,Reformer Intermig,2026-10-29 18:00,55,,,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Tabula Rasa,Diagonal,Tabula Rasa,a86e713f-e104-4bba-88cf-14a1f0736fde,Barre Booty ,2026-10-29 18:10,50,,,6,10,False,False,
+2026-10-29 16:08:53,mindbody,Tabula Rasa,Diagonal,Tabula Rasa,331c99e9-0d24-4063-9a76-c83cd0610e03,Reformer Basic,2026-10-29 19:00,55,,,0,0,True,False,
+2026-10-29 16:08:53,mindbody,Tabula Rasa,Diagonal,Tabula Rasa,0b66d428-7eab-4fa3-971b-92a5a956e5eb,Barre Core,2026-10-29 19:10,50,,,4,8,False,False,
+2026-10-29 16:08:53,mindbody,Tabula Rasa,Diagonal,Tabula Rasa,0f42d290-8a99-4cd6-9e2f-b08676408676,Barre Booty ,2026-10-29 20:10,50,,,6,12,False,False,
+2026-10-29 16:08:53,mindbody,ADN Pilates,Diagonal,ADN Pilates,b6c447f3-3db9-4166-80a0-aacf6983b4c8,Pilates Reformer,2026-10-29 16:00,60,,,0,6,True,False,
+2026-10-29 16:08:53,mindbody,ADN Pilates,Diagonal,ADN Pilates,b86125e7-28fb-4ee1-8d3f-c8f40765d41f,Pilates Reformer,2026-10-29 17:00,60,,,0,6,True,False,
+2026-10-29 16:08:53,mindbody,ADN Pilates,Diagonal,ADN Pilates,98c40a7d-190c-4b10-adfd-208e13a42c1c,Pilates Reformer,2026-10-29 18:00,60,,,2,6,False,False,
+2026-10-29 16:08:53,mindbody,ADN Pilates,Diagonal,ADN Pilates,0cf8e9c3-302e-48cf-8c31-244ac2d620bc,Pilates Reformer,2026-10-29 19:00,60,,,2,6,False,False,
+2026-10-29 16:08:53,mindbody,ADN Pilates,Diagonal,ADN Pilates,0f41e15d-6ca1-4f49-b324-0334d5a2e376,Pilates Reformer,2026-10-29 20:00,60,,,1,6,False,False,
+2026-10-29 16:08:53,mindbody,Prepnation,Diagonal,Prepnation,70768e7b-8843-4379-8a73-550e9dd6f15c,HYROX SIMULATION (EN),2026-10-29 18:00,60,,,1,2,False,False,
+2026-10-29 16:08:53,mindbody,Prepnation,Diagonal,Prepnation,8154bf80-366a-4389-ab2a-97ea8b1d0065,HYROX TRANSITIONS,2026-10-29 19:15,60,,,0,2,True,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,49e7f4d6-c91b-4cd9-855c-7111252a7602,Reformer: Flow ++,2026-10-29 16:00,50,5,3,2,3,False,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,7ce81ad6-b1f7-44dd-a425-c37b73e100c7,Reformer: Essential + (ENG),2026-10-29 17:00,50,5,1,4,5,False,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,7216120b-e879-4c41-b3de-07cf1ac618b1,Tower: Fit ++,2026-10-29 17:00,50,5,3,2,2,False,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,7026ff42-273c-4c6a-9783-f0de1a5dc36d,Reformer: Essential + (ENG),2026-10-29 18:00,50,5,5,0,1,True,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,4c5423e5-48ec-4953-a4a9-1fcfe1cd6043,Tower: Fit ++,2026-10-29 18:00,50,5,5,0,2,True,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,31b4ba15-ec0e-436f-a76a-e43881d948b0,Tower: Fit ++,2026-10-29 19:00,50,5,4,1,1,False,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,f8180dc2-f7e3-45e6-8ea4-4d6a4f25ec98,Reformer: Explosive +++ (ENG) ,2026-10-29 19:00,50,5,5,0,0,True,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,88774742-6eba-4c8f-9fc6-2aa68f9534f5,Tower: Fit ++,2026-10-29 20:00,50,5,5,0,0,True,False,
+2026-10-29 16:08:53,mindbody,Pampa Studio,Diagonal,Pampa Studio,c77525dc-6d86-48b7-9e21-3de4ba461123,Reformer: Flow ++ (ENG) ,2026-10-29 20:00,50,5,5,0,2,True,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,b131d730-64df-4388-b1e1-9db3248a3311,Strength,2026-10-29 16:00,60,16,7,9,10,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,f9996ce7-9a07-4972-8c46-24ec2935c09e,Hybrid,2026-10-29 16:15,60,18,9,9,10,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,4c32f599-9b6a-4b16-b1e2-7418d4d23479,Strength,2026-10-29 17:00,60,16,12,4,9,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,646850d0-0eb9-439b-91e5-e94634b80530,Empowering,2026-10-29 17:15,60,18,6,12,12,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,3694815d-4af0-44ec-a0ba-c6c93f6281c5,Strength,2026-10-29 18:00,60,16,15,1,9,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,68177272-4c73-4d3f-baad-2f585d034d74,Empowering,2026-10-29 18:15,60,18,15,3,12,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,d914997e-15e5-4eec-8880-b56fa76fdc1f,Strength,2026-10-29 19:00,60,16,16,0,9,True,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,54e19004-eeb8-40bb-8596-8adaa4751139,Hybrid,2026-10-29 19:15,60,18,6,12,14,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,acb1fa5b-3934-45e0-b366-006869dd6a4d,Strength,2026-10-29 20:00,60,16,14,2,5,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,69ca4965-d70e-4cc4-8507-bb95ac83f758,Empowering,2026-10-29 20:15,60,18,6,12,13,False,False,
+2026-10-29 16:08:53,mindbody,Fit Lovas Neptú,Diagonal,Fit Lovas Neptú,b9eb63f0-0830-416d-b527-af5103de93e3,Strength,2026-10-29 21:00,60,16,12,4,9,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,91d9b86a-e077-4631-bf80-e36e30922f7f,Reformer Burn,2026-10-29 17:00,50,,,6,8,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,10b5e70a-18bc-4167-87e2-32a83de7c2f5,Fuerza Lower Body,2026-10-29 17:10,50,,,4,10,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,3283b232-4c11-4c0d-8935-52ccad06d8e7,Reformer Burn,2026-10-29 18:00,50,,,1,4,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,4dd3feb5-9e02-405a-835f-0602b22d4030,Fuerza Lower Body,2026-10-29 18:10,50,,,0,8,True,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,9598e888-ff00-4440-8928-56728a1bf990,Reformer Burn,2026-10-29 19:00,50,,,0,8,True,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,b63e3829-5d87-45ff-a1b5-936d4e64590d,Fuerza Lower Body,2026-10-29 19:10,50,,,1,9,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,e38a5e28-39e0-4038-9b9c-3502978344b5,Reformer Burn,2026-10-29 20:00,50,,,2,8,False,False,
+2026-10-29 16:08:53,mindbody,Casa Focco,Diagonal,Casa Focco,1fce2364-bdb9-45ce-96c0-4084c860830c,Fuerza Lower Body,2026-10-29 20:10,50,,,2,8,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Neptú,Diagonal,Concept Barre Neptú,1a0577f1-5b2c-489c-8191-4504ee3532d5,CARDIO BARRE,2026-10-29 17:30,50,27,10,17,21,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Neptú,Diagonal,Concept Barre Neptú,1cba2ec9-25a4-4999-bdc6-5556c13146e9,ISOMETRIC BARRE,2026-10-29 18:30,50,26,22,4,9,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Neptú,Diagonal,Concept Barre Neptú,6d92b004-c263-44f1-a9d4-10da23f2e4c5,89 º FAHRENHEIT,2026-10-29 19:30,50,26,20,6,11,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Neptú,Diagonal,Concept Barre Neptú,21a48e77-cb4e-4d58-b003-b5f8c63c5710,STRETCHING  BARRE,2026-10-29 20:30,50,27,10,17,22,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,e80a3d9a-14af-4d58-b6f6-c7b3e9c6fef5,ISOMETRIC BARRE,2026-10-29 17:00,50,27,15,12,19,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,d78704c1-ea4a-4e18-882e-ae32a6ec9560,PROGRESSIVE WEIGHT,2026-10-29 17:30,50,12,10,2,4,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,af0cecf6-a0ef-46d4-b653-76ba0c864d47,CARDIO BARRE,2026-10-29 18:00,50,27,15,12,11,False,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,9bbe2ae0-3d5e-45d5-9d5e-a519c6d0526f,89º FAHRENHEIT,2026-10-29 18:30,50,12,12,0,6,True,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,aa5b668b-c4b9-43de-98c2-ecca9cfa3c66,MAT MADNESS,2026-10-29 19:00,50,23,23,0,5,True,False,
+2026-10-29 16:08:53,mindbody,Concept Barre Eixample,Diagonal,Concept Barre Eixample,0f6519a1-b319-47bb-aa41-0e548cb1f729,PROGRESSIVE WEIGHT,2026-10-29 19:30,50,12,12,0,3,True,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,d3f0d29a-a7ed-4e6b-b2d0-0409bfc46d4b,REFORMER & CADILLAC,2026-10-29 17:30,55,12,7,5,5,False,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,fe0ece08-756b-40aa-b4bc-d1cb0e689aef,REFORMER & CADILLAC STRONG .,2026-10-29 18:30,55,12,4,8,8,False,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,2fb66592-23ec-48d8-a490-28dd762faf99,BARRE PILATES ,2026-10-29 18:30,55,10,2,8,8,False,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,0baefe96-3ab3-42f4-a83b-379a6f7efb8d,REFORMER & CADILLAC .,2026-10-29 19:30,55,12,9,3,7,False,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,0f772b7b-2c1e-48b9-a188-faad7f3a7fc5,FIT FUERZA,2026-10-29 19:30,55,10,3,7,9,False,False,
+2026-10-29 16:08:53,mindbody,Nexes Gràcia,Diagonal,Nexes Gràcia,815e4fad-56c5-4d5e-85fc-6df91473aeac,REFORMER & CADILLAC FLOW,2026-10-29 20:30,55,12,5,7,7,False,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,5047fecb-b975-400f-beb0-35ff14f40925,Dynamic Reformer,2026-10-29 17:15,60,,,2,5,False,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,e42549bf-aedf-4eb2-bded-4899c3aef9ca,Build (fuerza + cardio),2026-10-29 17:30,60,,,2,6,False,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,1a61c27e-cd82-404d-8282-320d923ca095,Dynamic Reformer,2026-10-29 18:30,60,,,0,3,True,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,af4d429f-65ba-4f9a-84ee-2763469357cb,Boost (cardio + resistencia),2026-10-29 18:45,60,,,6,9,False,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,a8d1734f-20f6-46c3-8d39-25d97d2ccb71,Power Reformer,2026-10-29 19:45,60,,,4,7,False,False,
+2026-10-29 16:08:53,mindbody,VICTAS,Diagonal,VICTAS,d6f8b001-c584-43b0-afb2-134ab9ffa445,Sculpt Barre,2026-10-29 20:00,60,,,7,9,False,False,
+2026-10-29 16:08:53,mindbody,Let's Rise,Diagonal,Let's Rise,67fee83d-d7f6-4773-a095-89cfba051013,Karol G Sweat,2026-10-29 18:15,45,,,8,9,False,False,
+2026-10-29 16:08:53,mindbody,F45 Aribau,Diagonal,F45 Aribau,72bc0c9f-3ac1-468a-9a49-c05ba2b4f686,HYROX Signature Teaser,2026-10-29 18:30,45,,,9,10,False,False,
+2026-10-29 16:08:53,mindbody,F45 Aribau,Diagonal,F45 Aribau,b5d4d2c3-98f6-4609-b9c2-f3e6d104bf72,HYROX Signature Teaser,2026-10-29 19:30,45,,,15,17,False,False,
+2026-10-29 16:08:53,mindbody,Iron Studios,Diagonal,Iron Studios,b3eec82c-11d8-42a4-b37a-af4a1fdaac53,"Abs, Buns & Legs (Reformer) . ",2026-10-29 18:00,50,,,9,14,False,False,
+2026-10-29 16:08:53,mindbody,Iron Studios,Diagonal,Iron Studios,35fd6a6d-95a3-4b5a-93c0-7217534baa9e,Mat-Former (Mat),2026-10-29 18:30,50,,,10,14,False,False,
+2026-10-29 16:08:53,mindbody,Iron Studios,Diagonal,Iron Studios,d59103e7-4822-4027-8200-2719260597d0,Spicy Stretch (Mat),2026-10-29 19:30,50,,,12,13,False,False,
+2026-10-29 16:08:53,mindbody,Iron Studios,Diagonal,Iron Studios,e7032ede-8b7d-490b-8a1b-f6c61efb3848,"Arms, Abs & Back (Reformer)",2026-10-29 20:00,50,,,1,8,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,bd099834-03b0-41af-b8a6-ef6a7cea9a0c,Strength 50 (Upper),2026-10-29 16:00,50,12,11,1,2,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,7d3bf980-ec4b-4454-b9de-0d625ff3ae89,Tread 50,2026-10-29 16:00,50,12,4,8,8,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,8a15c874-5daa-41ab-97f3-49fcf9ddf8c2,Orange 60,2026-10-29 17:00,60,24,5,19,20,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,949a37fd-5fb1-48b1-9918-77816f99cfb1,Orange 60,2026-10-29 18:05,60,33,20,13,18,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,d986a5ee-f7d7-4fab-8d6f-2e82e0509f5f,Orange 60,2026-10-29 19:10,60,33,27,6,10,False,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,46418029-318c-4078-94ba-7308bc8fc30f,Strength 50 (Upper),2026-10-29 20:15,50,12,12,0,2,True,False,
+2026-10-29 16:08:53,mindbody,Orangetheory Aribau,Diagonal,Orangetheory Aribau,e7b63c1f-40bc-4c21-ad7c-3f28c47ef149,Tread 50,2026-10-29 20:15,50,12,1,11,11,False,False,
+2026-10-29 16:08:53,mindbody,Wellnest Studio,Valencia,Wellnest Studio,035204af-537a-4c1d-b689-462a3119981a,Hot Strength,2026-10-29 18:30,45,,,2,12,False,False,
+2026-10-29 16:08:53,mindbody,Wellnest Studio,Valencia,Wellnest Studio,c0fd9302-71bc-4176-9898-f7d3f6373dec,Hot & Haunted ,2026-10-29 20:00,120,,,0,2,True,False,
+2026-10-29 16:08:53,mindbody,Bikram Hot Yoga La Finca Roja,Valencia,Bikram Hot Yoga La Finca Roja,a6de8484-80f0-43c4-8d6c-08988af1442d,Hot HIIT Pilates,2026-10-29 19:00,60,24,10,14,17,False,False,
+2026-10-29 16:08:53,mindbody,WEMOOV,Chamberí,WEMOOV,6974fa71-0ebd-440a-afb4-3a491637cd86,MOOV Class,2026-10-29 17:00,60,8,0,8,8,False,False,
+2026-10-29 16:08:53,mindbody,WEMOOV,Chamberí,WEMOOV,365d37d5-9faf-42e3-8512-3bc4ddff4125,MOOV Class,2026-10-29 18:15,60,8,0,8,8,False,False,
+2026-10-29 16:08:53,mindbody,WEMOOV,Chamberí,WEMOOV,6693c48e-dc2c-4e55-ac59-a21d46d79059,MOOV Class,2026-10-29 19:30,60,8,0,8,8,False,False,
+2026-10-29 16:08:53,mindbody,WEMOOV,Chamberí,WEMOOV,972501b6-42ea-4aff-ad20-207642d51aff,MOOV Class,2026-10-29 20:45,60,8,0,8,8,False,False,
+2026-10-29 16:08:53,bsport,Victoria Studio,Salamanca,18537,35541859,Pilates Reformer,2026-10-29 16:00,50,5,,,,True,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Salamanca,18537,35541967,Pilates Reformer,2026-10-29 17:00,50,5,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Chamberí,18488,35539155,Pilates Reformer,2026-10-29 18:00,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Salamanca,18537,35542029,Pilates Reformer,2026-10-29 18:00,50,5,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Salamanca,18537,35542082,Pilates Reformer,2026-10-29 19:00,50,5,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Chamberí,18488,35539212,Pilates Reformer,2026-10-29 19:00,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Salamanca,18537,35542140,Pilates Reformer,2026-10-29 20:00,50,5,,,,False,,False
+2026-10-29 16:08:53,bsport,Victoria Studio,Chamberí,18488,35539266,Pilates Reformer,2026-10-29 20:00,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Chamberí,12490,43528704,Sculpt Barre,2026-10-29 18:15,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Salamanca,12489,43432639,Sculpt Barre,2026-10-29 18:30,50,10,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Chamberí,12490,43528776,Sculpt Barre - English session,2026-10-29 19:15,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Salamanca,12489,43432713,Sculpt Barre,2026-10-29 19:30,50,10,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Chamberí,12490,43528819,Sculpt Barre,2026-10-29 20:15,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Batelier Studio,Salamanca,12489,43432748,Sculpt Barre,2026-10-29 20:30,50,10,,,,False,,False
+2026-10-29 16:08:53,bsport,Enjoy Gravity,Chamberí,13239,42092900,GRAVITY-SEMIPERSONAL,2026-10-29 17:00,60,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Enjoy Gravity,Chamberí,13239,42093001,GRAVITY-FUNCIONAL,2026-10-29 18:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,Enjoy Gravity,Chamberí,13239,41892859,GRAVITY-FUNCIONAL,2026-10-29 19:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,Enjoy Gravity,Chamberí,13239,42093585,GRAVITY-FUNCIONAL,2026-10-29 20:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,KMT Studio,Chamberí,11491,42255332,Semi-Personal Functional Training,2026-10-29 18:15,45,5,,,,False,,False
+2026-10-29 16:08:53,bsport,KMT Studio,Chamberí,11491,41929160,Semi-Personal Functional Training,2026-10-29 19:00,45,5,,,,False,,False
+2026-10-29 16:08:53,bsport,KMT Studio,Chamberí,11491,41929410,Semi-Personal Functional Training,2026-10-29 19:45,45,5,,,,False,,False
+2026-10-29 16:08:53,bsport,VERDE Studio,Diagonal,19789,40021972,MAT - Sculpt (Strength & Control),2026-10-29 19:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,VERDE Studio,Diagonal,19789,40022003,REFORMER - Sculpt,2026-10-29 20:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,SHE Barre Gràcia,Diagonal,19209,36611439,Barre Tono,2026-10-29 17:15,60,13,,,,False,,False
+2026-10-29 16:08:53,bsport,SHE Barre Gràcia,Diagonal,19209,36611333,Slow Barre,2026-10-29 18:30,60,13,,,,False,,False
+2026-10-29 16:08:53,bsport,SHE Barre Gràcia,Diagonal,19209,36611553,Barre Tono,2026-10-29 19:45,60,13,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,12503,30130518,Lagree Intermediate,2026-10-29 17:00,45,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,12503,42596674,Lagree Intermediate,2026-10-29 18:00,45,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,21719,41787653,Lady Boxing ES/EN,2026-10-29 18:00,50,14,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,21719,42320546,Lady Boxing ES/EN,2026-10-29 18:15,50,14,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,12503,30130626,Lagree Beginner ES/EN,2026-10-29 19:00,45,12,,,,True,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,21719,42320682,Rocket Yoga,2026-10-29 19:15,60,10,,,,False,,False
+2026-10-29 16:08:53,bsport,Rohi by Kore Studio,Diagonal,12503,30130922,Lagree Intermediate,2026-10-29 20:00,45,12,,,,True,,False
+2026-10-29 16:08:53,bsport,Core Studio,Diagonal,15706,43831747,Glutes & Abs,2026-10-29 18:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,Core Studio,Diagonal,15706,43833781,Sculpt & Tone,2026-10-29 19:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,Form Studio Pilates Club,Diagonal,17287,32495043,Reformer FLOW,2026-10-29 17:00,50,7,,,,True,,False
+2026-10-29 16:08:53,bsport,Form Studio Pilates Club,Diagonal,17287,32495660,Reformer SCULPT,2026-10-29 18:00,50,7,,,,True,,False
+2026-10-29 16:08:53,bsport,Form Studio Pilates Club,Diagonal,17287,32495783,Reformer FLOW,2026-10-29 19:00,50,7,,,,True,,False
+2026-10-29 16:08:53,bsport,Form Studio Pilates Club,Diagonal,17287,32495889,Reformer SCULPT,2026-10-29 20:00,50,7,,,,True,,False
+2026-10-29 16:08:53,bsport,Dark Studio,Salamanca,16882,40426776,FLOW SCULPT,2026-10-29 18:10,50,10,,,,False,,False
+2026-10-29 16:08:53,bsport,Dark Studio,Salamanca,16882,40426860,PILATES SCULPT,2026-10-29 19:20,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Dark Studio,Salamanca,16882,40426898,PILATES STRENGTH - Full Body,2026-10-29 20:30,50,10,,,,False,,False
+2026-10-29 16:08:53,bsport,The Sanctuary,Valencia,16717,43169040,REFORMER PILATES,2026-10-29 17:15,50,3,,,,True,,False
+2026-10-29 16:08:53,bsport,The Sanctuary,Valencia,16717,42889990,VINYASA YOGA,2026-10-29 18:15,60,14,,,,False,,False
+2026-10-29 16:08:53,bsport,The Sanctuary,Valencia,16717,43169087,SLOW FLOW & YIN YOGA,2026-10-29 19:30,75,11,,,,False,,False
+2026-10-29 16:08:53,bsport,Musa House,Valencia,17057,39721520,Barre Sculpt,2026-10-29 18:15,50,18,,,,False,,False
+2026-10-29 16:08:53,bsport,Musa House,Valencia,17057,39721530,Barre HIIT,2026-10-29 19:15,50,18,,,,False,,False
+2026-10-29 16:08:53,bsport,Musa House,Valencia,17057,39721562,Barre Sculpt,2026-10-29 20:15,50,18,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,41294683,Classic Reformer,2026-10-29 16:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,40965307,Classic Reformer,2026-10-29 16:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,43588034,Classic Reformer,2026-10-29 16:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,41295065,Fitness Pilates,2026-10-29 17:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,40965479,Classic Reformer,2026-10-29 17:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,41294821,Classic Reformer,2026-10-29 17:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,40952176,Fit Pilates,2026-10-29 17:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,40965611,Classic Reformer,2026-10-29 18:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,41294874,Classic Reformer,2026-10-29 18:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,41295117,Burn Barre,2026-10-29 18:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,40952343,Burn Barre,2026-10-29 18:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,40939256,Classic Pilates,2026-10-29 19:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,40968647,Fit Reformer,2026-10-29 19:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,41396626,Power Reformer,2026-10-29 19:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,41294978,Classic Pilates,2026-10-29 19:10,50,12,,,,True,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,41396386,Burn Barre,2026-10-29 20:00,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,40965858,Classic Reformer,2026-10-29 20:10,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21688,41294926,Power Reformer,2026-10-29 20:10,50,6,,,,True,,False
+2026-10-29 16:08:53,bsport,Soma Club Ruzafa,Valencia,21646,40952418,Burn Barre,2026-10-29 20:10,50,12,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39911460,Pilates Reformer Classic,2026-10-29 16:30,60,7,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39911583,Pilates Reformer Classic,2026-10-29 17:30,60,7,,,,True,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39886954,Aero Yoga Kids,2026-10-29 17:30,60,17,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39886850,Aero Pilates Mat,2026-10-29 18:30,60,17,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39911812,Pilates Reformer Classic,2026-10-29 18:30,60,7,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39912036,Pilates Reformer Classic,2026-10-29 19:30,60,7,,,,False,,False
+2026-10-29 16:08:53,bsport,Aero Studio Seijaku,Valencia,20985,39886428,Aero Yoga CandleLight & Sound Bath,2026-10-29 19:30,60,17,,,,False,,False
+2026-10-29 16:08:53,bsport,AGMO,Chamberí,21229,42196658,Calistenia - Full Body,2026-10-29 17:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,AGMO,Chamberí,21229,39927651,Calistenia - Full Body,2026-10-29 18:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,AGMO,Chamberí,21229,39933096,Calistenia - Full Body,2026-10-29 19:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,AGMO,Chamberí,21229,40794686,Calistenia - Full Body,2026-10-29 20:00,50,11,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15078,42109349,Pilates Salud,2026-10-29 16:00,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15078,33085805,Pilates Balance,2026-10-29 17:00,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15076,35007606,Fuerza & Mobility,2026-10-29 17:00,50,6,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15077,33085889,Fit Pilates,2026-10-29 18:00,50,5,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15078,33150133,Pilates Basic,2026-10-29 18:00,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15076,33086777,Barre & Aéreo,2026-10-29 19:00,50,8,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15078,33086653,Pilates Balance,2026-10-29 19:00,50,9,,,,False,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15076,44530470,Entrenamiento de Bienvenida.,2026-10-29 20:00,50,1,,,,True,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15077,33086970,Pilates Basic,2026-10-29 20:00,50,5,,,,True,,False
+2026-10-29 16:08:53,bsport,Vibe Pilates & Fitness,Chamberí,15078,33087064,Pilates Dynamic,2026-10-29 20:00,50,9,,,,False,,False
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55df,Joseph - Reformer Flow 1.0,2026-10-29 17:00,50,12,7,5,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55d3,Clara - Cardio Sculpt 1.0,2026-10-29 17:30,50,12,5,7,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55e0,Joseph - Reformer Flow 1.5,2026-10-29 18:00,50,12,6,6,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55dc,Clara - Reformer Flow 1.0,2026-10-29 18:30,50,12,12,0,,True,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55e2,Joseph -Circuit 1.5,2026-10-29 19:00,50,12,6,6,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55d6,Clara - Reformer Flow 1.0,2026-10-29 19:30,50,12,9,3,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55de,Joseph - Control 1.5,2026-10-29 20:00,50,12,4,8,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Chamberí,Chamberí,Club Pilates Chamberí,6ab48ccb2ab4f66b7d0a55dd,Clara - Reformer Flow 1.5,2026-10-29 20:30,50,12,4,8,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Eixample,Diagonal,Club Pilates Eixample,6ab48c1d2ab4f66b7d0a43dc,Reformer Flow 1.0,2026-10-29 16:30,50,12,7,5,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Eixample,Diagonal,Club Pilates Eixample,6ab48c1d2ab4f66b7d0a43de,Cardio Sculpt 1.5,2026-10-29 17:30,50,12,5,7,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Eixample,Diagonal,Club Pilates Eixample,6ab48c1d2ab4f66b7d0a43d6,Reformer Flow 1.5,2026-10-29 18:30,50,12,10,2,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Eixample,Diagonal,Club Pilates Eixample,6ab48c1d2ab4f66b7d0a43da,Reformer Flow 1.0,2026-10-29 19:30,50,12,9,3,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Eixample,Diagonal,Club Pilates Eixample,6ab48c1d2ab4f66b7d0a43d3,Clase de introducción gratuita. ¡Ven a conocernos!,2026-10-29 20:30,30,12,4,8,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Goya,Salamanca,Club Pilates Goya,6ab48d292ab4f66b7d0a5fc1,Clase de introducción gratuita - ¡Te esperamos!,2026-10-29 16:30,30,12,3,9,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Goya,Salamanca,Club Pilates Goya,6ab48d292ab4f66b7d0a5fc5,Reformer Flow 1.0,2026-10-29 17:30,50,12,3,9,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Goya,Salamanca,Club Pilates Goya,6ab48d2a2ab4f66b7d0a5fc8,Reformer Flow 1.5 ¡Especial Halloween! Ven con tu accesorio más terrorífico y participa del sorteo,2026-10-29 18:30,50,12,6,6,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Goya,Salamanca,Club Pilates Goya,6ac88270f7fee8de8b078a6d,Circuit 1.5 ¡Especial Halloween! Ven con tu accesorio más terrorífico y participa del sorteo,2026-10-29 19:30,50,12,5,7,,False,,0
+2026-10-29 16:08:53,glofox,Club Pilates Goya,Salamanca,Club Pilates Goya,6ab48d2a2ab4f66b7d0a5fc6,Reformer Flow 1.0 ¡Especial Halloween! Ven con tu accesorio más terrorífico y participa del sorteo,2026-10-29 20:30,50,12,7,5,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3990,Recovery - Sauna Infrarrojos,2026-10-29 16:00,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3986,OPEN GYM,2026-10-29 16:30,60,6,1,5,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523bf9519103af0a3998,Recovery - Sauna Infrarrojos,2026-10-29 16:30,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3991,Recovery - Sauna Infrarrojos,2026-10-29 17:00,60,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3987,OPEN GYM,2026-10-29 17:30,45,6,1,5,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3992,Recovery - Sauna Infrarrojos,2026-10-29 18:00,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab5239f9519103af0a3973,Pilates Sculpt,2026-10-29 18:10,50,20,20,0,,True,,1
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3980,HYROX,2026-10-29 18:30,50,18,9,9,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523bf9519103af0a3999,Recovery - Sauna Infrarrojos,2026-10-29 18:30,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3993,Recovery - Sauna Infrarrojos,2026-10-29 19:00,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab5239f9519103af0a3972,Pilates Sculpt,2026-10-29 19:10,50,20,20,0,,True,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a397f,HYROX,2026-10-29 19:30,50,18,8,10,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523bf9519103af0a399a,Recovery - Sauna Infrarrojos,2026-10-29 19:30,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3994,Recovery - Sauna Infrarrojos,2026-10-29 20:00,30,2,2,0,,True,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a397c,Strength Lower Body,2026-10-29 20:15,50,18,12,6,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523af9519103af0a3977,HIIT Resistance,2026-10-29 20:30,50,21,6,15,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523bf9519103af0a399b,Recovery - Sauna Infrarrojos,2026-10-29 20:30,30,2,0,2,,False,,0
+2026-10-29 16:08:53,glofox,Pomona Club Serrano,Salamanca,Pomona Club Serrano,6aab523bf9519103af0a399c,Recovery - Sauna Infrarrojos,2026-10-29 21:00,30,2,0,2,,False,,0
+2026-10-29 16:08:53,marianatek,Sessions Studios,Salamanca,Salamanca,14000,Cycle Session (English),2026-10-29 19:30,,26,17,9,,False,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Madrid,Salamanca,Madrid,18893,Hotcore Power,2026-10-29 17:30,,21,21,0,,True,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Madrid,Salamanca,Madrid,18194,Hotcore Sculpt,2026-10-29 18:30,,21,11,10,,False,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Madrid,Salamanca,Madrid,18355,Hotcore Power,2026-10-29 19:00,,26,26,0,,True,False,1
+2026-10-29 16:08:53,marianatek,Hotcore Studios Madrid,Salamanca,Madrid,18475,Hotcore Sculpt,2026-10-29 19:30,,21,21,0,,True,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Madrid,Salamanca,Madrid,18389,Hotcore Power,2026-10-29 20:00,,26,8,18,,False,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Barcelona,Diagonal,Barcelona,18636,Hotcore Sculpt,2026-10-29 16:15,,23,18,5,,False,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Barcelona,Diagonal,Barcelona,17623,Hotcore Power,2026-10-29 17:15,,23,10,13,,False,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Barcelona,Diagonal,Barcelona,17622,Hotcore Sculpt,2026-10-29 18:15,,23,23,0,,True,False,0
+2026-10-29 16:08:53,marianatek,Hotcore Studios Barcelona,Diagonal,Barcelona,17621,Hotcore Power,2026-10-29 19:15,,23,23,0,,True,False,2
+2026-10-29 16:08:53,marianatek,Hotcore Studios Barcelona,Diagonal,Barcelona,17619,Hotcore Sculpt,2026-10-29 20:15,,23,23,0,,True,False,0
+2026-10-29 16:08:53,marianatek,Barry's Madrid Salamanca,Salamanca,Madrid - Salamanca,2204889,RUN x LIFT: Abs & Ass (EN) (50 min),2026-10-29 18:15,,48,44,4,,False,False,
+2026-10-29 16:08:53,marianatek,Barry's Madrid Salamanca,Salamanca,Madrid - Salamanca,2204890,RUN x LIFT: Abs & Ass (EN) (50 min),2026-10-29 19:15,,48,37,11,,False,False,
+2026-10-29 16:08:53,marianatek,Barry's Madrid Salamanca,Salamanca,Madrid - Salamanca,2334354,RUN x LIFT: Abs & Ass (EN) (50 min),2026-10-29 20:15,,48,14,34,,False,False,
+2026-10-29 16:08:53,marianatek,RED SPOT VLC,Valencia,Valencia,8142,FORM — RED,2026-10-29 17:10,,11,8,3,,False,False,0
+2026-10-29 16:08:53,marianatek,RED SPOT VLC,Valencia,Valencia,8151,FLOW — RED,2026-10-29 18:10,,11,6,5,,False,False,0
+2026-10-29 16:08:53,marianatek,RED SPOT VLC,Valencia,Valencia,8160,FORM — RED,2026-10-29 19:10,,11,11,0,,True,False,2
