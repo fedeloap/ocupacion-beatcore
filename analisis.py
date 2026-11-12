@@ -70,6 +70,9 @@ def franja(h):
     return FRANJAS[0][2]
 
 
+VENTANA_FOTO_H = 2      # una clase ya pasada solo cuenta si tiene foto de las últimas 2 h antes de empezar (Fede, 12/11/2026)
+
+
 def cargar():
     fin = leer("data/*.csv")
     plan = leer("data/plan/*.csv")
@@ -99,11 +102,11 @@ def cargar():
     fin = fin.sort_values("captured_at").groupby(key_est, as_index=False).tail(1)     # una fila por clase (en Mindbody, aunque cambie su id)
     fin = fin.merge(max_libres, left_on=key_est, right_index=True, how="left")
     # Clases ya dadas cuya foto final falló (la ventana de captura no las cogió): se usa su última foto de las
-    # 8 h previas a empezar (la curva guarda las próximas 6 h). Así el recuento coincide con la pestaña Oferta.
+    # 2 h previas a empezar (si falta más tiempo, la clase desapareció de la agenda: se canceló). Así el recuento coincide con la pestaña Oferta.
     if len(curva):
         ahora = todo["captured_at"].max()
         c2 = todo[(todo["captured_at"] <= todo["inicio_local"] + pd.Timedelta(minutes=MARGEN_MIN))
-                  & (todo["captured_at"] >= todo["inicio_local"] - pd.Timedelta(hours=8))
+                  & (todo["captured_at"] >= todo["inicio_local"] - pd.Timedelta(hours=VENTANA_FOTO_H))
                   & (todo["inicio_local"] <= ahora)]
         c2 = c2.sort_values("captured_at").groupby(key_est, as_index=False).tail(1)
         c2 = c2[~c2.set_index(key_est).index.isin(fin.set_index(key_est).index)]
