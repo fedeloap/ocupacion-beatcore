@@ -69,12 +69,12 @@ def momence(cfg, a, b):
             while page < 20:
                 url = (f"https://readonly-api.momence.com/host-plugins/host/{s['host_id']}"
                        f"/host-schedule/sessions?fromDate={iso_z(a - timedelta(hours=1))}"
-                       f"&toDate={iso_z(b + timedelta(hours=1))}&pageSize=200&page={page}")
+                       f"&toDate={iso_z(b + timedelta(hours=1))}&pageSize=100&page={page}")
                 r = requests.get(url, headers=UA, timeout=30)
                 r.raise_for_status()
                 batch = r.json().get("payload", [])
                 sessions += batch
-                if len(batch) < 200:
+                if len(batch) < 100:
                     break
                 page += 1
         except Exception as e:
